@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#17243b" />
-    <meta name="description" content="Hatch, catalogue, and train a personal collection using live PokéAPI data." />
+    <meta name="description" content="Hatch eggs, meet Pokémon, and fill a cosy little Pokédex." />
     <title>Pocket Hatchery</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
@@ -13,14 +13,16 @@
       <header class="topbar">
         <button class="brand" type="button" data-tab="home" aria-label="Go to the hatchery">
           <span class="brand-egg" aria-hidden="true"><span></span></span>
-          <span class="brand-copy"><strong>Pocket Hatchery</strong><small>field research archive</small></span>
+          <span class="brand-copy"><strong>Pocket Hatchery</strong><small>egg-and-pocket journal</small></span>
         </button>
 
         <nav class="primary-nav" aria-label="Main navigation">
           <button class="nav-button is-active" type="button" data-tab="home">Home</button>
           <button class="nav-button" type="button" data-tab="pokedex">Pokédex</button>
           <button class="nav-button" type="button" data-tab="pc">PC</button>
+          <button class="nav-button" type="button" data-tab="bag">Bag</button>
           <button class="nav-button" type="button" data-tab="competitions">Competitions</button>
+          <button class="nav-button" type="button" data-tab="achievements">Achievements</button>
           <button class="nav-button" type="button" data-tab="mart">Pokémart</button>
           <button class="nav-button" type="button" data-tab="settings">Settings</button>
         </nav>
@@ -39,7 +41,9 @@
         <button type="button" data-tab="home">Home</button>
         <button type="button" data-tab="pokedex">Pokédex</button>
         <button type="button" data-tab="pc">PC</button>
+        <button type="button" data-tab="bag">Bag</button>
         <button type="button" data-tab="competitions">Competitions</button>
+        <button type="button" data-tab="achievements">Achievements</button>
         <button type="button" data-tab="mart">Pokémart</button>
         <button type="button" data-tab="settings">Settings</button>
       </nav>
@@ -47,15 +51,18 @@
       <main id="view" class="view" tabindex="-1" aria-live="polite"></main>
 
       <footer class="statusbar">
-        <span><i class="status-light"></i><span id="api-status">archive online</span></span>
-        <span>▣ <span>local save</span></span>
-        <button id="help-button" type="button">? <span>field guide</span></button>
+        <span><i class="status-light"></i><span id="api-status">records awake</span></span>
+        <span>▣ <span>local nest</span></span>
+        <button id="help-button" type="button">? <span>hatchery guide</span></button>
       </footer>
 
       <div id="modal-root"></div>
       <div id="toast-root" class="toast-root" aria-live="assertive"></div>
     </div>
-    <noscript>This game needs JavaScript enabled to keep your local hatchery record.</noscript>
+    <noscript>This game needs JavaScript enabled to keep your local hatchery nest.</noscript>
+    <script src="profile-features.js" defer></script>
+    <script src="field-notes.js" defer></script>
+    <script src="shop-items.js" defer></script>
     <script src="app.js" defer></script>
   </body>
 </html>
