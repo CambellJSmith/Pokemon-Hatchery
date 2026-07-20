@@ -7,14 +7,13 @@
   const HATCH_SECONDS_PER_BASE_STAT_POINT = 30;
   const HATCH_MILLISECONDS_PER_BASE_STAT_POINT = HATCH_SECONDS_PER_BASE_STAT_POINT * 1000;
   const FALLBACK_HATCH_DURATION = 3 * 60 * 60 * 1000;
-  const EGG_COST = 25;
   const FIRST_EGG_HATCH_DURATION = 30 * 1000;
-  const ONBOARDING_FAST_EGG_COUNT = 10;
-  const ONBOARDING_FAST_EGG_START_MULTIPLIER = 0.2;
-  const ONBOARDING_FAST_EGG_END_MULTIPLIER = 0.95;
+  const EARLY_EGG_COUNT = 50;
+  const EARLY_EGG_SPEED_SCHEMA_REVISION = 17;
   const PASSIVE_XP_INTERVAL = 60 * 1000;
   const API_ROOT = "https://pokeapi.co/api/v2";
   const GEN_FIVE_SPRITE_ROOT = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white";
+  const DEFAULT_SPRITE_ROOT = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon";
   const ITEM_SPRITE_ROOT = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items";
   const EGG_SPRITE_URL = `${GEN_FIVE_SPRITE_ROOT}/egg.png`;
   const MANAPHY_SPECIES_ID = 490;
@@ -26,67 +25,17 @@
   const MASTER_BALL_STREAK_THRESHOLD = 10;
   const MASTER_BALL_DAILY_REWARD_CHANCE = 1 / 50;
   const MAX_INCUBATOR_SLOTS = 5;
-  const SNAKE_EGG_EVENT_CHANCE = 0.06;
-  const SNAKE_EGG_EVENT_MINIMUM_DURATION = 5 * 60 * 1000;
-  const BALL_BONUSES = { "poke-ball": 1, "premier-ball": 1, "great-ball": 1.5, "ultra-ball": 2, "master-ball": Infinity };
-  const BALL_CATCH_PROFILES = {
-    "poke-ball": { speed: 0.92, window: 1.24, taps: 1.18, label: "steady" },
-    "premier-ball": { speed: 1.02, window: 1.38, taps: 1.08, label: "smooth" },
-    "great-ball": { speed: 1.16, window: 1.6, taps: 0.88, label: "kind" },
-    "ultra-ball": { speed: 1.36, window: 1.88, taps: 0.68, label: "gentle" },
-    "master-ball": { speed: Infinity, window: Infinity, taps: 0, label: "certain" }
-  };
-  const CATCH_RING_START_SCALE = 2.7;
-  const CATCH_RING_END_SCALE = 0.45;
-  const CATCH_RING_SUCCESS_INNER_SCALE = 0.72;
-  const CATCH_RING_SUCCESS_OUTER_SCALE = 1.08;
-  const STARTER_SPECIES_BY_GENERATION = {
-    1: [1, 4, 7],
-    2: [152, 155, 158],
-    3: [252, 255, 258],
-    4: [387, 390, 393],
-    5: [495, 498, 501],
-    6: [650, 653, 656],
-    7: [722, 725, 728],
-    8: [810, 813, 816],
-    9: [906, 909, 912]
-  };
-  const SPECIES_GENERATION_RANGES = [
-    [1, 1, 151],
-    [2, 152, 251],
-    [3, 252, 386],
-    [4, 387, 493],
-    [5, 494, 649],
-    [6, 650, 721],
-    [7, 722, 809],
-    [8, 810, 905],
-    [9, 906, 1025]
-  ];
-  const DEV_TYPE_SAMPLE_SPECIES_IDS = {
-    fire: [4, 37, 58, 126, 155],
-    water: [7, 54, 60, 129, 158],
-    electric: [25, 81, 100, 179, 309],
-    grass: [1, 43, 69, 102, 152],
-    ice: [124, 220, 361, 459, 613],
-    fighting: [56, 66, 106, 107, 236],
-    poison: [23, 29, 32, 41, 88],
-    ground: [27, 50, 104, 207, 231],
-    flying: [16, 21, 41, 84, 163],
-    psychic: [63, 96, 122, 196, 280],
-    bug: [10, 13, 46, 123, 165],
-    rock: [74, 95, 138, 185, 299],
-    ghost: [92, 200, 353, 355, 425],
-    dragon: [147, 371, 443, 610, 633],
-    dark: [197, 198, 215, 228, 261],
-    steel: [81, 95, 208, 303, 304],
-    fairy: [35, 39, 173, 175, 280]
-  };
-  const CONTEST_STATS = ["hp", "attack", "defense", "special-attack", "special-defense", "speed"];
-  const POKEMON_TYPES = ["normal", "fire", "water", "electric", "grass", "ice", "fighting", "poison", "ground", "flying", "psychic", "bug", "rock", "ghost", "dragon", "dark", "steel", "fairy"];
+  const EGG_PRICE = 50;
+  const PREPAID_EGG_ITEM_ID = "egg-voucher";
+  const MAX_BULK_PURCHASE = 999;
+  const CATCH_BALL_IDS = new Set(["poke-ball", "premier-ball", "great-ball", "ultra-ball", "master-ball"]);
+
   const TRAINING_STAT_CAP = 252;
   const TRAINING_TOTAL_CAP = 510;
-  const EXPEDITION_MIN_DURATION = 5 * 60 * 60 * 1000;
-  const EXPEDITION_MAX_DURATION = 24 * 60 * 60 * 1000;
+  const EXPEDITION_MIN_DURATION = 2.5 * 60 * 60 * 1000;
+  const EXPEDITION_MAX_DURATION = 12 * 60 * 60 * 1000;
+  const EXPEDITION_DURATION_SCHEMA_REVISION = 15;
+  const EXPEDITION_REWARD_TIME_MULTIPLIER = 2;
   const EXPEDITION_REWARD_BALLS = ["poke-ball", "great-ball", "ultra-ball", "premier-ball"];
   const EXPEDITION_LOCATIONS = [
     { id: "viridian-forest", generation: 1, displayName: "Viridian Forest", region: "Kanto", description: "A leafy Kanto trail where tiny rustles are never quite leaves." },
@@ -135,31 +84,40 @@
     { id: "area-zero", generation: 9, displayName: "Area Zero", region: "Paldea", description: "A strange crater expedition with strict clipboard supervision." },
     { id: "glaseado-mountain", generation: 9, displayName: "Glaseado Mountain", region: "Paldea", description: "A snowy mountain route where warm scarves are not optional." }
   ];
-  const SNAKE_EGG_THIEVES = [
-    { id: 23, generation: 1, displayName: "Ekans" },
-    { id: 24, generation: 1, displayName: "Arbok" },
-    { id: 206, generation: 2, displayName: "Dunsparce" },
-    { id: 336, generation: 3, displayName: "Seviper" },
-    { id: 495, generation: 5, displayName: "Snivy" },
-    { id: 496, generation: 5, displayName: "Servine" },
-    { id: 497, generation: 5, displayName: "Serperior" },
-    { id: 843, generation: 8, displayName: "Silicobra" },
-    { id: 844, generation: 8, displayName: "Sandaconda" },
-    { id: 982, generation: 9, displayName: "Dudunsparce" }
-  ];
-  const DAILY_QUEST_TEMPLATES = [
-    { id: "hatch-egg", title: "Warm a shell", description: "Hatch any egg.", metric: "eggsHatched", target: 1, reward: 350 },
-    { id: "catch-pokemon", title: "Settle a visitor", description: "Catch any hatchling into the PC.", metric: "pokemonCaught", target: 1, reward: 300 },
-    { id: "release-visitor", title: "Gentle goodbye", description: "Release any visiting hatchling.", metric: "pokemonReleased", target: 1, reward: 180 },
-    { id: "buy-poke-balls", title: "Restock the bag", description: "Buy three Poké Balls from the Mart.", metric: "pokeBallsBought", target: 3, reward: 220 },
-    { id: "win-showcase", title: "Judge’s nod", description: "Win one competition.", metric: "competitionsWon", target: 1, reward: 520, available: () => state.team.length >= 6 },
-    { id: "start-expedition", title: "Open the map", description: "Send a PC Pokémon on an expedition.", metric: "expeditionsStarted", target: 1, reward: 280, available: () => state.pc.length > 0 },
-    { id: "finish-expedition", title: "Welcome home", description: "Have one expedition return.", metric: "expeditionsCompleted", target: 1, reward: 460, available: () => state.expeditions.length > 0 },
-    { id: "use-berry", title: "Berry training", description: "Use one berry on a PC Pokémon.", metric: "berriesUsed", target: 1, reward: 240, available: () => state.pc.length > 0 },
-    { id: "mark-favourite", title: "Mark a favourite", description: "Add one favourite mark in the PC.", metric: "favoriteCount", target: 1, reward: 160, available: () => state.pc.length > 0 },
-    { id: "build-team", title: "Showcase prep", description: "Add one Pokémon to the showcase team.", metric: "teamCount", target: 1, reward: 180, available: () => state.pc.length > 0 },
-    { id: "choose-partner", title: "Keep watch", description: "Set a Pokémon as partner.", metric: "partnerSet", target: 1, reward: 180, available: () => state.pc.length > 0 && !state.partnerUid }
-  ];
+
+  const STARTER_SPECIES_BY_GENERATION = {
+    1: [1, 4, 7],
+    2: [152, 155, 158],
+    3: [252, 255, 258],
+    4: [387, 390, 393],
+    5: [495, 498, 501],
+    6: [650, 653, 656],
+    7: [722, 725, 728],
+    8: [810, 813, 816],
+    9: [906, 909, 912]
+  };
+  const DEV_TYPE_SAMPLE_SPECIES_IDS = {
+    fire: [4, 37, 58, 126, 155],
+    water: [7, 54, 60, 129, 158],
+    electric: [25, 81, 100, 179, 309],
+    grass: [1, 43, 69, 102, 152],
+    ice: [124, 220, 361, 459, 613],
+    fighting: [56, 66, 106, 107, 236],
+    poison: [23, 29, 32, 41, 88],
+    ground: [27, 50, 104, 207, 231],
+    flying: [16, 21, 41, 84, 163],
+    psychic: [63, 96, 122, 196, 280],
+    bug: [10, 13, 46, 123, 165],
+    rock: [74, 95, 138, 185, 299],
+    ghost: [92, 200, 353, 355, 425],
+    dragon: [147, 371, 443, 610, 633],
+    dark: [197, 198, 215, 228, 261],
+    steel: [81, 95, 208, 303, 304],
+    fairy: [35, 39, 173, 175, 280]
+  };
+  const CONTEST_STATS = ["hp", "attack", "defense", "special-attack", "special-defense", "speed"];
+  const COMPETITION_ENGINE = window.PocketHatcheryCompetitionEngine;
+  if (!COMPETITION_ENGINE) throw new Error("Competition engine failed to load.");
   const DEV_TOOL_DEFAULTS = {
     instantHatch: false,
     boostedPassiveXp: false,
@@ -185,7 +143,7 @@
     ["Current Pokémon", [["dev-catch-current", "Catch to PC"], ["dev-make-shiny", "Make shiny"], ["dev-max-current-ivs", "Max stats"], ["dev-current-xp-1k", "+1,000 XP"], ["dev-current-xp-10k", "+10,000 XP"], ["dev-current-level-100", "Set level 100"]]],
     ["Bag & shop", [["dev-money-10k", "+₽10,000"], ["dev-money-100k", "+₽100,000"], ["dev-money-1m", "+₽1,000,000"], ["dev-max-incubators", "Max incubators"], ["dev-ball-bundle", "Add 99 shop balls"], ["dev-premier-balls", "Add 30 Premier Balls"], ["dev-add-shop-items", "Add shop items"], ["dev-add-shiny-charms", "Add 5 Shiny Charms"], ["dev-activate-shiny-charm", "Activate Shiny Charm"], ["dev-add-magmarizer", "Add Magmarizer"], ["dev-add-all-plates", "Add all plates"], ["dev-equip-random-plate", "Equip random plate"], ["dev-clear-plate", "Clear equipped plate"]]],
     ["Unlock tests", [["dev-unlock-shiny-shop", "Unlock Shiny Charm shelf"], ["dev-unlock-magmarizer-shop", "Unlock Magmarizer shelf"], ["dev-unlock-all-plates-shop", "Unlock every plate shelf"], ["dev-streak-10-ready", "Set 10-day parcel ready"], ["dev-streak-30-ready", "Set 30-day parcel ready"], ["dev-run-daily-reward", "Run daily parcel check"]]],
-    ["PC & collection", [["dev-random-pc", "Add random PC Pokémon"], ["dev-six-random-pc", "Add six random Pokémon"], ["dev-shiny-pc", "Add shiny Pokémon"], ["dev-type-sampler-pc", "Add type sampler"], ["dev-fill-pokedex", "Fill enabled Pokédex"], ["dev-favorite-all-pc", "Favourite all PC"], ["dev-clear-favorites", "Clear favourites"], ["dev-first-partner", "Set first PC partner"], ["dev-clear-partner", "Clear partner"], ["dev-team-level-100", "Level team to 100"], ["dev-clear-contests", "Clear contest log"]]],
+    ["PC & collection", [["dev-random-pc", "Add random PC Pokémon"], ["dev-six-random-pc", "Add six random Pokémon"], ["dev-shiny-pc", "Add shiny Pokémon"], ["dev-type-sampler-pc", "Add type sampler"], ["dev-fill-pokedex", "Fill enabled Pokédex"], ["dev-favorite-all-pc", "Favourite all PC"], ["dev-clear-favorites", "Clear favourites"], ["dev-first-partner", "Set first PC partner"], ["dev-clear-partner", "Clear partner"], ["dev-team-level-100", "Level team to 100"], ["dev-clear-contests", "Reset competition ladder"]]],
     ["Field notes", [["dev-next-field-note", "Roll new note today"], ["dev-reset-field-notes", "Reset note history"], ["dev-complete-field-notes", "Mark notes used"], ["dev-open-bag", "Open Bag tab"], ["dev-open-pc", "Open PC tab"], ["dev-open-mart", "Open Pokémart tab"]]]
   ];
   const THEME_TEMPLATES = [
@@ -208,8 +166,15 @@
     ["ultra_beast", "Ultra beast", "Deep ultramarine with electric cyan and strange magenta"]
   ];
   const THEME_VALUES = new Set(THEME_TEMPLATES.map(([value]) => value));
+  const INTERFACE_PERFORMANCE_OPTIONS = [
+    { value: "automatic", label: "Automatic", description: "Let the hatchery choose between standard and low-power rendering for this browser." },
+    { value: "standard", label: "Standard", description: "Use larger page batches and full visual effects. Reduced-motion accessibility requests remain respected." },
+    { value: "low", label: "Low power", description: "Reduce visual effects, render smaller batches, and use the lightweight catch prompt." }
+  ];
+  const INTERFACE_PERFORMANCE_VALUES = new Set(INTERFACE_PERFORMANCE_OPTIONS.map((option) => option.value));
   const DEFAULT_STATE = {
     version: 13,
+    schemaRevision: 17,
     player: null,
     money: 0,
     streak: 0,
@@ -237,27 +202,51 @@
     items: {},
     equippedPlate: "",
     activeItemEffects: { shinyCharmEggsRemaining: 0 },
-    settings: { generations: [1, 2, 3, 4, 5, 6, 7, 8, 9], theme: "field", devTools: { ...DEV_TOOL_DEFAULTS } },
-    statistics: { eggsHatched: 0, eggsLaid: 0, eggsBought: 0, eggsLostToSnakes: 0, pokemonCaught: 0, pokemonReleased: 0, competitionsWon: 0, competitionWinsByStat: {}, masterBallsFound: 0, pokeBallsBought: 0, shinyCharmUses: 0, achievementRewardsClaimed: 0, dailyQuestRewardsClaimed: 0, expeditionsStarted: 0, expeditionsCompleted: 0, berriesUsed: 0, keepsakesFound: 0, keepsakesSold: 0, mysteriousItemsUnlocked: 0, mysteriousSummons: 0 },
+    settings: { generations: [1, 2, 3, 4, 5, 6, 7, 8, 9], theme: "field", interfacePerformance: "automatic", devTools: { ...DEV_TOOL_DEFAULTS } },
+    statistics: {
+      eggsHatched: 0,
+      eggsLaid: 0,
+      eggsBought: 0,
+      eggsLostToSnakes: 0,
+      pokemonCaught: 0,
+      pokemonReleased: 0,
+      competitionsWon: 0,
+      competitionWinsByStat: {},
+      masterBallsFound: 0,
+      pokeBallsBought: 0,
+      shinyCharmUses: 0,
+      achievementRewardsClaimed: 0,
+      dailyQuestRewardsClaimed: 0,
+      expeditionsStarted: 0,
+      expeditionsCompleted: 0,
+      berriesUsed: 0,
+      keepsakesFound: 0,
+      keepsakesSold: 0,
+      mysteriousItemsUnlocked: 0,
+      mysteriousSummons: 0
+    },
+    competition: { rating: 1000, peakRating: 1000, selectedLeague: "local", selectedDifficulty: "standard", cooldowns: {}, rivals: {}, challenges: {}, activeMatch: null, winStreak: 0, totalEntries: 0 },
     competitionLog: []
   };
 
+  let saveRecoveryNeeded = false;
+  let resetInProgress = false;
+  let stateSchemaInstance = null;
   const state = loadState();
   normaliseIncubators();
   normaliseEggSequenceTracking();
   normaliseTrainingState();
-  normaliseDailyQuestState();
   normaliseExpeditionState();
-  syncMysteriousItemUnlocks(false);
   state.settings.theme = normaliseTheme(state.settings.theme);
+  state.settings.interfacePerformance = normaliseInterfacePerformance(state.settings.interfacePerformance);
   let activeTab = "home";
   let clockTimer = null;
   let isHatching = false;
   let nextHatchRetryAt = 0;
   let isCompetitionRunning = false;
+  let isCompetitionScouting = false;
   let isSettlingExpeditions = false;
   let enabledSpeciesTotal = 0;
-  let enabledSpeciesIds = [];
   let shopItems = null;
   let pokedexFilter = "";
   let pcSearch = "";
@@ -267,16 +256,19 @@
   let idleCryUid = null;
   let currentCryAudio = null;
   let pendingImportSave = null;
-  let pendingMysteriousUnlockToasts = [];
   let catchChallenge = null;
   let catchChallengeTimer = null;
-  let isPreparingEgg = false;
-  let renderMotionIndex = 0;
+  let searchRenderTimer = null;
+  let lastMaintenanceAt = 0;
+  let pokedexVisibleLimit = 0;
+  let pcVisibleLimit = 0;
+  let shopVisibleLimit = 0;
+  let mysteryGoalVisibleLimit = 0;
+  let focusViewAfterRender = true;
   let previousMoney = Number(state.money || 0);
   let previousStreak = Number(state.streak || 0);
   let previousTheme = state.settings?.theme || "field";
   let nextEggPreparationRetryAt = 0;
-  const apiCache = new Map();
   const generationCache = new Map();
   const growthCache = new Map();
 
@@ -288,54 +280,179 @@
   const streakDisplay = document.getElementById("streak-display");
   const mobileNav = document.getElementById("mobile-nav");
   const menuButton = document.getElementById("menu-button");
+  const navButtons = Array.from(document.querySelectorAll("[data-tab]"));
 
-  function uniqueNumberList(values) {
-    return [...new Set((Array.isArray(values) ? values : []).map(Number).filter((value) => Number.isInteger(value) && value > 0))];
+  function normaliseInterfacePerformance(value) {
+    return INTERFACE_PERFORMANCE_VALUES.has(value) ? value : "automatic";
   }
 
-  function uniqueStringList(values) {
-    return [...new Set((Array.isArray(values) ? values : []).map((value) => String(value || "").trim()).filter(Boolean))];
+  function detectLowPowerInterface() {
+    const browserNavigator = typeof navigator === "object" && navigator ? navigator : (window.navigator || {});
+    const memory = Number(browserNavigator.deviceMemory || 0);
+    const cores = Number(browserNavigator.hardwareConcurrency || 0);
+    const saveData = browserNavigator.connection && browserNavigator.connection.saveData === true;
+    const reducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const supportsContainment = window.CSS && typeof window.CSS.supports === "function" && window.CSS.supports("content-visibility", "auto");
+    return saveData || reducedMotion || !supportsContainment || (memory > 0 && memory <= 4) || (cores > 0 && cores <= 4);
   }
+
+  const AUTOMATIC_LOW_POWER_INTERFACE = detectLowPowerInterface();
+  let LOW_POWER_INTERFACE = false;
+  let ARCHIVE_PAGE_SIZE = 96;
+  let MAINTENANCE_INTERVAL = 10000;
+
+  function applyInterfacePerformance(resetArchiveLimits = false) {
+    const preference = normaliseInterfacePerformance(state.settings.interfacePerformance);
+    state.settings.interfacePerformance = preference;
+    LOW_POWER_INTERFACE = preference === "low" || (preference === "automatic" && AUTOMATIC_LOW_POWER_INTERFACE);
+    ARCHIVE_PAGE_SIZE = LOW_POWER_INTERFACE ? 48 : 96;
+    MAINTENANCE_INTERVAL = LOW_POWER_INTERFACE ? 30000 : 10000;
+    appShell.dataset.performance = LOW_POWER_INTERFACE ? "low" : "standard";
+    if (document.documentElement?.dataset) document.documentElement.dataset.performance = appShell.dataset.performance;
+    if (resetArchiveLimits) {
+      pokedexVisibleLimit = ARCHIVE_PAGE_SIZE;
+      pcVisibleLimit = ARCHIVE_PAGE_SIZE;
+      shopVisibleLimit = ARCHIVE_PAGE_SIZE;
+      mysteryGoalVisibleLimit = ARCHIVE_PAGE_SIZE;
+    }
+  }
+
+  applyInterfacePerformance(true);
+  let storageWarningShown = false;
+  storageLayer().configure({
+    onWarning(message) {
+      if (storageWarningShown) return;
+      storageWarningShown = true;
+      window.setTimeout(() => toast(message), 0);
+    }
+  });
+  const apiClient = window.PocketHatcheryApi
+    ? window.PocketHatcheryApi.create({ root: API_ROOT, timeoutMs: 12000, onStatus: setApiStatus })
+    : null;
+  const modalManager = window.PocketHatcheryModal
+    ? window.PocketHatcheryModal.create(modalRoot, { requestClose: closeModal })
+    : null;
+  const catchEngine = window.PocketHatcheryCatchEngine
+    ? window.PocketHatcheryCatchEngine.create()
+    : null;
 
   function cloneDefault() {
     return JSON.parse(JSON.stringify(DEFAULT_STATE));
   }
 
+  function storageLayer() {
+    return window.PocketHatcheryStorage || {
+      read: (key) => localStorage.getItem(key),
+      write: (key, value) => { localStorage.setItem(key, typeof value === "string" ? value : JSON.stringify(value)); return true; },
+      remove: async (key) => { localStorage.removeItem(key); return true; },
+      clearAll: async () => {
+        const keys = [];
+        for (let index = 0; index < localStorage.length; index += 1) {
+          const key = localStorage.key(index);
+          if (typeof key === "string" && key.startsWith("pocket_hatchery_")) keys.push(key);
+        }
+        keys.forEach((key) => localStorage.removeItem(key));
+        if (window.sessionStorage) {
+          const sessionKeys = [];
+          for (let index = 0; index < window.sessionStorage.length; index += 1) {
+            const key = window.sessionStorage.key(index);
+            if (typeof key === "string" && key.startsWith("pocket_hatchery_")) sessionKeys.push(key);
+          }
+          sessionKeys.forEach((key) => window.sessionStorage.removeItem(key));
+        }
+        return true;
+      },
+      configure: () => {}
+    };
+  }
+
+  function stateSchema() {
+    if (!stateSchemaInstance) {
+      if (!window.PocketHatcheryStateSchema) throw new Error("The hatchery save schema did not load.");
+      stateSchemaInstance = window.PocketHatcheryStateSchema.create({
+        defaultState: DEFAULT_STATE,
+        contestStats: CONTEST_STATS,
+        devToolDefaults: DEV_TOOL_DEFAULTS,
+        catchBallIds: [...CATCH_BALL_IDS],
+        defaultSpriteRoot: DEFAULT_SPRITE_ROOT,
+        apiRoot: API_ROOT,
+        fallbackHatchDuration: FALLBACK_HATCH_DURATION,
+        makeId,
+        cryUrlFromSpeciesId,
+        normaliseTheme,
+        clampIncubatorCapacity,
+        competitionLeagueIds: COMPETITION_ENGINE.LEAGUES.map((league) => league.id),
+        competitionDifficultyIds: COMPETITION_ENGINE.DIFFICULTIES.map((difficulty) => difficulty.id),
+        competitionArchetypeIds: COMPETITION_ENGINE.ARCHETYPES.map((archetype) => archetype.id)
+      });
+    }
+    return stateSchemaInstance;
+  }
+
+  function isPlainObject(value) {
+    return stateSchema().isPlainObject(value);
+  }
+
+  function cleanUrl(value, fallback = "") {
+    return stateSchema().cleanUrl(value, fallback);
+  }
+
+  function normaliseSaveState(stored, options = {}) {
+    return stateSchema().normaliseSaveState(stored, options);
+  }
+
+  function migrateExpeditionDurations(stored, storedRevision) {
+    if (storedRevision >= EXPEDITION_DURATION_SCHEMA_REVISION || !Array.isArray(stored.expeditions)) return stored;
+    stored.expeditions = stored.expeditions.map((entry) => {
+      if (!entry || typeof entry !== "object") return entry;
+      const startedAt = Math.max(0, Number(entry.startedAt || Date.now()));
+      const recordedDuration = Number(entry.durationMs || (Number(entry.returnAt || 0) - startedAt));
+      const sourceDuration = Number.isFinite(recordedDuration) && recordedDuration > 0 ? recordedDuration : EXPEDITION_MIN_DURATION * 2;
+      const durationMs = Math.max(EXPEDITION_MIN_DURATION, Math.min(EXPEDITION_MAX_DURATION, Math.round(sourceDuration / 2)));
+      return { ...entry, startedAt, durationMs, returnAt: startedAt + durationMs };
+    });
+    return stored;
+  }
+
+  function migrateEarlyEggDurations(stored, storedRevision) {
+    if (storedRevision >= EARLY_EGG_SPEED_SCHEMA_REVISION) return stored;
+    const globalMultiplier = Number(stored?.items?.magmarizer || 0) > 0 ? 0.5 : 1;
+    const updateEgg = (egg) => {
+      if (!egg || typeof egg !== "object") return egg;
+      const eggNumber = Math.floor(Number(egg.eggNumber || 0));
+      if (eggNumber < 1 || eggNumber > EARLY_EGG_COUNT) return egg;
+      const baseStatTotal = Number(egg.baseStatTotal || egg.pendingEncounter?.baseStatTotal || 0);
+      if (!Number.isFinite(baseStatTotal) || baseStatTotal <= 0) return egg;
+      const laidAt = Math.max(0, Number(egg.laidAt || Date.now()));
+      const hatchDuration = earlyEggHatchDuration(hatchDurationForBaseStatTotal(baseStatTotal), eggNumber, globalMultiplier);
+      return { ...egg, laidAt, hatchDuration, hatchAt: laidAt + hatchDuration };
+    };
+    if (Array.isArray(stored?.incubators?.slots)) {
+      stored.incubators.slots = stored.incubators.slots.map((slot) => slot && typeof slot === "object" ? { ...slot, egg: updateEgg(slot.egg) } : slot);
+    }
+    stored.egg = updateEgg(stored.egg);
+    return stored;
+  }
+
   function loadState() {
     try {
-      const stored = JSON.parse(localStorage.getItem(STORAGE_KEY));
-      if (!stored || ![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].includes(stored.version)) return cloneDefault();
-      const storedGenerations = Array.isArray(stored.settings?.generations) ? stored.settings.generations.filter((generation) => Number.isInteger(generation) && generation >= 1 && generation <= 9) : [];
-      const usedLegacyDefault = stored.version === 1
-        && storedGenerations.length === 5
-        && storedGenerations.every((generation, index) => generation === index + 1);
-      return {
-        ...cloneDefault(),
-        ...stored,
-        version: 13,
-        player: stored.player ? { ...stored.player, gender: ["boy", "girl", "other"].includes(stored.player.gender) ? stored.player.gender : "other" } : null,
-        inventory: { ...DEFAULT_STATE.inventory, ...(stored.inventory || {}) },
-        items: { ...(stored.items || {}) },
-        souvenirs: { ...(stored.souvenirs || {}) },
-        expeditions: Array.isArray(stored.expeditions) ? stored.expeditions : [],
-        expeditionLog: Array.isArray(stored.expeditionLog) ? stored.expeditionLog.slice(0, 30) : [],
-        dailyQuests: { ...DEFAULT_STATE.dailyQuests, ...(stored.dailyQuests || {}), quests: Array.isArray(stored.dailyQuests?.quests) ? stored.dailyQuests.quests : [] },
-        equippedPlate: typeof stored.equippedPlate === "string" ? stored.equippedPlate : "",
-        activeItemEffects: { ...DEFAULT_STATE.activeItemEffects, ...(stored.activeItemEffects || {}) },
-        settings: {
-          ...DEFAULT_STATE.settings,
-          ...(stored.settings || {}),
-          generations: usedLegacyDefault || !storedGenerations.length ? [...DEFAULT_STATE.settings.generations] : storedGenerations,
-          devTools: { ...DEV_TOOL_DEFAULTS, ...(stored.settings?.devTools || {}) }
-        },
-        statistics: { ...DEFAULT_STATE.statistics, ...(stored.statistics || {}), competitionWinsByStat: { ...DEFAULT_STATE.statistics.competitionWinsByStat, ...(stored.statistics?.competitionWinsByStat || {}) } },
-        caughtSpeciesIds: uniqueNumberList([...(Array.isArray(stored.caughtSpeciesIds) ? stored.caughtSpeciesIds : []), ...((stored.pc || []).map((pokemon) => pokemon?.speciesId))]),
-        caughtBallIds: uniqueStringList([...(Array.isArray(stored.caughtBallIds) ? stored.caughtBallIds : []), ...((stored.pc || []).map((pokemon) => pokemon?.caughtWith))]),
-        caughtShinySpeciesIds: uniqueNumberList([...(Array.isArray(stored.caughtShinySpeciesIds) ? stored.caughtShinySpeciesIds : []), ...((stored.pc || []).filter((pokemon) => pokemon?.shiny).map((pokemon) => pokemon?.speciesId))]),
-        claimedAchievementIds: uniqueStringList(stored.claimedAchievementIds || []),
-        fieldNotes: { ...DEFAULT_STATE.fieldNotes, ...(stored.fieldNotes || {}), usedIds: Array.isArray(stored.fieldNotes?.usedIds) ? stored.fieldNotes.usedIds : [] }
-      };
-    } catch {
+      const storedText = storageLayer().read(STORAGE_KEY);
+      if (!storedText) return cloneDefault();
+      const stored = JSON.parse(storedText);
+      if (!Number.isInteger(stored?.version) || stored.version < 1 || stored.version > DEFAULT_STATE.version) {
+        saveRecoveryNeeded = true;
+        return cloneDefault();
+      }
+      const storedRevision = Math.max(0, Math.floor(Number(stored.schemaRevision || 0)));
+      if ((stored.version < DEFAULT_STATE.version || storedRevision < DEFAULT_STATE.schemaRevision) && typeof storageLayer().preserveMigrationBackup === "function") {
+        storageLayer().preserveMigrationBackup(STORAGE_KEY, storedText, stored.version, DEFAULT_STATE.schemaRevision);
+      }
+      migrateExpeditionDurations(stored, storedRevision);
+      migrateEarlyEggDurations(stored, storedRevision);
+      return normaliseSaveState(stored, { preserveUnknown: true });
+    } catch (error) {
+      saveRecoveryNeeded = true;
+      console.warn("The local hatchery save could not be loaded.", error);
       return cloneDefault();
     }
   }
@@ -368,14 +485,10 @@
   }
 
   function normaliseTrainingState() {
-    const pc = Array.isArray(state.pc) ? state.pc : [];
-    pc.forEach(normalisePokemonTraining);
-    const expeditions = Array.isArray(state.expeditions) ? state.expeditions : [];
-    expeditions.forEach((entry) => normalisePokemonTraining(entry?.pokemon));
+    (Array.isArray(state.pc) ? state.pc : []).forEach(normalisePokemonTraining);
+    (Array.isArray(state.expeditions) ? state.expeditions : []).forEach((entry) => normalisePokemonTraining(entry?.pokemon));
     if (state.encounter) normalisePokemonTraining(state.encounter);
-    incubatorSlots().forEach((slot) => {
-      if (slot.encounter) normalisePokemonTraining(slot.encounter);
-    });
+    if (state.incubators?.slots) state.incubators.slots.forEach((slot) => { if (slot?.encounter) normalisePokemonTraining(slot.encounter); });
   }
 
   function trainingTotal(pokemon) {
@@ -388,116 +501,46 @@
     return Math.max(0, Math.min(TRAINING_STAT_CAP - Number(pokemon?.evs?.[stat] || 0), TRAINING_TOTAL_CAP - trainingTotal(pokemon)));
   }
 
-  function describeStatEffects(statEffects = {}) {
-    return Object.entries(statEffects)
-      .filter(([stat, amount]) => CONTEST_STATS.includes(stat) && Number(amount) > 0)
-      .map(([stat, amount]) => `+${Number(amount)} ${statLabel(stat)}`)
-      .join(" / ") || "training";
-  }
-
-  function normaliseDailyQuestState() {
-    const saved = state.dailyQuests && typeof state.dailyQuests === "object" ? state.dailyQuests : {};
-    state.dailyQuests = {
-      currentDate: typeof saved.currentDate === "string" ? saved.currentDate : "",
-      quests: Array.isArray(saved.quests) ? saved.quests.filter(Boolean) : []
-    };
-  }
-
-  function statisticMetric(metric) {
-    return Math.max(0, Math.floor(Number(state.statistics?.[metric] || 0)));
-  }
-
-  function dailyQuestMetricValue(metric) {
-    if (metric === "favoriteCount") return state.pc.filter((pokemon) => pokemon.favorite).length;
-    if (metric === "teamCount") return state.team.length;
-    if (metric === "partnerSet") return state.partnerUid ? 1 : 0;
-    return statisticMetric(metric);
-  }
-
-  function dailyQuestTemplate(templateId) {
-    return DAILY_QUEST_TEMPLATES.find((template) => template.id === templateId) || null;
-  }
-
-  function dailyQuestProgress(quest) {
-    const current = dailyQuestMetricValue(quest.metric);
-    return Math.max(0, current - Math.max(0, Math.floor(Number(quest.start || 0))));
-  }
-
-  function isDailyQuestComplete(quest) {
-    return dailyQuestProgress(quest) >= Number(quest.target || 1);
-  }
-
-  function questAvailable(template) {
-    return typeof template.available === "function" ? template.available() : true;
-  }
-
-  function createDailyQuest(template) {
-    return {
-      id: `${localDateKey()}-${template.id}-${makeId()}`,
-      templateId: template.id,
-      title: template.title,
-      description: template.description,
-      metric: template.metric,
-      start: dailyQuestMetricValue(template.metric),
-      target: template.target,
-      reward: template.reward,
-      claimed: false,
-      createdAt: new Date().toISOString()
-    };
-  }
-
-  function rollDailyQuests() {
-    const available = DAILY_QUEST_TEMPLATES.filter(questAvailable);
-    const fallback = DAILY_QUEST_TEMPLATES.filter((template) => !available.includes(template));
-    const pool = [...available, ...fallback];
-    const selected = [];
-    const used = new Set();
-    while (selected.length < 3 && used.size < pool.length) {
-      const template = randomChoice(pool.filter((entry) => !used.has(entry.id)));
-      used.add(template.id);
-      selected.push(createDailyQuest(template));
-    }
-    state.dailyQuests = { currentDate: localDateKey(), quests: selected };
-  }
-
-  function ensureDailyQuests() {
-    normaliseDailyQuestState();
-    if (!state.player) return;
-    if (state.dailyQuests.currentDate !== localDateKey() || state.dailyQuests.quests.length !== 3) rollDailyQuests();
-  }
-
-  function claimDailyQuest(questId) {
-    ensureDailyQuests();
-    const quest = state.dailyQuests.quests.find((entry) => entry.id === questId);
-    if (!quest || quest.claimed || !isDailyQuestComplete(quest)) return;
-    const reward = Math.max(0, Math.floor(Number(quest.reward || 0)));
-    quest.claimed = true;
-    quest.claimedAt = new Date().toISOString();
-    state.money += reward;
-    state.statistics.dailyQuestRewardsClaimed = (state.statistics.dailyQuestRewardsClaimed || 0) + 1;
-    saveState();
-    if (activeTab === "home") render();
-    toast(`Daily quest complete: +₽${reward.toLocaleString()}.`);
+  function describeStatEffects(statEffects) {
+    return Object.entries(statEffects || {}).filter(([stat]) => CONTEST_STATS.includes(stat)).map(([stat, amount]) => `+${Number(amount || 0)} ${statLabel(stat)}`).join(", ");
   }
 
   function normaliseExpeditionState() {
-    const expeditions = Array.isArray(state.expeditions) ? state.expeditions : [];
-    state.expeditions = expeditions
+    const now = Date.now();
+    const seenPokemon = new Set();
+    state.expeditions = (Array.isArray(state.expeditions) ? state.expeditions : [])
       .filter((entry) => entry && entry.pokemon && typeof entry.id === "string")
       .map((entry) => ({
-        id: entry.id,
+        ...entry,
+        id: String(entry.id),
         pokemon: entry.pokemon,
         locationId: String(entry.locationId || ""),
         locationName: String(entry.locationName || "Unknown route"),
         region: String(entry.region || ""),
         generation: Math.max(1, Math.min(9, Math.floor(Number(entry.generation || 1)))),
-        startedAt: Number(entry.startedAt || Date.now()),
-        returnAt: Number(entry.returnAt || Date.now() + EXPEDITION_MIN_DURATION),
-        durationMs: Number(entry.durationMs || EXPEDITION_MIN_DURATION)
-      }));
-    state.expeditions.forEach((entry) => normalisePokemonTraining(entry.pokemon));
-    state.expeditionLog = Array.isArray(state.expeditionLog) ? state.expeditionLog.slice(0, 30) : [];
-    state.souvenirs = state.souvenirs && typeof state.souvenirs === "object" ? state.souvenirs : {};
+        startedAt: Math.max(0, Number(entry.startedAt || now)),
+        returnAt: Math.max(0, Number(entry.returnAt || now + EXPEDITION_MIN_DURATION)),
+        durationMs: Math.max(EXPEDITION_MIN_DURATION, Math.min(EXPEDITION_MAX_DURATION, Number(entry.durationMs || EXPEDITION_MIN_DURATION)))
+      }))
+      .filter((entry) => {
+        const uid = String(entry.pokemon?.uid || "");
+        if (!uid || seenPokemon.has(uid)) return false;
+        seenPokemon.add(uid);
+        normalisePokemonTraining(entry.pokemon);
+        return true;
+      });
+    state.expeditionLog = Array.isArray(state.expeditionLog) ? state.expeditionLog.filter(Boolean).slice(0, 30) : [];
+    state.souvenirs = state.souvenirs && typeof state.souvenirs === "object" && !Array.isArray(state.souvenirs) ? state.souvenirs : {};
+    for (const [itemId, count] of Object.entries(state.souvenirs)) {
+      const clean = Math.max(0, Math.floor(Number(count || 0)));
+      if (clean > 0) state.souvenirs[itemId] = clean;
+      else delete state.souvenirs[itemId];
+    }
+  }
+
+  function enabledGenerationNumbers() {
+    const generations = Array.isArray(state.settings?.generations) ? state.settings.generations.map(Number).filter((value) => Number.isInteger(value) && value >= 1 && value <= 9) : [];
+    return generations.length ? [...new Set(generations)] : [1];
   }
 
   function enabledExpeditionLocations() {
@@ -530,7 +573,7 @@
     const registry = shopItemRegistry();
     const berries = registry && typeof registry.berries === "function" ? registry.berries() : [];
     const souvenirs = registry && typeof registry.souvenirs === "function" ? registry.souvenirs() : [];
-    const hours = Math.max(5, durationMs / 3600000);
+    const hours = Math.max(5, (durationMs * EXPEDITION_REWARD_TIME_MULTIPLIER) / 3600000);
     const money = randomInt(Math.floor(120 + hours * 28), Math.floor(280 + hours * 62));
     const xp = randomInt(Math.floor(900 + hours * 210), Math.floor(1500 + hours * 340));
     const ballCount = randomInt(1, 4);
@@ -544,16 +587,16 @@
 
   function countRewards(values) {
     const counts = new Map();
-    values.forEach((value) => counts.set(value, (counts.get(value) || 0) + 1));
+    (values || []).forEach((value) => counts.set(value, (counts.get(value) || 0) + 1));
     return [...counts.entries()].map(([id, count]) => ({ id, count }));
   }
 
   function rewardListText(rewards) {
     const parts = [];
-    if (rewards.money) parts.push(`₽${rewards.money.toLocaleString()}`);
-    countRewards(rewards.balls || []).forEach((entry) => parts.push(`${entry.count} ${displayItemName(entry.id)}`));
-    countRewards(rewards.berries || []).forEach((entry) => parts.push(`${entry.count} ${displayItemName(entry.id)}`));
-    countRewards(rewards.souvenirs || []).forEach((entry) => parts.push(`${entry.count} ${displayItemName(entry.id)}`));
+    if (rewards.money) parts.push(`₽${Number(rewards.money).toLocaleString()}`);
+    countRewards(rewards.balls).forEach((entry) => parts.push(`${entry.count} ${displayItemName(entry.id)}`));
+    countRewards(rewards.berries).forEach((entry) => parts.push(`${entry.count} ${displayItemName(entry.id)}`));
+    countRewards(rewards.souvenirs).forEach((entry) => parts.push(`${entry.count} ${displayItemName(entry.id)}`));
     return parts.join(", ") || "field notes";
   }
 
@@ -564,7 +607,14 @@
     const pokemon = state.expeditions[index].pokemon;
     const rewards = expeditionRewardBundle(Number(entry.durationMs || EXPEDITION_MIN_DURATION));
     state.expeditions.splice(index, 1);
-    const result = await addExperience(pokemon, rewards.xp);
+    let result;
+    try {
+      result = await addExperience(pokemon, rewards.xp);
+    } catch (error) {
+      console.warn("The expedition XP record could not be refreshed; the Pokémon will still return.", error);
+      pokemon.experience = Math.max(0, Number(pokemon.experience || 0) + rewards.xp);
+      result = { oldLevel: pokemon.level, newLevel: pokemon.level, evolutions: [] };
+    }
     state.pc.push(pokemon);
     state.money += rewards.money;
     rewards.balls.forEach((ball) => { state.inventory[ball] = (state.inventory[ball] || 0) + 1; });
@@ -586,6 +636,7 @@
       returnedAt: new Date().toISOString()
     });
     state.expeditionLog = state.expeditionLog.slice(0, 30);
+    normalisePcLinks();
     saveState();
     if (notify) {
       const evolutionText = result.evolutions.length ? ` ${result.evolutions.join(" ")}!` : "";
@@ -604,7 +655,8 @@
       for (const entry of ready) {
         try {
           await settleExpedition(entry, notify);
-        } catch {
+        } catch (error) {
+          console.warn("An expedition return could not be settled.", error);
           if (notify) toast(`${entry.pokemon?.nickname || entry.pokemon?.displayName || "A Pokémon"} is back at the gate, but the growth record could not be opened yet.`);
         }
       }
@@ -713,10 +765,13 @@
   }
 
   function saveState() {
+    if (resetInProgress) return true;
+    const newlyUnlocked = syncLegendaryUnlocks();
     syncActiveIncubatorFromLegacy();
-    syncMysteriousItemUnlocks(false);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    const saved = storageLayer().write(STORAGE_KEY, JSON.stringify(state));
     updateHeader();
+    if (saved && newlyUnlocked.length) announceLegendaryUnlocks(newlyUnlocked);
+    return saved;
   }
 
   function safeFileNamePart(value) {
@@ -749,15 +804,14 @@
   }
 
   function extractImportedSave(payload) {
-    if (!payload || typeof payload !== "object") throw new Error("This file does not look like a hatchery save.");
-    const candidate = payload.magic === SAVE_EXPORT_MAGIC && payload.save && typeof payload.save === "object" ? payload.save : payload;
-    if (!candidate || typeof candidate !== "object") throw new Error("This file does not contain a hatchery save.");
+    if (!isPlainObject(payload)) throw new Error("This file does not look like a hatchery save.");
+    const candidate = payload.magic === SAVE_EXPORT_MAGIC && isPlainObject(payload.save) ? payload.save : payload;
+    if (!isPlainObject(candidate)) throw new Error("This file does not contain a hatchery save.");
     if (!Number.isInteger(candidate.version)) throw new Error("This save is missing its version card.");
     if (candidate.version > DEFAULT_STATE.version) throw new Error("This save comes from a newer hatchery build.");
-    if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].includes(candidate.version)) throw new Error("This save version is not supported by this build.");
-    if (!candidate.player || typeof candidate.player !== "object" || typeof candidate.player.name !== "string") throw new Error("This save is missing its registration card.");
-    if (!candidate.settings || typeof candidate.settings !== "object") throw new Error("This save is missing its hatchery settings.");
-    return candidate;
+    if (candidate.version < 1) throw new Error("This save version is not supported by this build.");
+    if (!isPlainObject(candidate.settings)) throw new Error("This save is missing its hatchery settings.");
+    return normaliseSaveState(candidate, { requirePlayer: true, preserveUnknown: true });
   }
 
   function requestSaveImport() {
@@ -783,12 +837,20 @@
       toast("No backup is waiting to be opened.");
       return;
     }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(pendingImportSave));
+    if (!storageLayer().write(STORAGE_KEY, JSON.stringify(pendingImportSave))) {
+      toast("The backup was valid, but local storage could not save it.");
+      return;
+    }
     window.location.reload();
   }
 
   function readImportFile(file) {
     if (!file) return;
+    if (Number(file.size || 0) > 10 * 1024 * 1024) {
+      pendingImportSave = null;
+      toast("That backup is too large to open safely.");
+      return;
+    }
     const reader = new FileReader();
     reader.onload = () => {
       try {
@@ -929,7 +991,6 @@
       state.statistics.masterBallsFound = (state.statistics.masterBallsFound || 0) + 1;
     }
     state.lastLoginDate = today;
-    rollDailyQuests();
     saveState();
     window.setTimeout(() => {
       const streakText = `Streak: ${state.streak} day${state.streak === 1 ? "" : "s"}.`;
@@ -959,24 +1020,33 @@
     return total > 0 ? total * HATCH_MILLISECONDS_PER_BASE_STAT_POINT : FALLBACK_HATCH_DURATION;
   }
 
-  function onboardingEggSpeedMultiplier(eggNumber = 0) {
+  function earlyEggProgress(eggNumber = 0) {
     const number = Math.floor(Number(eggNumber || 0));
-    if (number <= 1 || number > ONBOARDING_FAST_EGG_COUNT) return 1;
-    const span = Math.max(1, ONBOARDING_FAST_EGG_COUNT - 2);
-    const progress = Math.min(1, Math.max(0, (number - 2) / span));
-    return ONBOARDING_FAST_EGG_START_MULTIPLIER + ((ONBOARDING_FAST_EGG_END_MULTIPLIER - ONBOARDING_FAST_EGG_START_MULTIPLIER) * progress);
+    if (number <= 1) return 0;
+    if (number >= EARLY_EGG_COUNT) return 1;
+    return (number - 1) / (EARLY_EGG_COUNT - 1);
   }
 
-  function hatchDurationForEgg(openingStarterEgg = false, baseStatTotal = 0, eggNumber = 0) {
+  function earlyEggSpeedMultiplier(baseDuration, eggNumber = 0) {
+    const duration = Math.max(1, Number(baseDuration || FALLBACK_HATCH_DURATION));
+    const number = Math.floor(Number(eggNumber || 0));
+    if (number < 1 || number > EARLY_EGG_COUNT) return 1;
+    const startingMultiplier = Math.min(1, FIRST_EGG_HATCH_DURATION / duration);
+    const progress = earlyEggProgress(number);
+    return startingMultiplier + ((1 - startingMultiplier) * progress);
+  }
+
+  function earlyEggHatchDuration(baseDuration, eggNumber = 0, globalMultiplier = 1) {
+    const duration = Math.max(1, Number(baseDuration || FALLBACK_HATCH_DURATION));
+    return Math.max(1, Math.floor(duration * earlyEggSpeedMultiplier(duration, eggNumber) * Math.max(0, Number(globalMultiplier || 0))));
+  }
+
+  function hatchDurationForEgg(_openingStarterEgg = false, baseStatTotal = 0, eggNumber = 0) {
     if (isDevToolEnabled("instantHatch")) return 0;
-    if (openingStarterEgg) return Math.max(1, Math.floor(FIRST_EGG_HATCH_DURATION * hatchDurationMultiplier()));
-    const onboardingMultiplier = onboardingEggSpeedMultiplier(eggNumber);
-    return Math.max(1, Math.floor(hatchDurationForBaseStatTotal(baseStatTotal) * onboardingMultiplier * hatchDurationMultiplier()));
+    const baseDuration = hatchDurationForBaseStatTotal(baseStatTotal);
+    return earlyEggHatchDuration(baseDuration, eggNumber, hatchDurationMultiplier());
   }
 
-  function currentEggCountInIncubators() {
-    return incubatorSlots().reduce((total, slot) => total + (slot.egg || slot.encounter ? 1 : 0), 0);
-  }
 
   function normaliseEggSequenceTracking() {
     let laidCount = Math.max(Math.floor(Number(state.statistics?.eggsLaid || 0)), Math.floor(Number(state.statistics?.eggsHatched || 0)));
@@ -1013,55 +1083,6 @@
 
   function eggSpriteUrl(egg = state.egg) {
     return eggContainsManaphy(egg) ? MANAPHY_EGG_SPRITE_URL : EGG_SPRITE_URL;
-  }
-
-  function eggCostForSlot(slotIndex = activeIncubatorIndex()) {
-    return slotIndex === 0 && shouldUseOpeningStarterEgg() ? 0 : EGG_COST;
-  }
-
-  function canAffordEgg(slotIndex = activeIncubatorIndex()) {
-    const cost = eggCostForSlot(slotIndex);
-    return isDevToolEnabled("freeShop") || cost <= 0 || state.money >= cost;
-  }
-
-  function eggPurchaseLabel(slotIndex = activeIncubatorIndex()) {
-    const cost = eggCostForSlot(slotIndex);
-    return cost <= 0 ? "Start free egg" : `Buy egg · ₽${cost}`;
-  }
-
-  function basicPokemonSpriteUrl(speciesId) {
-    return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${speciesId}.png`;
-  }
-
-  function enabledSnakeEggThieves() {
-    const generations = new Set(enabledGenerationNumbers());
-    const choices = SNAKE_EGG_THIEVES.filter((pokemon) => generations.has(pokemon.generation));
-    return choices.length ? choices : SNAKE_EGG_THIEVES.filter((pokemon) => pokemon.generation === 1);
-  }
-
-  function assignSnakeEggEvent(egg) {
-    if (!egg || egg.openingStarterEgg || egg.snakeEventAt || egg.snakeEventResolved) return;
-    const laidAt = Number(egg.laidAt || Date.now());
-    const hatchAt = Number(egg.hatchAt || 0);
-    const duration = hatchAt - laidAt;
-    if (!Number.isFinite(duration) || duration < SNAKE_EGG_EVENT_MINIMUM_DURATION || Math.random() >= SNAKE_EGG_EVENT_CHANCE) {
-      egg.snakeEventResolved = true;
-      return;
-    }
-    const earliest = Math.max(Date.now() + 60000, laidAt + Math.floor(duration * 0.2));
-    const latest = hatchAt - 15000;
-    if (latest <= earliest) {
-      egg.snakeEventResolved = true;
-      return;
-    }
-    const snake = randomChoice(enabledSnakeEggThieves());
-    egg.snakeEventAt = randomInt(Math.floor(earliest), Math.floor(latest));
-    egg.snakePokemon = { ...snake, sprite: basicPokemonSpriteUrl(snake.id) };
-  }
-
-  function ensureSnakeEventForEgg(egg) {
-    if (!egg || egg.openingStarterEgg || egg.snakeEventAt || egg.snakeEventResolved || egg.preparingEncounter || !egg.pendingEncounter) return;
-    assignSnakeEggEvent(egg);
   }
 
   function createEgg(laidAt = Date.now(), openingStarterEgg = shouldUseOpeningStarterEgg(), forcedSpeciesId = 0, eggNumber = allocateEggNumber()) {
@@ -1112,11 +1133,7 @@
     if (activeTab === "home" && slotIndex === activeIncubatorIndex()) render();
     try {
       const openingStarterEgg = Boolean(egg.openingStarterEgg);
-      let forcedSpeciesId = normalisedSpeciesId(egg.forcedSpeciesId);
-      if (forcedSpeciesId && isMysteriousSpeciesLocked(forcedSpeciesId)) {
-        forcedSpeciesId = 0;
-        delete egg.forcedSpeciesId;
-      }
+      const forcedSpeciesId = normalisedSpeciesId(egg.forcedSpeciesId);
       const encounter = forcedSpeciesId
         ? await chooseSpeciesEncounter(forcedSpeciesId, "forced-egg", { eggEncounter: true })
         : openingStarterEgg
@@ -1131,61 +1148,85 @@
       egg.hatchDuration = hatchDuration;
       egg.hatchAt = laidAt + hatchDuration;
       egg.preparingEncounter = false;
-      assignSnakeEggEvent(egg);
       delete egg.preparingRequest;
       if (slotIndex === activeIncubatorIndex()) syncLegacyFromActiveIncubator();
       saveState();
       if (activeTab === "home") render();
       if (Date.now() >= egg.hatchAt) hatchEggForSlot(slotIndex);
-    } catch {
+    } catch (error) {
       nextEggPreparationRetryAt = Date.now() + 30000;
-      if (activeTab === "home" && slotIndex === activeIncubatorIndex()) toast("The next egg is being shy. The incubator will try again shortly.");
+      if (activeTab === "home" && slotIndex === activeIncubatorIndex()) {
+        if (error?.code === "MISSING_LEGENDARY_ITEM" && error.requirement) {
+          toast(`${error.requirement.displayName} cannot form in this egg without ${error.requirement.itemName} in the Mystery Items pocket.`);
+        } else {
+          toast("The next egg is being shy. The incubator will try again shortly.");
+        }
+      }
     } finally {
       if (slot.egg === egg) delete egg.preparingRequest;
       if (slotIndex === activeIncubatorIndex()) syncLegacyFromActiveIncubator();
+      saveState();
     }
   }
 
-  function startEggForSlot(slotIndex = activeIncubatorIndex(), options = {}) {
-    normaliseIncubatorsIfNeeded();
-    const index = Math.min(incubatorCapacity() - 1, Math.max(0, Math.floor(Number(slotIndex || 0))));
-    const slot = incubatorSlots()[index];
+  function placeEggInSlot(slot, slotIndex, openingStarterEgg = false, options = {}) {
     if (!state.player || !slot || slot.egg || slot.encounter) return false;
     const forcedSpeciesId = normalisedSpeciesId(state.forcedNextEggSpeciesId);
-    const openingStarterEgg = index === 0 && shouldUseOpeningStarterEgg();
-    const cost = openingStarterEgg ? 0 : EGG_COST;
-    const freePurchase = isDevToolEnabled("freeShop");
-    if (!freePurchase && cost > 0 && state.money < cost) {
-      if (!options.silent) toast(`An egg costs ₽${cost}. Earn a few more Pokédollars first.`);
-      return false;
-    }
-    if (!freePurchase && cost > 0) state.money -= cost;
     slot.egg = createEgg(Date.now(), openingStarterEgg, forcedSpeciesId);
-    if (cost > 0) state.statistics.eggsBought = (state.statistics.eggsBought || 0) + 1;
     if (forcedSpeciesId) state.forcedNextEggSpeciesId = 0;
-    if (index === activeIncubatorIndex()) syncLegacyFromActiveIncubator();
-    saveState();
-    prepareEggForSlot(slot, index);
-    if (!options.silent) {
-      if (index !== activeIncubatorIndex()) selectIncubatorSlot(index);
-      render();
-      toast(openingStarterEgg ? "Your first egg is warm and waiting." : `A new egg is warming in incubator ${index + 1}.`);
-    }
+    if (slotIndex === activeIncubatorIndex()) syncLegacyFromActiveIncubator();
+    if (options.save !== false) saveState();
+    if (options.prepare !== false) prepareEggForSlot(slot, slotIndex);
     return true;
   }
 
+  function autoPlacePrepaidEggs() {
+    if (!state.player) return 0;
+    normaliseIncubatorsIfNeeded();
+    let available = itemCount(PREPAID_EGG_ITEM_ID);
+    if (available <= 0) return 0;
+    const preparedSlots = [];
+    const activeIndex = activeIncubatorIndex();
+    const slotIndexes = [activeIndex, ...state.incubators.slots.map((_slot, index) => index).filter((index) => index !== activeIndex)];
+    for (const index of slotIndexes) {
+      if (available <= 0) break;
+      const slot = state.incubators.slots[index];
+      if (!slot || slot.egg || slot.encounter) continue;
+      setItemCount(PREPAID_EGG_ITEM_ID, available - 1);
+      if (placeEggInSlot(slot, index, false, { save: false, prepare: false })) {
+        available -= 1;
+        preparedSlots.push(index);
+      } else {
+        setItemCount(PREPAID_EGG_ITEM_ID, available);
+      }
+    }
+    if (!preparedSlots.length) return 0;
+    syncLegacyFromActiveIncubator();
+    saveState();
+    preparedSlots.forEach((index) => prepareEggForSlot(state.incubators.slots[index], index));
+    return preparedSlots.length;
+  }
+
   function ensureEggForSlot(slot, slotIndex) {
-    if (!state.player || slot.encounter) return;
-    if (!slot.egg && slotIndex === 0 && shouldUseOpeningStarterEgg()) startEggForSlot(slotIndex, { silent: true });
+    if (!state.player || !slot?.egg || slot.encounter) return;
     if (eggNeedsPreparedEncounterForSlot(slot)) prepareEggForSlot(slot, slotIndex);
-    else ensureSnakeEventForEgg(slot.egg);
   }
 
   function ensureAllIncubators() {
     normaliseIncubatorsIfNeeded();
     syncActiveIncubatorFromLegacy();
+    autoPlacePrepaidEggs();
     incubatorSlots().forEach((slot, index) => ensureEggForSlot(slot, index));
     syncLegacyFromActiveIncubator();
+  }
+
+  function grantOpeningEggIfNeeded() {
+    normaliseIncubatorsIfNeeded();
+    if (!state.player || Number(state.statistics?.eggsLaid || 0) > 0) return false;
+    if (incubatorSlots().some((slot) => slot.egg || slot.encounter)) return false;
+    state.incubators.activeIndex = 0;
+    syncLegacyFromActiveIncubator();
+    return placeEggInSlot(incubatorSlots()[0], 0, true);
   }
 
   async function hatchEggForSlot(slotIndex = activeIncubatorIndex()) {
@@ -1197,9 +1238,19 @@
       await prepareEggForSlot(slot, slotIndex);
       return;
     }
+    const preparedEncounter = egg.pendingEncounter || null;
+    const missingRequirement = missingLegendaryRequirement(preparedEncounter?.speciesId);
+    if (missingRequirement) {
+      const now = Date.now();
+      const lastNoticeAt = Number(egg.legendaryLockNoticeAt || 0);
+      if (now - lastNoticeAt >= 30000) {
+        egg.legendaryLockNoticeAt = now;
+        toast(`${missingRequirement.displayName} is waiting for ${missingRequirement.itemName} in the Mystery Items pocket.`);
+      }
+      return;
+    }
     egg.hatching = true;
     const openingStarterEgg = Boolean(egg.openingStarterEgg);
-    const preparedEncounter = egg.pendingEncounter || null;
     if (slotIndex === activeIncubatorIndex()) {
       syncLegacyFromActiveIncubator();
       if (activeTab === "home") render();
@@ -1229,82 +1280,79 @@
     }
   }
 
-  function snakeEggEventReady(slot) {
-    const egg = slot?.egg;
-    return Boolean(egg && egg.snakeEventAt && !egg.snakeEventResolved && Date.now() >= Number(egg.snakeEventAt));
-  }
-
-  function showSnakeEggEventModal(snake, slotIndex) {
-    const cost = eggCostForSlot(slotIndex);
-    const disabled = !canAffordEgg(slotIndex);
-    const buyCopy = cost <= 0 ? "Start another egg" : `Buy another egg · ₽${cost}`;
-    modalRoot.innerHTML = `
-      <div class="modal-backdrop"><section class="modal paper-panel catch-result" role="dialog" aria-modal="true" aria-labelledby="snake-event-title">
-        <p class="eyebrow">Wild hatchery event</p><h2 id="snake-event-title">${escapeHtml(snake.displayName)} raided the nest</h2>
-        <img class="result-sprite" src="${escapeHtml(snake.sprite || basicPokemonSpriteUrl(snake.id))}" alt="${escapeHtml(snake.displayName)}" />
-        <p class="modal-intro">A hungry ${escapeHtml(snake.displayName)} slipped up to incubator ${slotIndex + 1} and ate the egg. The cushion is empty again.</p>
-        <div class="button-row"><button class="button button-primary" type="button" data-action="buy-egg" data-slot-index="${slotIndex}" ${disabled ? "disabled" : ""}>${escapeHtml(buyCopy)}</button><button class="button" type="button" data-close-modal>Close</button></div>
-      </section></div>`;
-  }
-
-  function triggerSnakeEggEventForSlot(slotIndex = activeIncubatorIndex()) {
-    normaliseIncubatorsIfNeeded();
-    const slot = incubatorSlots()[slotIndex];
-    if (!snakeEggEventReady(slot) || slot.encounter) return false;
-    const egg = slot.egg;
-    const snake = egg.snakePokemon || { ...randomChoice(enabledSnakeEggThieves()) };
-    snake.sprite = snake.sprite || basicPokemonSpriteUrl(snake.id);
-    slot.egg = null;
-    if (slotIndex === activeIncubatorIndex()) syncLegacyFromActiveIncubator();
-    state.statistics.eggsLostToSnakes = (state.statistics.eggsLostToSnakes || 0) + 1;
-    saveState();
-    showSnakeEggEventModal(snake, slotIndex);
-    if (activeTab === "home") render();
-    toast(`${snake.displayName} ate the egg in incubator ${slotIndex + 1}.`);
-    return true;
-  }
-
   async function prepareNormalEgg() {
     await prepareEggForSlot(activeIncubatorSlot(), activeIncubatorIndex());
   }
 
   function ensureEgg() {
-    ensureEggForSlot(activeIncubatorSlot(), activeIncubatorIndex());
+    const slot = activeIncubatorSlot();
+    if (!slot.egg && !slot.encounter) placeEggInSlot(slot, activeIncubatorIndex(), shouldUseOpeningStarterEgg());
+    else ensureEggForSlot(slot, activeIncubatorIndex());
+  }
+
+  function clearActiveEncounter() {
+    const slot = activeIncubatorSlot();
+    if (slot) slot.encounter = null;
+    state.encounter = null;
+    syncLegacyFromActiveIncubator();
+    return autoPlacePrepaidEggs();
+  }
+
+  function buyEggForActiveIncubator() {
+    const slot = activeIncubatorSlot();
+    if (!slot || slot.egg || slot.encounter) {
+      toast("This incubator already has something resting in it.");
+      return;
+    }
+    const freePurchase = isDevToolEnabled("freeShop");
+    if (!freePurchase && state.money < EGG_PRICE) {
+      toast("You need ₽50 to buy a new egg.");
+      return;
+    }
+    if (!freePurchase) state.money -= EGG_PRICE;
+    if (!placeEggInSlot(slot, activeIncubatorIndex(), false)) {
+      if (!freePurchase) state.money += EGG_PRICE;
+      toast("The egg could not be placed in that incubator.");
+      return;
+    }
+    shopItems = null;
+    saveState();
+    activeTab = "home";
+    render();
+    toast(freePurchase ? "A new egg is incubating." : "A new egg is incubating. −₽50.");
   }
 
   function pulseUiElement(element, className = "is-updated", duration = 700) {
-    if (!element) return;
+    if (!element || LOW_POWER_INTERFACE || prefersReducedMotion()) return;
     element.classList.remove(className);
-    void element.offsetWidth;
-    element.classList.add(className);
-    window.setTimeout(() => element.classList.remove(className), duration);
+    window.requestAnimationFrame(() => {
+      element.classList.add(className);
+      window.setTimeout(() => element.classList.remove(className), duration);
+    });
+  }
+
+  function optimiseRenderedImages() {
+    const images = view.querySelectorAll("img");
+    images.forEach((image, index) => {
+      image.decoding = "async";
+      if (index > 2 && !image.hasAttribute("loading")) image.loading = "lazy";
+      image.draggable = false;
+    });
   }
 
   function animateRenderedView() {
+    optimiseRenderedImages();
+    if (LOW_POWER_INTERFACE || prefersReducedMotion()) return;
     const stage = view.firstElementChild;
     if (!stage) return;
-    renderMotionIndex += 1;
-    stage.classList.remove("view-enter");
-    void stage.offsetWidth;
     stage.classList.add("view-enter");
     const motionSelectors = [
-      ".paper-panel",
-      ".field-note",
-      ".toolbar",
-      ".danger-zone",
-      ".summary-stamps",
-      ".pc-card",
-      ".dex-card",
-      ".mart-card",
-      ".incubator-slot-card",
-      ".bag-pocket",
-      ".competition-card",
-      ".placeholder-card"
+      ".paper-panel", ".field-note", ".toolbar", ".danger-zone", ".summary-stamps",
+      ".pc-card", ".dex-card", ".mart-card", ".incubator-slot-card", ".bag-pocket",
+      ".competition-card", ".placeholder-card"
     ].join(", ");
-    stage.querySelectorAll(motionSelectors).forEach((element, index) => {
-      element.style.setProperty("--enter-delay", `${Math.min(index * 38, 456)}ms`);
-      element.classList.remove("panel-enter");
-      void element.offsetWidth;
+    Array.from(stage.querySelectorAll(motionSelectors)).slice(0, 24).forEach((element, index) => {
+      element.style.setProperty("--enter-delay", `${Math.min(index * 28, 280)}ms`);
       element.classList.add("panel-enter");
     });
   }
@@ -1362,6 +1410,50 @@
     return window.PocketHatcheryShopItems || null;
   }
 
+  function legendaryItemRegistry() {
+    return window.PocketHatcheryLegendaryItems || null;
+  }
+
+  function syncLegendaryUnlocks() {
+    const registry = legendaryItemRegistry();
+    if (!registry || typeof registry.unlockEligibleItems !== "function") return [];
+    const unlocked = registry.unlockEligibleItems(state);
+    if (unlocked.length) shopItems = null;
+    return unlocked;
+  }
+
+  function announceLegendaryUnlocks(unlocked) {
+    const records = Array.isArray(unlocked) ? unlocked.filter(Boolean) : [];
+    if (!records.length) return;
+    if (records.length === 1) {
+      const record = records[0];
+      window.setTimeout(() => toast(`${record.itemName} unlocked. ${record.displayName} eggs can now form.`), 0);
+      return;
+    }
+    const names = records.slice(0, 3).map((record) => record.itemName).join(", ");
+    const remainder = records.length > 3 ? ` and ${records.length - 3} more` : "";
+    window.setTimeout(() => toast(`${records.length} Mystery Items unlocked: ${names}${remainder}.`), 0);
+  }
+
+  function legendaryRequirement(speciesId) {
+    if (isManaphySpeciesId(speciesId)) return null;
+    const registry = legendaryItemRegistry();
+    return registry && typeof registry.getRequirement === "function" ? registry.getRequirement(speciesId) : null;
+  }
+
+  function missingLegendaryRequirement(speciesId) {
+    const requirement = legendaryRequirement(speciesId);
+    if (!requirement) return null;
+    return itemCount(requirement.itemId) > 0 ? null : requirement;
+  }
+
+  function createMissingLegendaryItemError(requirement) {
+    const error = new Error(`${requirement.displayName} requires ${requirement.itemName} in the Mystery Items pocket.`);
+    error.code = "MISSING_LEGENDARY_ITEM";
+    error.requirement = requirement;
+    return error;
+  }
+
   function shopItemDefinition(itemId) {
     const registry = shopItemRegistry();
     return registry && typeof registry.getItem === "function" ? registry.getItem(itemId) : null;
@@ -1388,231 +1480,6 @@
   function addItemToBag(itemId, amount = 1) {
     setItemCount(itemId, itemCount(itemId) + amount);
   }
-
-  function mysteriousItemDefinitions() {
-    const registry = shopItemRegistry();
-    return registry && typeof registry.mysteriousItems === "function" ? registry.mysteriousItems() : [];
-  }
-
-  function mysteriousItemForSpecies(speciesId) {
-    const id = normalisedSpeciesId(speciesId);
-    return mysteriousItemDefinitions().find((item) => Number(item.summonSpeciesId || 0) === id) || null;
-  }
-
-  function generationEnabled(generation) {
-    return enabledGenerationNumbers().includes(Number(generation));
-  }
-
-  function ownedPokemonForUnlocks() {
-    return [
-      ...(Array.isArray(state.pc) ? state.pc : []),
-      ...(Array.isArray(state.expeditions) ? state.expeditions.map((entry) => entry?.pokemon).filter(Boolean) : [])
-    ].filter(Boolean);
-  }
-
-  function ownedSpeciesSetForUnlocks() {
-    return new Set(uniqueNumberList(ownedPokemonForUnlocks().map((pokemon) => pokemon.speciesId)));
-  }
-
-  function ownsSpeciesForUnlock(speciesId) {
-    return ownedSpeciesSetForUnlocks().has(normalisedSpeciesId(speciesId));
-  }
-
-  function ownedTypeCountForUnlock(type) {
-    return ownedPokemonForUnlocks().filter((pokemon) => Array.isArray(pokemon.types) && pokemon.types.includes(type)).length;
-  }
-
-  function caughtSpeciesCountForUnlocks() {
-    return uniqueNumberList([...(state.caughtSpeciesIds || []), ...(state.pc || []).map((pokemon) => pokemon?.speciesId)])
-      .filter(speciesInEnabledGenerations).length;
-  }
-
-  function registeredSpeciesIdsForUnlocks() {
-    return uniqueNumberList(Object.values(state.pokedex || {}).map((entry) => entry?.speciesId));
-  }
-
-  function generationSpeciesTarget(generation) {
-    const range = SPECIES_GENERATION_RANGES.find(([entryGeneration]) => entryGeneration === Number(generation));
-    return range ? Math.max(1, (range[2] - range[1]) + 1) : 1;
-  }
-
-  function registeredCountForGeneration(generation) {
-    return registeredSpeciesIdsForUnlocks().filter((speciesId) => speciesGeneration(speciesId) === Number(generation)).length;
-  }
-
-  function pokedexPercentForGeneration(generation, ratio) {
-    return registeredCountForGeneration(generation) >= Math.ceil(generationSpeciesTarget(generation) * Number(ratio || 0));
-  }
-
-  function enabledSpeciesTargetFromRanges() {
-    return enabledGenerationNumbers().reduce((total, generation) => total + generationSpeciesTarget(generation), 0);
-  }
-
-  function registeredCountForEnabledGenerations() {
-    const generations = new Set(enabledGenerationNumbers());
-    return registeredSpeciesIdsForUnlocks().filter((speciesId) => generations.has(speciesGeneration(speciesId))).length;
-  }
-
-  function pokedexPercentAllEnabled(ratio) {
-    return registeredCountForEnabledGenerations() >= Math.ceil(enabledSpeciesTargetFromRanges() * Number(ratio || 0));
-  }
-
-  function ownedPlateCountForUnlocks() {
-    const registry = shopItemRegistry();
-    const plates = registry && typeof registry.plates === "function" ? registry.plates() : [];
-    return plates.filter((item) => itemCount(item.id) > 0).length;
-  }
-
-  function allPlatesOwnedForUnlocks() {
-    const registry = shopItemRegistry();
-    const plates = registry && typeof registry.plates === "function" ? registry.plates() : [];
-    return plates.length > 0 && plates.every((item) => itemCount(item.id) > 0);
-  }
-
-  function allBerriesOwnedForUnlocks() {
-    const registry = shopItemRegistry();
-    const berries = registry && typeof registry.berries === "function" ? registry.berries() : [];
-    return berries.length > 0 && berries.every((item) => itemCount(item.id) > 0);
-  }
-
-  function keepsakeCountForUnlocks() {
-    return Object.values(state.souvenirs || {}).reduce((total, value) => total + Math.max(0, Math.floor(Number(value || 0))), 0);
-  }
-
-  function allEnabledTypesOwnedForUnlocks() {
-    const ownedTypes = new Set(ownedPokemonForUnlocks().flatMap((pokemon) => Array.isArray(pokemon.types) ? pokemon.types : []));
-    return POKEMON_TYPES.every((type) => ownedTypes.has(type));
-  }
-
-  function mysteriousUnlockConditionMet(item) {
-    const id = String(item?.id || "");
-    const stat = (metric) => statisticMetric(metric);
-    switch (id) {
-      case "frozen-slate": return generationEnabled(1) && stat("eggsHatched") >= 25 && ownedTypeCountForUnlock("ice") >= 10;
-      case "storm-slate": return generationEnabled(1) && stat("eggsHatched") >= 25 && ownedTypeCountForUnlock("electric") >= 10;
-      case "ember-slate": return generationEnabled(1) && stat("eggsHatched") >= 25 && ownedTypeCountForUnlock("fire") >= 10;
-      case "genetic-fragment": return generationEnabled(1) && pokedexPercentForGeneration(1, 0.75);
-      case "old-sea-map": return generationEnabled(1) && (claimedAchievementSet().has("pokedex-half") || pokedexPercentAllEnabled(0.5));
-      case "thunder-bell": return generationEnabled(2) && stat("expeditionsCompleted") >= 10 && ownedTypeCountForUnlock("electric") >= 10;
-      case "volcano-bell": return generationEnabled(2) && stat("expeditionsCompleted") >= 10 && ownedTypeCountForUnlock("fire") >= 10;
-      case "clear-bell-suicune": return generationEnabled(2) && stat("expeditionsCompleted") >= 10 && ownedTypeCountForUnlock("water") >= 10;
-      case "silver-wing": return generationEnabled(2) && ownsSpeciesForUnlock(144) && ownsSpeciesForUnlock(145) && ownsSpeciesForUnlock(146);
-      case "rainbow-wing": return generationEnabled(2) && ownsSpeciesForUnlock(243) && ownsSpeciesForUnlock(244) && ownsSpeciesForUnlock(245);
-      case "gs-ball": return generationEnabled(2) && Number(state.streak || 0) >= 10 && stat("expeditionsCompleted") >= 25;
-      case "stone-tablet": return generationEnabled(3) && ownedTypeCountForUnlock("rock") >= 10 && stat("expeditionsCompleted") >= 15;
-      case "ice-tablet": return generationEnabled(3) && ownedTypeCountForUnlock("ice") >= 10 && stat("expeditionsCompleted") >= 15;
-      case "iron-tablet": return generationEnabled(3) && ownedTypeCountForUnlock("steel") >= 10 && stat("expeditionsCompleted") >= 15;
-      case "eon-ticket-latias": return generationEnabled(3) && pokedexPercentForGeneration(3, 0.5);
-      case "eon-ticket-latios": return generationEnabled(3) && caughtSpeciesCountForUnlocks() >= 50;
-      case "blue-orb": return generationEnabled(3) && ownedTypeCountForUnlock("water") >= 25 && stat("eggsHatched") >= 100;
-      case "red-orb": return generationEnabled(3) && ownedTypeCountForUnlock("ground") >= 25 && stat("eggsHatched") >= 100;
-      case "jade-orb": return generationEnabled(3) && ownsSpeciesForUnlock(382) && ownsSpeciesForUnlock(383);
-      case "wish-tag": return generationEnabled(3) && stat("dailyQuestRewardsClaimed") >= 25;
-      case "aurora-ticket": return generationEnabled(3) && stat("expeditionsCompleted") >= 50;
-      case "knowledge-charm": return generationEnabled(4) && pokedexPercentForGeneration(4, 0.5);
-      case "emotion-charm": return generationEnabled(4) && Boolean(state.partnerUid);
-      case "willpower-charm": return generationEnabled(4) && stat("competitionsWon") >= 10;
-      case "adamant-orb": return generationEnabled(4) && ownedTypeCountForUnlock("steel") >= 15 && ownedTypeCountForUnlock("dragon") >= 15;
-      case "lustrous-orb": return generationEnabled(4) && ownedTypeCountForUnlock("water") >= 15 && ownedTypeCountForUnlock("dragon") >= 15;
-      case "magma-stone": return generationEnabled(4) && ownedTypeCountForUnlock("fire") >= 20 && ownedTypeCountForUnlock("steel") >= 20;
-      case "ancient-giant-key": return generationEnabled(4) && ownsSpeciesForUnlock(377) && ownsSpeciesForUnlock(378) && ownsSpeciesForUnlock(379);
-      case "griseous-orb": return generationEnabled(4) && ownsSpeciesForUnlock(483) && ownsSpeciesForUnlock(484);
-      case "lunar-wing": return generationEnabled(4) && Number(state.streak || 0) >= 30;
-      case "sea-crown": return generationEnabled(4) && ownsSpeciesForUnlock(490);
-      case "manaphy-egg-charm": return generationEnabled(4) && stat("eggsHatched") >= 150 && ownedTypeCountForUnlock("water") >= 20;
-      case "member-card": return generationEnabled(4) && ownsSpeciesForUnlock(488);
-      case "oaks-letter": return generationEnabled(4) && ownedTypeCountForUnlock("grass") >= 25 && stat("berriesUsed") >= 25;
-      case "azure-flute": return generationEnabled(4) && allPlatesOwnedForUnlocks() && pokedexPercentAllEnabled(0.75);
-      case "liberty-pass": return generationEnabled(5) && stat("dailyQuestRewardsClaimed") >= 10 && stat("competitionsWon") >= 5;
-      case "sacred-blade-crest": return generationEnabled(5) && ownedTypeCountForUnlock("steel") >= 15;
-      case "sacred-stone-crest": return generationEnabled(5) && ownedTypeCountForUnlock("rock") >= 15;
-      case "sacred-leaf-crest": return generationEnabled(5) && ownedTypeCountForUnlock("grass") >= 15;
-      case "reveal-glass-tornadus": return generationEnabled(5) && ownedTypeCountForUnlock("flying") >= 20;
-      case "reveal-glass-thundurus": return generationEnabled(5) && ownedTypeCountForUnlock("electric") >= 20;
-      case "light-stone": return generationEnabled(5) && pokedexPercentForGeneration(5, 0.5) && stat("eggsHatched") >= 100;
-      case "dark-stone": return generationEnabled(5) && pokedexPercentForGeneration(5, 0.5) && stat("competitionsWon") >= 10;
-      case "reveal-glass": return generationEnabled(5) && ownsSpeciesForUnlock(641) && ownsSpeciesForUnlock(642);
-      case "dna-splicers": return generationEnabled(5) && ownsSpeciesForUnlock(643) && ownsSpeciesForUnlock(644);
-      case "secret-sword-scroll": return generationEnabled(5) && ownsSpeciesForUnlock(638) && ownsSpeciesForUnlock(639) && ownsSpeciesForUnlock(640);
-      case "relic-song-sheet": return generationEnabled(5) && stat("keepsakesFound") >= 20;
-      case "ancient-drive": return generationEnabled(5) && ownedTypeCountForUnlock("bug") >= 20 && stat("expeditionsCompleted") >= 50;
-      case "life-antler": return generationEnabled(6) && ownedTypeCountForUnlock("fairy") >= 25;
-      case "ruin-feather": return generationEnabled(6) && ownedTypeCountForUnlock("dark") >= 25;
-      case "zygarde-cube": return generationEnabled(6) && stat("expeditionsCompleted") >= 100;
-      case "diamond-shard": return generationEnabled(6) && stat("keepsakesSold") >= 25;
-      case "prison-bottle": return generationEnabled(6) && stat("keepsakesFound") >= 30;
-      case "steam-core": return generationEnabled(6) && ownedTypeCountForUnlock("fire") >= 20 && ownedTypeCountForUnlock("water") >= 20;
-      case "rks-memory-core": return generationEnabled(7) && allEnabledTypesOwnedForUnlocks();
-      case "rks-memory-drive": return generationEnabled(7) && ownsSpeciesForUnlock(772) && stat("berriesUsed") >= 25;
-      case "guardian-spark": return generationEnabled(7) && ownedTypeCountForUnlock("electric") >= 20;
-      case "guardian-bloom": return generationEnabled(7) && ownedTypeCountForUnlock("psychic") >= 20;
-      case "guardian-horn": return generationEnabled(7) && ownedTypeCountForUnlock("grass") >= 20;
-      case "guardian-shell": return generationEnabled(7) && ownedTypeCountForUnlock("water") >= 20;
-      case "cosmog-star": return generationEnabled(7) && pokedexPercentForGeneration(7, 0.25) && stat("expeditionsCompleted") >= 25;
-      case "cosmoem-shell": return generationEnabled(7) && ownsSpeciesForUnlock(789);
-      case "sun-flute": return generationEnabled(7) && pokedexPercentForGeneration(7, 0.5);
-      case "moon-flute": return generationEnabled(7) && caughtSpeciesCountForUnlocks() >= 50;
-      case "light-prism": return generationEnabled(7) && (ownsSpeciesForUnlock(791) || ownsSpeciesForUnlock(792));
-      case "soul-heart-gear": return generationEnabled(7) && registeredCountForEnabledGenerations() >= 100;
-      case "shadow-charm": return generationEnabled(7) && ownedTypeCountForUnlock("ghost") >= 20 && stat("competitionsWon") >= 10;
-      case "plasma-claw": return generationEnabled(7) && ownedTypeCountForUnlock("electric") >= 30;
-      case "mystery-box": return generationEnabled(7) && ownedTypeCountForUnlock("steel") >= 25 && stat("expeditionsCompleted") >= 50;
-      case "rusted-sword": return generationEnabled(8) && stat("competitionsWon") >= 25;
-      case "rusted-shield": return generationEnabled(8) && stat("eggsHatched") >= 250;
-      case "wishing-star-core": return generationEnabled(8) && ownedTypeCountForUnlock("poison") >= 20 && ownedTypeCountForUnlock("dragon") >= 20;
-      case "armor-pass": return generationEnabled(8) && stat("competitionsWon") >= 10;
-      case "jungle-vine": return generationEnabled(8) && ownedTypeCountForUnlock("grass") >= 30 && ownedTypeCountForUnlock("dark") >= 20;
-      case "electric-temple-key": return generationEnabled(8) && ownsSpeciesForUnlock(377) && ownsSpeciesForUnlock(378) && ownsSpeciesForUnlock(379) && ownedTypeCountForUnlock("electric") >= 25;
-      case "dragon-temple-key": return generationEnabled(8) && ownsSpeciesForUnlock(377) && ownsSpeciesForUnlock(378) && ownsSpeciesForUnlock(379) && ownedTypeCountForUnlock("dragon") >= 25;
-      case "iceroot-carrot": return generationEnabled(8) && ownedTypeCountForUnlock("ice") >= 25;
-      case "shaderoot-carrot": return generationEnabled(8) && ownedTypeCountForUnlock("ghost") >= 25;
-      case "wooden-crown": return generationEnabled(8) && (ownsSpeciesForUnlock(896) || ownsSpeciesForUnlock(897));
-      case "reveal-glass-enamorus": return generationEnabled(8) && ownsSpeciesForUnlock(641) && ownsSpeciesForUnlock(642) && ownsSpeciesForUnlock(645);
-      case "ruinous-tablet": return generationEnabled(9) && ownedTypeCountForUnlock("dark") >= 20;
-      case "ruinous-sword": return generationEnabled(9) && ownedTypeCountForUnlock("ice") >= 20;
-      case "ruinous-vessel": return generationEnabled(9) && ownedTypeCountForUnlock("ground") >= 20;
-      case "ruinous-beads": return generationEnabled(9) && ownedTypeCountForUnlock("fire") >= 20;
-      case "scarlet-book": return generationEnabled(9) && ownedTypeCountForUnlock("fighting") >= 25;
-      case "violet-book": return generationEnabled(9) && ownedTypeCountForUnlock("electric") >= 25;
-      case "toxic-chain-okidogi": return generationEnabled(9) && ownedTypeCountForUnlock("poison") >= 20 && ownedTypeCountForUnlock("fighting") >= 20;
-      case "toxic-chain-munkidori": return generationEnabled(9) && ownedTypeCountForUnlock("poison") >= 20 && ownedTypeCountForUnlock("psychic") >= 20;
-      case "toxic-chain-fezandipiti": return generationEnabled(9) && ownedTypeCountForUnlock("poison") >= 20 && ownedTypeCountForUnlock("fairy") >= 20;
-      case "teal-mask": return generationEnabled(9) && ownedTypeCountForUnlock("grass") >= 30;
-      case "indigo-disk": return generationEnabled(9) && pokedexPercentAllEnabled(0.75) && stat("expeditionsCompleted") >= 100;
-      case "mythical-pecha-berry": return generationEnabled(9) && allBerriesOwnedForUnlocks();
-      default: return false;
-    }
-  }
-
-  function syncMysteriousItemUnlocks(notify = false) {
-    if (!state.player) return false;
-    let changed = false;
-    for (const item of mysteriousItemDefinitions()) {
-      if (itemCount(item.id) > 0 || !mysteriousUnlockConditionMet(item)) continue;
-      setItemCount(item.id, 1);
-      state.statistics.mysteriousItemsUnlocked = (state.statistics.mysteriousItemsUnlocked || 0) + 1;
-      changed = true;
-      const message = `${item.displayName} unlocked in the Mysterious Items pocket.`;
-      if (notify) window.setTimeout(() => toast(message), 50);
-      else pendingMysteriousUnlockToasts.push(message);
-    }
-    return changed;
-  }
-
-  function isMysteriousSpeciesLocked(speciesId) {
-    const item = mysteriousItemForSpecies(speciesId);
-    return Boolean(item && itemCount(item.id) <= 0);
-  }
-
-  function flushMysteriousUnlockToasts() {
-    if (!pendingMysteriousUnlockToasts.length) return;
-    const messages = uniqueStringList(pendingMysteriousUnlockToasts);
-    pendingMysteriousUnlockToasts = [];
-    messages.slice(0, 5).forEach((message, index) => window.setTimeout(() => toast(message), 80 + (index * 180)));
-    if (messages.length > 5) window.setTimeout(() => toast(`${messages.length - 5} more Mysterious Items unlocked.`), 1100);
-  }
-
-
 
   function hasItem(itemId) {
     return itemCount(itemId) > 0;
@@ -1782,10 +1649,6 @@
     return Math.max(1, Math.floor(SHINY_ODDS / (profileMultiplier * charmMultiplier)));
   }
 
-  function activeHatchDuration() {
-    return state.egg?.hatchDuration || hatchDurationForEgg(false, state.egg?.baseStatTotal || 0, state.egg?.eggNumber || 0);
-  }
-
   function statLabel(value) {
     return value === "hp" ? "HP" : titleCase(value);
   }
@@ -1805,7 +1668,7 @@
   }
 
   function makeId() {
-    if (crypto.randomUUID) return crypto.randomUUID();
+    if (typeof crypto === "object" && crypto && typeof crypto.randomUUID === "function") return crypto.randomUUID();
     return `${Date.now()}-${randomInt(100000, 999999)}`;
   }
 
@@ -1822,26 +1685,35 @@
   }
 
   async function apiFetch(resource) {
-    const url = resource.startsWith("http") ? resource : `${API_ROOT}/${resource.replace(/^\//, "")}`;
-    if (apiCache.has(url)) return apiCache.get(url);
-    const request = fetch(url, { headers: { Accept: "application/json" } })
-      .then((response) => {
-        if (!response.ok) throw new Error(`PokéAPI returned ${response.status}`);
-        setApiStatus(true);
-        return response.json();
-      })
-      .catch((error) => {
-        apiCache.delete(url);
-        setApiStatus(false);
-        throw error;
-      });
-    apiCache.set(url, request);
-    return request;
+    if (apiClient) return apiClient.fetchJson(resource);
+    const url = String(resource).startsWith("http") ? String(resource) : `${API_ROOT}/${String(resource).replace(/^\//, "")}`;
+    const controller = typeof AbortController === "function" ? new AbortController() : null;
+    const timeout = controller ? window.setTimeout(() => controller.abort(), 12000) : null;
+    try {
+      const requestOptions = { headers: { Accept: "application/json" } };
+      if (controller) requestOptions.signal = controller.signal;
+      const response = await fetch(url, requestOptions);
+      if (!response.ok) throw new Error(`PokéAPI returned ${response.status}`);
+      setApiStatus(true);
+      return response.json();
+    } catch (error) {
+      setApiStatus(false);
+      if (typeof DOMException === "function" && error instanceof DOMException && error.name === "AbortError") throw new Error("The Pokémon records took too long to respond.");
+      throw error;
+    } finally {
+      if (timeout) window.clearTimeout(timeout);
+    }
   }
 
   async function loadGeneration(generation) {
     if (!generationCache.has(generation)) {
-      generationCache.set(generation, apiFetch(`generation/${generation}`).then((data) => data.pokemon_species));
+      const request = apiFetch(`generation/${generation}`)
+        .then((data) => data.pokemon_species)
+        .catch((error) => {
+          generationCache.delete(generation);
+          throw error;
+        });
+      generationCache.set(generation, request);
     }
     return generationCache.get(generation);
   }
@@ -1850,7 +1722,6 @@
     const generations = state.settings.generations.length ? state.settings.generations : [1];
     const groups = await Promise.all(generations.map(loadGeneration));
     const references = groups.flat().sort((left, right) => resourceId(left.url) - resourceId(right.url));
-    enabledSpeciesIds = uniqueNumberList(references.map((reference) => resourceId(reference.url)));
     enabledSpeciesTotal = references.length;
     return references;
   }
@@ -1859,11 +1730,11 @@
     return resource.names?.find((entry) => entry.language.name === "en")?.name || titleCase(fallback);
   }
 
-  function getGenerationFiveSprites(pokemon) {
-    return {
-      normal: `${GEN_FIVE_SPRITE_ROOT}/${pokemon.id}.png`,
-      shiny: `${GEN_FIVE_SPRITE_ROOT}/shiny/${pokemon.id}.png`
-    };
+  function getPokemonSprites(pokemon) {
+    const fallbackNormal = `${DEFAULT_SPRITE_ROOT}/${pokemon.id}.png`;
+    const normal = cleanUrl(pokemon?.sprites?.front_default, fallbackNormal);
+    const shiny = cleanUrl(pokemon?.sprites?.front_shiny, normal);
+    return { normal, shiny };
   }
 
   function rollIvs(forcePerfect = isDevToolEnabled("perfectIvs")) {
@@ -1887,7 +1758,7 @@
   }
 
   async function createEncounter(reference, pokemon, species, options = {}) {
-    const sprites = getGenerationFiveSprites(pokemon);
+    const sprites = getPokemonSprites(pokemon);
     const useEggCharm = options.eggEncounter === true && activeShinyCharmCharges() > 0;
     const shiny = isDevToolEnabled("guaranteedShiny") || randomInt(0, activeShinyOdds({ useEggCharm })) === 0;
     if (useEggCharm) consumeShinyCharmEggCharge();
@@ -1909,7 +1780,6 @@
       baseStats: mapBaseStats(pokemon),
       baseStatTotal: pokemon.stats.reduce((total, entry) => total + entry.base_stat, 0),
       ivs: rollIvs(),
-      evs: blankTrainingMap(),
       ability: ability.name,
       abilitySlot: ability.slot,
       hiddenAbility: ability.hidden,
@@ -1929,8 +1799,12 @@
   }
 
   async function chooseWeightedEncounter(options = {}) {
-    const references = (await getEnabledSpeciesReferences()).filter((reference) => !isMysteriousSpeciesLocked(resourceId(reference.url)));
-    if (!references.length) throw new Error("No unlocked Pokémon are available for eggs in the enabled generations.");
+    const enabledReferences = await getEnabledSpeciesReferences();
+    if (!enabledReferences.length) throw new Error("No generations are enabled.");
+    const references = options.eggEncounter === true
+      ? enabledReferences.filter((reference) => !missingLegendaryRequirement(resourceId(reference.url)))
+      : enabledReferences;
+    if (!references.length) throw new Error("No Pokémon are eligible to hatch with the current Mystery Items.");
     let lastCandidate = null;
     for (let attempt = 0; attempt < 48; attempt += 1) {
       const reference = randomChoice(references);
@@ -1959,7 +1833,10 @@
   async function chooseSpeciesEncounter(speciesId, referenceName = "egg", options = {}) {
     const id = normalisedSpeciesId(speciesId);
     if (!id) throw new Error("No Pokémon species was chosen for this egg.");
-    if (options.eggEncounter === true && isMysteriousSpeciesLocked(id) && options.allowLockedMysterious !== true) throw new Error("That Pokémon needs its Mysterious Item before it can appear in an egg.");
+    if (options.eggEncounter === true) {
+      const missingRequirement = missingLegendaryRequirement(id);
+      if (missingRequirement) throw createMissingLegendaryItemError(missingRequirement);
+    }
     const reference = { name: `${referenceName}-${id}`, url: `${API_ROOT}/pokemon-species/${id}/` };
     const [pokemon, species] = await Promise.all([apiFetch(`pokemon/${id}`), apiFetch(reference.url)]);
     return createEncounter(reference, pokemon, species, options);
@@ -1984,11 +1861,13 @@
       cryUrl: encounter.cryUrl,
       baseStatTotal: Number.isFinite(baseStatTotal) && baseStatTotal > 0 ? baseStatTotal : 0,
       hatchDuration: Number.isFinite(baseStatTotal) && baseStatTotal > 0 ? hatchDurationForBaseStatTotal(baseStatTotal) : 0,
+      types: Array.isArray(encounter.types) ? encounter.types.map((type) => String(type || "").toLowerCase()).filter(Boolean) : [],
       seen: 0,
       shinySeen: 0,
       firstEncounteredAt: encounter.encounteredAt
     };
     record.cryUrl = record.cryUrl || encounter.cryUrl;
+    if (Array.isArray(encounter.types) && encounter.types.length) record.types = encounter.types.map((type) => String(type || "").toLowerCase()).filter(Boolean);
     if (Number.isFinite(baseStatTotal) && baseStatTotal > 0) {
       record.baseStatTotal = baseStatTotal;
       record.hatchDuration = hatchDurationForBaseStatTotal(baseStatTotal);
@@ -1996,17 +1875,6 @@
     record.seen += 1;
     if (encounter.shiny) record.shinySeen += 1;
     state.pokedex[key] = record;
-  }
-
-  function recordCaughtPokemon(pokemon, ball = pokemon?.caughtWith || "") {
-    if (!pokemon) return;
-    const speciesId = Number(pokemon.speciesId || 0);
-    if (Number.isInteger(speciesId) && speciesId > 0) {
-      state.caughtSpeciesIds = uniqueNumberList([...(state.caughtSpeciesIds || []), speciesId]);
-      if (pokemon.shiny) state.caughtShinySpeciesIds = uniqueNumberList([...(state.caughtShinySpeciesIds || []), speciesId]);
-    }
-    const ballId = String(ball || pokemon.caughtWith || "").trim();
-    if (ballId) state.caughtBallIds = uniqueStringList([...(state.caughtBallIds || []), ballId]);
   }
 
   function backfillPokedexHatchTimes() {
@@ -2041,9 +1909,9 @@
     normalisePokemonTraining(pokemon);
     const base = pokemon.baseStats[stat] || 1;
     const iv = pokemon.ivs[stat] || 0;
-    const ev = Math.floor(Number(pokemon.evs?.[stat] || 0) / 4);
-    if (stat === "hp") return Math.floor(((2 * base + iv + ev) * level) / 100) + level + 10;
-    return Math.floor(((2 * base + iv + ev) * level) / 100) + 5;
+    const effort = Math.floor(Number(pokemon.evs?.[stat] || 0) / 4);
+    if (stat === "hp") return Math.floor(((2 * base + iv + effort) * level) / 100) + level + 10;
+    return Math.floor(((2 * base + iv + effort) * level) / 100) + 5;
   }
 
   async function getGrowthLevels(url) {
@@ -2078,7 +1946,6 @@
       }
       state.encounter.nextLevelExperience = levels.find((entry) => entry.level === Math.min(100, state.encounter.level + 1))?.experience || state.encounter.experience;
     }
-    saveState();
     return true;
   }
 
@@ -2113,7 +1980,7 @@
   async function evolvePokemon(pokemon, evolutionNode) {
     const evolvedId = resourceId(evolutionNode.species.url);
     const [newPokemon, newSpecies] = await Promise.all([apiFetch(`pokemon/${evolvedId}`), apiFetch(evolutionNode.species.url)]);
-    const sprites = getGenerationFiveSprites(newPokemon);
+    const sprites = getPokemonSprites(newPokemon);
     const previousName = pokemon.displayName;
     const matchingAbility = newPokemon.abilities.find((entry) => entry.slot === pokemon.abilitySlot)
       || newPokemon.abilities.find((entry) => !entry.is_hidden)
@@ -2174,7 +2041,7 @@
     if (slot.encounter) return { label: "hatchling", copy: `${slot.encounter.displayName} is waiting`, image: slot.encounter.sprite, alt: slot.encounter.displayName };
     if (slot.egg) {
       const preparing = Boolean(slot.egg.preparingEncounter && !slot.egg.pendingEncounter);
-      return { label: preparing ? "warming" : "incubating", copy: preparing ? "Tiny taps are sorting themselves out" : "Something is stirring inside", image: eggSpriteUrl(slot.egg), alt: "A speckled egg is incubating" };
+      return { label: "incubating", copy: preparing ? "Tiny taps are sorting themselves out" : "Something is stirring inside", image: eggSpriteUrl(slot.egg), alt: "A speckled egg is incubating" };
     }
     return { label: "empty", copy: "A clean cushion is ready", image: EGG_SPRITE_URL, alt: "An empty incubator cushion" };
   }
@@ -2198,42 +2065,6 @@
         </button>`;
     }).join("");
     return `<article class="paper-panel incubator-slot-tray"><div class="panel-label">Incubator row</div>${cards}</article>`;
-  }
-
-
-  function renderDailyQuestBoard() {
-    ensureDailyQuests();
-    const quests = state.dailyQuests.quests || [];
-    const completeCount = quests.filter(isDailyQuestComplete).length;
-    const cards = quests.map((quest) => {
-      const progress = dailyQuestProgress(quest);
-      const target = Math.max(1, Number(quest.target || 1));
-      const percent = Math.min(100, (progress / target) * 100);
-      const complete = progress >= target;
-      const claimed = Boolean(quest.claimed);
-      const stateLabel = claimed ? "claimed" : complete ? "ready" : `${Math.min(progress, target)} / ${target}`;
-      const button = claimed
-        ? `<span class="quest-state is-claimed">Claimed</span>`
-        : complete
-          ? `<button class="button button-primary" type="button" data-action="claim-daily-quest" data-quest-id="${escapeHtml(quest.id)}">Claim ${formatMoney(quest.reward)}</button>`
-          : `<span class="quest-state">${formatMoney(quest.reward)}</span>`;
-      return `
-        <article class="paper-panel quest-card ${complete ? "is-complete" : ""} ${claimed ? "is-claimed" : ""}">
-          <span class="quest-mark">${claimed ? "✓" : complete ? "!" : "·"}</span>
-          <div>
-            <p class="eyebrow">${escapeHtml(stateLabel)}</p>
-            <h2>${escapeHtml(quest.title)}</h2>
-            <p>${escapeHtml(quest.description)}</p>
-            <div class="quest-progress" aria-label="${Math.min(progress, target)} of ${target}"><span style="width:${percent.toFixed(2)}%"></span></div>
-            <div class="quest-reward-row">${button}</div>
-          </div>
-        </article>`;
-    }).join("");
-    return `
-      <section class="daily-quest-board archive-page" aria-labelledby="daily-quests-title">
-        ${pageHeader("Today’s ledger", "Daily quests", "Three small jobs refresh each day. Claim completed cards before tomorrow rolls the board.", `<div class="record-stamp"><b>${completeCount}</b><span>/ 3 ready</span></div>`)}
-        <div class="quest-grid">${cards}</div>
-      </section>`;
   }
 
   function renderHatchingHome() {
@@ -2262,8 +2093,8 @@ ${renderFieldNoteAside({
           headingId: "encounter-title",
           metaRows: `
             <dt>Species</dt><dd>${escapeHtml(pokemon.displayName)}</dd>
-            <dt>Types</dt><dd>${pokemon.types.map(titleCase).join(" / ")}</dd>
-            <dt>Ability</dt><dd>${titleCase(pokemon.ability)}${pokemon.hiddenAbility ? " · hidden" : ""}</dd>
+            <dt>Types</dt><dd>${pokemon.types.map((type) => escapeHtml(titleCase(type))).join(" / ")}</dd>
+            <dt>Ability</dt><dd>${escapeHtml(titleCase(pokemon.ability))}${pokemon.hiddenAbility ? " · hidden" : ""}</dd>
             <dt>Hatched</dt><dd>${new Date(pokemon.encounteredAt).toLocaleString()}</dd>`
         })}
 
@@ -2297,7 +2128,6 @@ ${renderFieldNoteAside({
         </aside>
       </section>
       ${renderIncubatorSlotTray()}
-      ${renderDailyQuestBoard()}
       ${renderDevHud()}`;
     getGrowthLevels(pokemon.growthRateUrl).then(() => refreshLevelFromExperience(pokemon)).then(() => saveState()).catch(() => {});
   }
@@ -2318,19 +2148,47 @@ ${renderFieldNoteAside({
     const total = enabledSpeciesTotal;
     const totalLabel = total || "…";
     const laid = state.egg ? new Date(state.egg.laidAt) : now;
+    const remaining = state.egg ? state.egg.hatchAt - Date.now() : 0;
     const preparingEgg = Boolean(state.egg?.preparingEncounter && !state.egg?.pendingEncounter);
     const hatchDuration = state.egg ? Math.max(1, state.egg.hatchDuration || state.egg.hatchAt - state.egg.laidAt) : FALLBACK_HATCH_DURATION;
     const progress = state.egg && !preparingEgg ? Math.min(100, Math.max(0, ((Date.now() - state.egg.laidAt) / hatchDuration) * 100)) : 0;
     const nextGift = millisecondsUntilTomorrow();
     const openingStarterEgg = Boolean(state.egg?.openingStarterEgg);
+    const freeEggPurchase = isDevToolEnabled("freeShop");
+    const canBuyEgg = freeEggPurchase || state.money >= EGG_PRICE;
+    const eggPriceLabel = freeEggPurchase ? "FREE" : `₽${EGG_PRICE}`;
     const firstEggWarning = openingStarterEgg
       ? `<p class="first-egg-warning">Your first egg is unusually warm. It should hatch much faster than most, so keep an eye on the incubator.</p>`
       : "";
-    const activeSlotEmpty = !state.egg && !state.encounter;
-    const eggButtonDisabled = activeSlotEmpty && !canAffordEgg(activeIncubatorIndex());
-    const eggStage = activeSlotEmpty
-      ? `<div class="egg-stage empty-incubator"><div class="empty-cushion" aria-hidden="true">○</div><button class="button button-primary" type="button" data-action="buy-egg" data-slot-index="${activeIncubatorIndex()}" ${eggButtonDisabled ? "disabled" : ""}>${escapeHtml(eggPurchaseLabel(activeIncubatorIndex()))}</button></div>`
-      : `<div class="egg-stage"><img class="egg egg-sprite" src="${eggSpriteUrl()}" alt="A speckled egg is incubating" /></div>`;
+    const incubatorPanel = state.egg ? `
+        <article class="paper-panel incubator">
+          <div class="panel-label">Incubation / <em>active</em></div>
+          <div class="hatchery-stage ${getPartnerPokemon() ? "has-partner" : ""}">
+            <div class="egg-stage"><img class="egg egg-sprite" src="${eggSpriteUrl()}" alt="A speckled egg is incubating" /></div>
+            ${renderPartnerCompanion()}
+          </div>
+          <div class="countdown-wrap">
+            <div id="hatch-countdown" class="countdown">incubating</div>
+            <p class="hatch-copy">${openingStarterEgg ? "Your first egg is wiggling." : preparingEgg ? "Tiny taps echo inside…" : "Something is stirring inside…"}</p>
+            <div class="progress-ruler">
+              <span>laid</span>
+              <div class="progress-track"><span id="egg-progress" class="progress-fill" style="width:${progress.toFixed(2)}%"></span></div>
+              <span>soon</span>
+            </div>
+          </div>
+        </article>` : `
+        <article class="paper-panel incubator empty-incubator">
+          <div class="panel-label">Incubation / <em>empty</em></div>
+          <div class="empty-incubator-stage">
+            <img class="empty-incubator-egg egg-sprite" src="${EGG_SPRITE_URL}" alt="" />
+            <h2>This cushion is ready</h2>
+            <p>Buy a fresh egg for ₽${EGG_PRICE}. Any prepaid egg in the field bag is loaded automatically before this screen appears.</p>
+            <div class="button-row empty-incubator-actions">
+              <button class="button button-accent" type="button" data-action="buy-new-egg" ${canBuyEgg ? "" : "disabled"}>Buy new egg · ${eggPriceLabel}</button>
+              <button class="button" type="button" data-tab="mart">Prepurchase eggs</button>
+            </div>
+          </div>
+        </article>`;
 
     view.innerHTML = `
       <section class="home-grid" aria-labelledby="home-title">
@@ -2343,22 +2201,7 @@ ${renderFieldNoteAside({
             <dt>Keeper</dt><dd>${escapeHtml(state.player?.name || "You")}</dd>`
         })}
 
-        <article class="paper-panel incubator">
-          <div class="panel-label">Incubation / <em>active</em></div>
-          <div class="hatchery-stage ${getPartnerPokemon() ? "has-partner" : ""}">
-            ${eggStage}
-            ${renderPartnerCompanion()}
-          </div>
-          <div class="countdown-wrap">
-            <div id="hatch-countdown" class="countdown">${activeSlotEmpty ? "empty" : preparingEgg ? "warming" : "nesting"}</div>
-            <p class="hatch-copy">${activeSlotEmpty ? "Buy an egg to start the next hatch." : openingStarterEgg ? "Your first egg is wiggling." : preparingEgg ? "Tiny taps echo inside…" : "Something is stirring inside…"}</p>
-            <div class="progress-ruler">
-              <span>laid</span>
-              <div class="progress-track"><span id="egg-progress" class="progress-fill" style="width:${progress.toFixed(2)}%"></span></div>
-              <span>${preparingEgg ? "warming" : "soon"}</span>
-            </div>
-          </div>
-        </article>
+        ${incubatorPanel}
 
         <aside class="side-stack">
           <article class="paper-panel mini-card">
@@ -2375,7 +2218,6 @@ ${renderFieldNoteAside({
         </aside>
       </section>
       ${renderIncubatorSlotTray()}
-      ${renderDailyQuestBoard()}
       ${renderDevHud()}`;
     if (!enabledSpeciesTotal) {
       getEnabledSpeciesReferences().then(() => {
@@ -2399,7 +2241,7 @@ ${renderFieldNoteAside({
     if (!isDevToolEnabled("debugHud")) return "";
     const eggPending = state.egg?.pendingEncounter ? `${state.egg.pendingEncounter.displayName} #${state.egg.pendingEncounter.speciesId}` : "unknown";
     const eggState = state.egg ? (eggNeedsPreparedEncounter() ? "egg identifying" : `egg incubating · ${eggPending}`) : "no egg";
-    const slotState = incubatorSlots().map((slot, index) => slot.encounter ? `${index + 1}: ${slot.encounter.displayName}` : slot.egg?.pendingEncounter ? `${index + 1}: egg ${slot.egg.pendingEncounter.displayName}` : slot.egg ? `${index + 1}: egg warming` : `${index + 1}: empty`).join(" · ");
+    const slotState = incubatorSlots().map((slot, index) => slot.encounter ? `${index + 1}: ${slot.encounter.displayName}` : slot.egg?.pendingEncounter ? `${index + 1}: egg ${slot.egg.pendingEncounter.displayName}` : slot.egg ? `${index + 1}: egg incubating` : `${index + 1}: empty`).join(" · ");
     const encounterState = state.encounter ? `${state.encounter.displayName} · Lv. ${state.encounter.level} · ${state.encounter.experience.toLocaleString()} XP` : "no visitor waiting";
     const enabledTools = Object.entries(devSettings()).filter(([, enabled]) => enabled).map(([key]) => key).join(", ") || "none";
     const plateName = equippedPlate()?.displayName || "none";
@@ -2432,7 +2274,8 @@ ${renderFieldNoteAside({
 
   function renderPokedex() {
     const allEntries = Object.values(state.pokedex).sort((left, right) => left.speciesId - right.speciesId);
-    const entries = allEntries.filter((entry) => `${entry.displayName} ${entry.speciesId}`.toLowerCase().includes(pokedexFilter.toLowerCase()));
+    const matchingEntries = allEntries.filter((entry) => `${entry.displayName} ${entry.speciesId}`.toLowerCase().includes(pokedexFilter.toLowerCase()));
+    const entries = matchingEntries.slice(0, pokedexVisibleLimit);
     const totalHatches = allEntries.reduce((total, entry) => total + entry.seen, 0);
     const shinyHatches = allEntries.reduce((total, entry) => total + entry.shinySeen, 0);
     const cards = entries.map((entry) => `
@@ -2455,7 +2298,7 @@ ${renderFieldNoteAside({
           <input id="pokedex-search" type="search" value="${escapeHtml(pokedexFilter)}" placeholder="Name or number…" autocomplete="off" />
           <span id="pokedex-progress-copy">${allEntries.length} / ${enabledSpeciesTotal || "…"} possible species met</span>
         </div>
-        ${allEntries.length ? `<div class="dex-grid">${cards || '<p class="no-results">No journal pages match this search.</p>'}</div>` : emptyState("The journal is still blank", "Your first hatch will make the opening page.", '<button class="button button-primary" type="button" data-tab="home">Back to the incubator</button>')}
+        ${allEntries.length ? `<div class="dex-grid">${cards || '<p class="no-results">No journal pages match this search.</p>'}</div>${matchingEntries.length > entries.length ? `<div class="archive-more"><button class="button button-primary" type="button" data-action="show-more-pokedex">Show ${Math.min(ARCHIVE_PAGE_SIZE, matchingEntries.length - entries.length)} more</button><span>${entries.length} of ${matchingEntries.length} shown</span></div>` : ""}` : emptyState("The journal is still blank", "Your first hatch will make the opening page.", '<button class="button button-primary" type="button" data-tab="home">Back to the incubator</button>')}
       </section>`;
     if (!enabledSpeciesTotal) {
       getEnabledSpeciesReferences().then(() => {
@@ -2526,7 +2369,6 @@ ${renderFieldNoteAside({
   }
 
 
-
   function renderExpeditionPanel() {
     normaliseExpeditionState();
     const activeCards = state.expeditions.length ? state.expeditions.map((entry) => {
@@ -2551,7 +2393,7 @@ ${renderFieldNoteAside({
       <section class="expedition-panel">
         <div class="expedition-column">
           <h2>Expeditions</h2>
-          <p>Sent Pokémon are hidden from the PC until they come home with XP and small findings. No unique shop purchases can appear as expedition loot.</p>
+          <p>Sent Pokémon are hidden from the PC until they come home with XP and small findings. Expeditions last between 2.5 and 12 hours, and no unique shop purchase can appear as loot.</p>
           <div class="expedition-grid">${activeCards}</div>
         </div>
         ${logCards ? `<aside class="paper-panel expedition-log"><div class="panel-label">Recent returns</div>${logCards}</aside>` : ""}
@@ -2561,7 +2403,8 @@ ${renderFieldNoteAside({
   function renderPc() {
     const partner = getPartnerPokemon();
     const favouriteCount = state.pc.filter((pokemon) => pokemon.favorite).length;
-    const visiblePokemon = filteredPcPokemon();
+    const matchingPokemon = filteredPcPokemon();
+    const visiblePokemon = matchingPokemon.slice(0, pcVisibleLimit);
     const cards = visiblePokemon.map((pokemon) => {
       const selected = state.team.includes(pokemon.uid);
       const isPartner = state.partnerUid === pokemon.uid;
@@ -2574,16 +2417,16 @@ ${renderFieldNoteAside({
       return `
         <article class="pc-card paper-panel ${selected ? "is-selected" : ""} ${isFavourite ? "is-favorite" : ""} ${isPartner ? "is-partner" : ""}">
           ${badges}
-          <button class="pc-summary-button" type="button" data-action="pc-summary" data-uid="${pokemon.uid}">
+          <button class="pc-summary-button" type="button" data-action="pc-summary" data-uid="${escapeHtml(pokemon.uid)}">
             <span class="dex-card-number">No. ${String(pokemon.speciesId).padStart(3, "0")}</span>
             <img src="${escapeHtml(pokemon.sprite)}" alt="${escapeHtml(pokemon.displayName)}" loading="lazy" />
             <strong>${escapeHtml(pokemon.nickname || pokemon.displayName)}</strong>
             <span>${pokemon.nickname ? escapeHtml(pokemon.displayName) + " · " : ""}Lv. ${pokemon.level}</span>
           </button>
           <div class="pc-card-actions">
-            <button class="pc-card-action" type="button" data-action="toggle-favorite" data-uid="${pokemon.uid}" aria-pressed="${isFavourite}">${isFavourite ? "★ Favourite" : "☆ Favourite"}</button>
-            <button class="pc-card-action" type="button" data-action="toggle-partner" data-uid="${pokemon.uid}" aria-pressed="${isPartner}">${isPartner ? "◇ Partner" : "+ Partner"}</button>
-            <button class="pc-card-action" type="button" data-action="toggle-team" data-uid="${pokemon.uid}" aria-pressed="${selected}">${selected ? "✓ Team" : "+ Team"}</button>
+            <button class="pc-card-action" type="button" data-action="toggle-favorite" data-uid="${escapeHtml(pokemon.uid)}" aria-pressed="${isFavourite}">${isFavourite ? "★ Favourite" : "☆ Favourite"}</button>
+            <button class="pc-card-action" type="button" data-action="toggle-partner" data-uid="${escapeHtml(pokemon.uid)}" aria-pressed="${isPartner}">${isPartner ? "◇ Partner" : "+ Partner"}</button>
+            <button class="pc-card-action" type="button" data-action="toggle-team" data-uid="${escapeHtml(pokemon.uid)}" aria-pressed="${selected}">${selected ? "✓ Team" : "+ Team"}</button>
           </div>
         </article>`;
     }).join("");
@@ -2609,7 +2452,7 @@ ${renderFieldNoteAside({
           <option value="species" ${pcSort === "species" ? "selected" : ""}>Pokédex number</option>
           <option value="shiny" ${pcSort === "shiny" ? "selected" : ""}>Shiny first</option>
         </select>
-        <span>${visiblePokemon.length} / ${state.pc.length} shown</span>
+        <span>${matchingPokemon.length} / ${state.pc.length} match</span>
       </div>` : "";
     const headerAside = `
       <div class="pc-header-stamps">
@@ -2623,7 +2466,7 @@ ${renderFieldNoteAside({
         ${pageHeader("Pokémon room", "PC", "Every Pokémon here has its own little story. Mark favourites, choose a partner, and keep your showcase team tidy.", headerAside)}
         ${pcControls}
         ${renderExpeditionPanel()}
-        ${state.pc.length ? `<div class="pc-grid">${cards || '<p class="no-results">No Pokémon match those filters.</p>'}</div>` : emptyState("No Pokémon in the room yet", "Hatch an egg, spend a moment with the visitor, then try a Poké Ball when you are ready.", '<button class="button button-primary" type="button" data-tab="home">Visit the incubator</button>')}
+        ${state.pc.length ? `<div class="pc-grid">${cards || '<p class="no-results">No Pokémon match those filters.</p>'}</div>${matchingPokemon.length > visiblePokemon.length ? `<div class="archive-more"><button class="button button-primary" type="button" data-action="show-more-pc">Show ${Math.min(ARCHIVE_PAGE_SIZE, matchingPokemon.length - visiblePokemon.length)} more</button><span>${visiblePokemon.length} of ${matchingPokemon.length} shown</span></div>` : ""}` : emptyState("No Pokémon in the room yet", "Hatch an egg, spend a moment with the visitor, then try a Poké Ball when you are ready.", '<button class="button button-primary" type="button" data-tab="home">Visit the incubator</button>')}
       </section>`;
   }
 
@@ -2649,7 +2492,7 @@ ${renderFieldNoteAside({
 
   function renderBag() {
     const registry = shopItemRegistry();
-    const pockets = registry && typeof registry.getBagPockets === "function" ? registry.getBagPockets(state) : { balls: [], items: [], berries: [], plates: [], souvenirs: [], mysterious: [] };
+    const pockets = registry && typeof registry.getBagPockets === "function" ? registry.getBagPockets(state) : { balls: [], items: [], berries: [], plates: [], souvenirs: [], mysteryItems: [] };
     const charmCharges = activeShinyCharmCharges();
     const ballPocket = renderBagPocket("Poké Ball pocket", "The round things with a habit of rolling under furniture.", pockets.balls, "No Poké Balls are currently in the bag.", (item) => `
       <article class="bag-card">
@@ -2661,9 +2504,20 @@ ${renderFieldNoteAside({
       const owned = Number(item.count || 0) > 0;
       const isCharm = item.id === "shiny-charm";
       const isMagmarizer = item.id === "magmarizer";
-      const isRareCandy = item.id === "rare-candy";
-      const detail = isCharm && charmCharges > 0 ? `${charmCharges} egg${charmCharges === 1 ? "" : "s"} still sparkling` : isMagmarizer && owned ? "warming new eggs" : `${Number(item.count || 0).toLocaleString()} in bag`;
-      const action = isCharm && owned ? `<button class="button button-primary" type="button" data-action="use-item" data-item-id="${item.id}">Use charm</button>` : isRareCandy && owned ? `<button class="button button-primary" type="button" data-action="use-item" data-item-id="${item.id}">Use candy</button>` : "";
+      const isPrepaidEgg = item.id === PREPAID_EGG_ITEM_ID;
+      const incubatorAvailable = !activeIncubatorSlot()?.egg && !activeIncubatorSlot()?.encounter;
+      const detail = isCharm && charmCharges > 0
+        ? `${charmCharges} egg${charmCharges === 1 ? "" : "s"} still sparkling`
+        : isMagmarizer && owned
+          ? "warming new eggs"
+          : isPrepaidEgg
+            ? `${Number(item.count || 0).toLocaleString()} prepaid egg${Number(item.count || 0) === 1 ? "" : "s"} ready`
+            : `${Number(item.count || 0).toLocaleString()} in bag`;
+      const action = isCharm && owned
+        ? `<button class="button button-primary" type="button" data-action="use-item" data-item-id="${item.id}">Use charm</button>`
+        : isPrepaidEgg && owned
+          ? `<p class="passive-note">${incubatorAvailable ? "An available incubator will load this automatically." : "It will load automatically when an incubator becomes available."}</p>`
+          : "";
       return `
         <article class="bag-card">
           <img src="${escapeHtml(itemSpriteUrl(item.spriteId || item.id))}" alt="" />
@@ -2672,13 +2526,48 @@ ${renderFieldNoteAside({
           ${action}
         </article>`;
     });
-    const berryPocket = renderBagPocket("Berry pouch", "Purchased berries add capped training points to one or more stats. No Pokémon can exceed the usual per-stat or total training limits.", pockets.berries || [], "No berries are tucked into the pouch yet.", (item) => `
+    const legendaryRegistry = legendaryItemRegistry();
+    const legendaryStatuses = legendaryRegistry && typeof legendaryRegistry.getUnlockStatuses === "function" ? legendaryRegistry.getUnlockStatuses(state) : [];
+    const lockedLegendaryStatuses = legendaryStatuses.filter((status) => status && !status.unlocked);
+    const visibleLegendaryStatuses = lockedLegendaryStatuses.slice(0, mysteryGoalVisibleLimit);
+    const unlockedLegendaryCount = legendaryStatuses.length - lockedLegendaryStatuses.length;
+    const mysteryPocket = renderBagPocket("Mystery Items", "Rare relics earned through hatchery research. Each relic allows its associated Legendary Pokémon to form inside an egg; relics are checked again at hatching and are never consumed.", pockets.mysteryItems || [], "No Legendary relics are tucked away yet. Open the research ledger below to see the first goals.", (item) => `
+      <article class="bag-card mystery-item-card">
+        <img src="${escapeHtml(itemSpriteUrl(item.spriteId || item.id))}" alt="" />
+        <strong>${escapeHtml(item.displayName)}</strong>
+        <span>${Number(item.count || 0).toLocaleString()} in bag · permits ${escapeHtml(item.associatedPokemon)} eggs</span>
+      </article>`);
+    const mysteryResearch = legendaryStatuses.length ? `
+      <details class="paper-panel mystery-research">
+        <summary><span>Mystery research ledger</span><b>${unlockedLegendaryCount} / ${legendaryStatuses.length} relics unlocked</b></summary>
+        <p>Goals are checked automatically whenever the hatchery saves. Once earned, a relic stays in the Mystery Items pocket.</p>
+        ${lockedLegendaryStatuses.length ? `<div class="mystery-goal-grid">${visibleLegendaryStatuses.map((status) => `
+          <article class="mystery-goal-card">
+            <span class="mystery-goal-pokemon">${escapeHtml(status.displayName)}</span>
+            <strong>${escapeHtml(status.itemName)}</strong>
+            <p>${escapeHtml(status.description)}</p>
+            <small>${escapeHtml(status.progressText)}</small>
+          </article>`).join("")}</div>${lockedLegendaryStatuses.length > visibleLegendaryStatuses.length ? `<div class="archive-more"><button class="button" type="button" data-action="show-more-mystery-goals">Show ${Math.min(ARCHIVE_PAGE_SIZE, lockedLegendaryStatuses.length - visibleLegendaryStatuses.length)} more goals</button><span>${visibleLegendaryStatuses.length} of ${lockedLegendaryStatuses.length} locked goals shown</span></div>` : ""}` : '<p class="mystery-complete">Every known Legendary relic has been unlocked.</p>'}
+      </details>` : "";
+    const berryPocket = renderBagPocket("Berry pouch", "Purchased berries add capped training points to one or more stats. No Pokémon can exceed 252 points in one stat or 510 total.", pockets.berries || [], "No berries are tucked into the pouch yet.", (item) => `
       <article class="bag-card">
         <img src="${escapeHtml(itemSpriteUrl(item.spriteId || item.id))}" alt="" />
         <strong>${escapeHtml(item.displayName)}</strong>
         <span>${Number(item.count || 0).toLocaleString()} in bag · ${escapeHtml(describeStatEffects(item.statEffects))}</span>
-        <button class="button button-primary" type="button" data-action="use-item" data-item-id="${item.id}">Use berry</button>
+        <button class="button button-primary" type="button" data-action="use-item" data-item-id="${escapeHtml(item.id)}">Use berry</button>
       </article>`);
+    const souvenirPocket = renderBagPocket("Expedition keepsakes", "Small harmless things brought back from canon routes. They can be sold for pocket money, but never replace unique shop items.", pockets.souvenirs || [], "No expedition keepsakes have come home yet.", (item) => {
+      const count = Number(item.count || 0);
+      const sellValue = Number(item.sellValue || 0);
+      return `
+        <article class="bag-card">
+          <img src="${escapeHtml(itemSpriteUrl(item.spriteId || item.id))}" alt="" />
+          <strong>${escapeHtml(item.displayName)}</strong>
+          <span>${count.toLocaleString()} found · sells for ₽${sellValue.toLocaleString()}</span>
+          <button class="button" type="button" data-action="sell-souvenir" data-item-id="${escapeHtml(item.id)}">Sell one</button>
+          ${count > 1 ? `<button class="button button-primary" type="button" data-action="sell-all-souvenir" data-item-id="${escapeHtml(item.id)}">Sell all</button>` : ""}
+        </article>`;
+    });
     const platePocket = renderBagPocket("Plate pocket", "Only one plate can sit beside the incubator at a time.", pockets.plates.filter((item) => Number(item.count || 0) > 0), "No plates are tucked away yet.", (item) => `
       <article class="bag-card ${item.equipped ? "is-equipped" : ""}">
         <img src="${escapeHtml(itemSpriteUrl(item.spriteId || item.id))}" alt="" />
@@ -2686,42 +2575,23 @@ ${renderFieldNoteAside({
         <span>${item.equipped ? "beside the incubator" : `${titleCase(item.type)} plate`}</span>
         <button class="button ${item.equipped ? "" : "button-primary"}" type="button" data-action="toggle-plate" data-item-id="${item.id}">${item.equipped ? "Put away" : "Equip"}</button>
       </article>`);
-    const souvenirPocket = renderBagPocket("Expedition keepsakes", "Small harmless things brought back from canon routes. They can be sold for pocket money, but they do not stand in for single-purchase shop items.", pockets.souvenirs || [], "No expedition keepsakes have come home yet.", (item) => {
-      const count = Number(item.count || 0);
-      const sellValue = Number(item.sellValue || 0);
-      return `
-      <article class="bag-card">
-        <img src="${escapeHtml(itemSpriteUrl(item.spriteId || item.id))}" alt="" />
-        <strong>${escapeHtml(item.displayName)}</strong>
-        <span>${count.toLocaleString()} found · sells for ₽${sellValue.toLocaleString()}</span>
-        <button class="button button-primary" type="button" data-action="sell-souvenir" data-item-id="${escapeHtml(item.id)}">Sell one</button>
-        ${count > 1 ? `<button class="button" type="button" data-action="sell-all-souvenir" data-item-id="${escapeHtml(item.id)}">Sell all</button>` : ""}
-      </article>`;
-    });
-    const activeSlot = activeIncubatorSlot();
-    const canSummonMysteryEgg = Boolean(activeSlot && !activeSlot.egg && !activeSlot.encounter);
-    const mysteriousPocket = renderBagPocket("Mysterious Items", "Unique relics unlocked by hatchery milestones. Each one opens its matching Pokémon to eggs and can call a dedicated egg into an empty active incubator.", pockets.mysterious || [], "No mysterious items have unlocked yet.", (item) => `
-      <article class="bag-card">
-        <img src="${escapeHtml(itemSpriteUrl(item.spriteId || item.id))}" alt="" />
-        <strong>${escapeHtml(item.displayName)}</strong>
-        <span>Calls ${escapeHtml(item.summonSpeciesName || "a rare Pokémon")}</span>
-        <button class="button button-primary" type="button" data-action="summon-mysterious" data-item-id="${escapeHtml(item.id)}" ${canSummonMysteryEgg ? "" : "disabled"}>Summon egg</button>
-      </article>`);
     view.innerHTML = `
       <section class="archive-page bag-page">
-        ${pageHeader("Field bag", "Bag", "Everything you have tucked away for eggs, visitors, training, and odd little shop surprises.")}
-        <div class="bag-pockets">${ballPocket}${itemPocket}${berryPocket}${platePocket}${mysteriousPocket}${souvenirPocket}</div>
+        ${pageHeader("Field bag", "Bag", "Everything you have tucked away for eggs, visitors, and odd little shop surprises.")}
+        <div class="bag-pockets">${ballPocket}${itemPocket}${berryPocket}${mysteryPocket}${mysteryResearch}${platePocket}${souvenirPocket}</div>
       </section>`;
   }
 
   function renderMart() {
     if (!shopItems) loadShopItems();
-    const stock = shopItems.map((item) => {
+    const visibleStock = shopItems.slice(0, shopVisibleLimit);
+    const stock = visibleStock.map((item) => {
       const count = item.id === "incubator-upgrade" ? incubatorCapacity() : item.category === "ball" ? state.inventory[item.id] || 0 : itemCount(item.id);
       const ownedUnique = item.unique && count > 0;
       const disabled = ownedUnique || (!isDevToolEnabled("freeShop") && state.money < item.cost);
       const price = isDevToolEnabled("freeShop") && !ownedUnique ? "FREE" : `₽${item.cost.toLocaleString()}`;
-      const pocketLabel = item.category === "plate" ? "Plate shelf" : item.category === "berry" ? "Berry pouch" : item.category === "ball" ? "Field bag favourite" : "Counter curiosity";
+      const pocketLabel = item.category === "plate" ? "Plate shelf" : item.category === "ball" ? "Field bag favourite" : "Counter curiosity";
+      const bulkPurchase = item.consumable === true && item.stackable === true;
       return `
       <article class="shop-card paper-panel">
         <div class="shop-sprite"><img src="${escapeHtml(item.sprite)}" alt="" /></div>
@@ -2729,41 +2599,146 @@ ${renderFieldNoteAside({
         <h2>${escapeHtml(item.displayName)}</h2>
         <p>${escapeHtml(item.description)}</p>
         <dl><dt>Price</dt><dd>${ownedUnique ? "owned" : price}</dd><dt>${item.id === "incubator-upgrade" ? "Slots" : "In bag"}</dt><dd>${item.id === "incubator-upgrade" ? `${count} / ${MAX_INCUBATOR_SLOTS}` : count || 0}</dd></dl>
-        <button class="button button-primary" type="button" data-action="buy-shop-item" data-item-id="${item.id}" ${disabled ? "disabled" : ""}>${ownedUnique ? "Already in bag" : `Buy one · ${price}`}</button>
+        <button class="button button-primary" type="button" data-action="buy-shop-item" data-item-id="${item.id}" ${disabled ? "disabled" : ""}>${ownedUnique ? "Already in bag" : bulkPurchase ? `Choose quantity · ${price} each` : `Buy one · ${price}`}</button>
       </article>`;
     }).join("");
     view.innerHTML = `
       <section class="archive-page">
         ${pageHeader("Field supplies", "Pokémart", "Stock your field bag before the next shell starts to wobble.", `<div class="wallet-stamp"><span>pocket money</span><b>₽${state.money.toLocaleString()}</b></div>`)}
         <div class="shop-grid">${stock || emptyState("The shelves are being dusted", "Check back after your collection has grown a little.")}</div>
-        <p class="archive-footnote">Your first kit includes five Poké Balls. Restock before the next shell starts to wobble.</p>
+        ${shopItems.length > visibleStock.length ? `<div class="archive-more"><button class="button button-primary" type="button" data-action="show-more-shop">Show ${Math.min(ARCHIVE_PAGE_SIZE, shopItems.length - visibleStock.length)} more items</button><span>${visibleStock.length} of ${shopItems.length} shown</span></div>` : ""}
+        <p class="archive-footnote">Your first egg is free. Later eggs cost ₽${EGG_PRICE}; prepaid eggs wait in the field bag and load automatically into available incubators.</p>
       </section>`;
+  }
+
+  function competitionProgress() {
+    if (!state.competition || typeof state.competition !== "object") state.competition = JSON.parse(JSON.stringify(DEFAULT_STATE.competition));
+    const unlocked = COMPETITION_ENGINE.unlockedLeagues(state.competition.peakRating);
+    if (!unlocked.some((league) => league.id === state.competition.selectedLeague)) state.competition.selectedLeague = unlocked[unlocked.length - 1]?.id || "local";
+    if (!COMPETITION_ENGINE.DIFFICULTIES.some((difficulty) => difficulty.id === state.competition.selectedDifficulty)) state.competition.selectedDifficulty = "standard";
+    state.competition.cooldowns ||= {};
+    state.competition.rivals ||= {};
+    state.competition.challenges ||= {};
+    return state.competition;
+  }
+
+  function competitionTeam() {
+    normalisePcLinks();
+    return state.team.map((id) => state.pc.find((pokemon) => pokemon.uid === id)).filter(Boolean);
+  }
+
+  function competitionCooldownRemaining(leagueId) {
+    return Math.max(0, Number(competitionProgress().cooldowns[leagueId] || 0) - Date.now());
+  }
+
+  function updateCompetitionCooldownDisplay() {
+    if (activeTab !== "competitions") return;
+    const element = document.querySelector("[data-competition-cooldown]");
+    if (!element) return;
+    const leagueId = competitionProgress().selectedLeague;
+    const remaining = competitionCooldownRemaining(leagueId);
+    if (remaining > 0) {
+      element.textContent = `Reopens in ${formatShortDuration(remaining)}`;
+      return;
+    }
+    if (element.dataset.cooldownActive === "true") renderCompetitions();
+  }
+
+  function formatShortDuration(milliseconds) {
+    const seconds = Math.max(0, Math.ceil(Number(milliseconds || 0) / 1000));
+    const minutes = Math.floor(seconds / 60);
+    const remainder = seconds % 60;
+    return minutes ? `${minutes}m ${String(remainder).padStart(2, "0")}s` : `${remainder}s`;
+  }
+
+  function getOrCreateCompetitionRival(leagueId) {
+    const progress = competitionProgress();
+    if (progress.rivals[leagueId]) return progress.rivals[leagueId];
+    const leagueIndex = Math.max(0, COMPETITION_ENGINE.LEAGUES.findIndex((league) => league.id === leagueId));
+    const usedNames = new Set(Object.values(progress.rivals).map((rival) => rival?.name).filter(Boolean));
+    const availableNames = COMPETITION_ENGINE.RIVAL_NAMES.filter((name) => !usedNames.has(name));
+    const name = randomChoice(availableNames.length ? availableNames : COMPETITION_ENGINE.RIVAL_NAMES);
+    const archetype = COMPETITION_ENGINE.ARCHETYPES[(leagueIndex + randomInt(0, COMPETITION_ENGINE.ARCHETYPES.length)) % COMPETITION_ENGINE.ARCHETYPES.length];
+    const rival = { id: `rival-${leagueId}-${makeId()}`, name, archetype: archetype.id, meetings: 0, playerWins: 0, rivalWins: 0, lastResult: "" };
+    progress.rivals[leagueId] = rival;
+    saveState();
+    return rival;
+  }
+
+  function competitionMemberPreview(member, index, rival = false) {
+    return `<article class="competition-lineup-member ${rival ? "is-rival" : ""}">
+      <span class="lineup-position">${index + 1}</span>
+      <button class="competition-pokemon-button" type="button" ${member.uid ? `data-action="pc-summary" data-uid="${escapeHtml(member.uid)}"` : "disabled"}>
+        <img src="${escapeHtml(member.sprite)}" alt="" />
+        <span><strong>${escapeHtml(member.nickname || member.displayName)}</strong><small>${rival ? (member.types || []).map(titleCase).join(" / ") : `Lv. ${member.level}`}</small></span>
+      </button>
+      ${rival ? "" : `<span class="lineup-order-controls"><button type="button" data-action="move-competition-team" data-index="${index}" data-direction="-1" ${index === 0 || state.competition?.activeMatch ? "disabled" : ""} aria-label="Move ${escapeHtml(member.nickname || member.displayName)} earlier">↑</button><button type="button" data-action="move-competition-team" data-index="${index}" data-direction="1" ${index === 5 || state.competition?.activeMatch ? "disabled" : ""} aria-label="Move ${escapeHtml(member.nickname || member.displayName)} later">↓</button></span>`}
+    </article>`;
   }
 
   function renderCompetitions() {
-    const team = state.team.map((id) => state.pc.find((pokemon) => pokemon.uid === id)).filter(Boolean);
-    const teamStrip = team.length ? team.map((pokemon) => `
-      <button class="team-member" type="button" data-action="pc-summary" data-uid="${pokemon.uid}"><img src="${escapeHtml(pokemon.sprite)}" alt="" /><span>${escapeHtml(pokemon.nickname || pokemon.displayName)}</span><small>Lv. ${pokemon.level}</small></button>`).join("") : "";
+    const progress = competitionProgress();
+    const team = competitionTeam();
+    const unlocked = COMPETITION_ENGINE.unlockedLeagues(progress.peakRating);
+    const unlockedIds = new Set(unlocked.map((league) => league.id));
+    const selectedLeague = COMPETITION_ENGINE.leagueById(progress.selectedLeague);
+    const selectedDifficulty = COMPETITION_ENGINE.difficultyById(progress.selectedDifficulty);
+    const rival = getOrCreateCompetitionRival(selectedLeague.id);
+    const archetype = COMPETITION_ENGINE.archetypeById(rival.archetype);
+    const challenge = progress.challenges[selectedLeague.id] || null;
+    const cooldown = competitionCooldownRemaining(selectedLeague.id);
+    const fee = COMPETITION_ENGINE.entryFee(selectedLeague.id, selectedDifficulty.id);
+    const prize = COMPETITION_ENGINE.prizeRange(selectedLeague.id, selectedDifficulty.id, progress.winStreak);
+    const balance = COMPETITION_ENGINE.teamBalance(team);
+    const activeMatch = progress.activeMatch;
+    const teamStrip = team.length ? team.map((pokemon, index) => competitionMemberPreview(pokemon, index)).join("") : "";
+    const leagues = COMPETITION_ENGINE.LEAGUES.map((league) => {
+      const unlockedLeague = unlockedIds.has(league.id);
+      const selected = selectedLeague.id === league.id;
+      return `<button class="competition-option ${selected ? "is-selected" : ""}" type="button" data-action="select-competition-league" data-league-id="${league.id}" ${!unlockedLeague || activeMatch ? "disabled" : ""} aria-pressed="${selected}"><strong>${escapeHtml(league.name)}</strong><small>${unlockedLeague ? `Entry from ₽${league.entryFee}` : `Unlock at ${league.minimumPeakRating} peak rating`}</small></button>`;
+    }).join("");
+    const difficulties = COMPETITION_ENGINE.DIFFICULTIES.map((difficulty) => {
+      const selected = selectedDifficulty.id === difficulty.id;
+      return `<button class="competition-option ${selected ? "is-selected" : ""}" type="button" data-action="select-competition-difficulty" data-difficulty-id="${difficulty.id}" ${activeMatch ? "disabled" : ""} aria-pressed="${selected}"><strong>${escapeHtml(difficulty.name)}</strong><small>${escapeHtml(difficulty.description)}</small></button>`;
+    }).join("");
+    const rivalLineup = challenge ? challenge.members.map((member, index) => competitionMemberPreview(member, index, true)).join("") : "";
+    const canEnter = team.length === 6 && challenge && !activeMatch && !isCompetitionRunning && cooldown <= 0 && state.money >= fee;
+    const unavailableReason = team.length !== 6 ? "Choose six Pokémon first."
+      : !challenge ? "Scout the rival team before entering."
+      : activeMatch ? "Finish the current showcase first."
+      : cooldown > 0 ? `This class reopens in ${formatShortDuration(cooldown)}.`
+      : state.money < fee ? `You need ₽${fee.toLocaleString()} for this entry.`
+      : "";
     const contests = CONTEST_STATS.map((stat) => `
-      <button class="contest-card paper-panel" type="button" data-action="enter-contest" data-stat="${stat}" ${team.length !== 6 || isCompetitionRunning ? "disabled" : ""}>
+      <button class="contest-card paper-panel" type="button" data-action="enter-contest" data-stat="${stat}" ${canEnter ? "" : "disabled"}>
         <span class="contest-glyph" aria-hidden="true">${{ hp: "♥", attack: "⚔", defense: "◆", "special-attack": "✦", "special-defense": "✥", speed: "»" }[stat]}</span>
         <strong>${statLabel(stat)}</strong>
-        <small>bring your best ${statLabel(stat)}</small>
+        <small>six ordered head-to-head rounds</small>
       </button>`).join("");
     const latest = state.competitionLog[0];
     view.innerHTML = `
-      <section class="archive-page">
-        ${pageHeader("Six-on-six showcases", "Competitions", "Pick a showcase and send in your six. A visiting team will step up to meet them.", `<div class="record-stamp"><b>${state.statistics.competitionsWon}</b><span>victories</span></div>`)}
-        <article class="paper-panel team-sheet">
-          <div class="panel-label">Chosen six / ${team.length} of 6</div>
-          ${team.length ? `<div class="team-strip">${teamStrip}</div>` : '<p class="team-empty">Choose your six from the PC room.</p>'}
-          ${team.length !== 6 ? '<button class="button button-primary" type="button" data-tab="pc">Select your six</button>' : '<p class="ready-mark">✓ team ready to step out</p>'}
+      <section class="archive-page competition-page">
+        ${pageHeader("Ranked six-on-six showcases", "Competitions", "Scout a persistent rival, arrange your six, and make a halftime tactical call.", `<div class="competition-rating-stamp"><span>rating</span><b>${progress.rating}</b><small>peak ${progress.peakRating}</small></div>`)}
+        ${activeMatch ? `<article class="paper-panel active-showcase-callout"><div><p class="eyebrow">Showcase in progress</p><h2>${escapeHtml(activeMatch.rivalName)} is waiting at halftime</h2><p>Your entry is already recorded. Resume it instead of beginning another contest.</p></div><button class="button button-primary" type="button" data-action="resume-competition">Resume showcase</button></article>` : ""}
+        <div class="competition-control-grid">
+          <article class="paper-panel competition-control-panel"><p class="eyebrow">League ladder</p><h2>Choose a class</h2><div class="competition-options">${leagues}</div></article>
+          <article class="paper-panel competition-control-panel"><p class="eyebrow">Judging pressure</p><h2>Choose difficulty</h2><div class="competition-options">${difficulties}</div></article>
+        </div>
+        <article class="paper-panel rival-sheet">
+          <div class="rival-heading"><div><p class="eyebrow">Persistent rival · ${escapeHtml(selectedLeague.name)}</p><h2>${escapeHtml(rival.name)}</h2><p>${escapeHtml(archetype.name)} — ${escapeHtml(archetype.description)}</p></div><dl><dt>Meetings</dt><dd>${rival.meetings}</dd><dt>Your wins</dt><dd>${rival.playerWins}</dd><dt>Rival wins</dt><dd>${rival.rivalWins}</dd></dl></div>
+          ${challenge ? `<div class="competition-lineup rival-lineup">${rivalLineup}</div><p class="ready-mark">✓ scouted lineup is locked until this showcase is completed</p>` : `<div class="rival-unscouted"><p>This rival’s next six have not been scouted. Once revealed, reloading or changing difficulty will not replace them.</p><button class="button button-primary" type="button" data-action="scout-competition-rival" ${isCompetitionScouting || activeMatch ? "disabled" : ""}>${isCompetitionScouting ? "Scouting…" : "Scout rival team"}</button></div>`}
         </article>
+        <article class="paper-panel team-sheet competition-team-sheet">
+          <div class="panel-label">Your ordered six / ${team.length} of 6</div>
+          ${team.length ? `<div class="competition-lineup">${teamStrip}</div>` : '<p class="team-empty">Choose your six from the PC room.</p>'}
+          ${team.length !== 6 ? '<button class="button button-primary" type="button" data-tab="pc">Select your six</button>' : `<div class="balance-readout"><strong>${Math.round(balance.bonus * 100)}% balance bonus</strong><span>${balance.typeCount} types · ${balance.roleCount} stat roles${balance.duplicateSpecies ? ` · ${balance.duplicateSpecies} duplicate-species penalty` : ""}</span></div>`}
+        </article>
+        <article class="paper-panel competition-entry-summary"><div><p class="eyebrow">Current entry</p><h2>${escapeHtml(selectedLeague.name)} · ${escapeHtml(selectedDifficulty.name)}</h2><p>Entry ₽${fee.toLocaleString()} · Prize ₽${prize.minimum.toLocaleString()}–₽${prize.maximum.toLocaleString()} · ${Math.round(selectedLeague.xpPool * selectedDifficulty.prizeMultiplier).toLocaleString()} XP pool</p></div><div class="competition-status" data-competition-cooldown data-cooldown-active="${cooldown > 0}">${cooldown > 0 ? `Reopens in ${formatShortDuration(cooldown)}` : unavailableReason || "Ready for judging"}</div></article>
         <div class="contest-grid">${contests}</div>
-        ${latest ? `<article class="paper-panel latest-result"><p class="eyebrow">Last showcase</p><h2>${escapeHtml(latest.title)}</h2><p>${escapeHtml(latest.summary)}</p><time>${new Date(latest.at).toLocaleString()}</time></article>` : ""}
+        ${unavailableReason ? `<p class="competition-unavailable">${escapeHtml(unavailableReason)}</p>` : ""}
+        ${latest ? `<article class="paper-panel latest-result"><p class="eyebrow">Last showcase · ${escapeHtml(COMPETITION_ENGINE.leagueById(latest.leagueId).name)}</p><h2>${escapeHtml(latest.title)}</h2><p>${escapeHtml(latest.summary)}</p><time>${new Date(latest.at).toLocaleString()}</time></article>` : ""}
       </section>`;
   }
-
   function generationSummary() {
     const generationNumerals = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"];
     const generationRegions = ["Kanto", "Johto", "Hoenn", "Sinnoh", "Unova", "Kalos", "Alola", "Galar", "Paldea"];
@@ -2787,336 +2762,15 @@ ${renderFieldNoteAside({
     }).join("");
   }
 
-  function enabledGenerationNumbers() {
-    return (Array.isArray(state.settings.generations) && state.settings.generations.length ? state.settings.generations : [1])
-      .filter((generation, index, generations) => generation >= 1 && generation <= 9 && generations.indexOf(generation) === index)
-      .sort((left, right) => left - right);
-  }
-
-  function speciesGeneration(speciesId) {
-    const id = Number(speciesId || 0);
-    const range = SPECIES_GENERATION_RANGES.find(([, start, end]) => id >= start && id <= end);
-    return range ? range[0] : 0;
-  }
-
-  function speciesInEnabledGenerations(speciesId) {
-    return enabledGenerationNumbers().includes(speciesGeneration(speciesId));
-  }
-
-  function enabledStarterSpeciesIds() {
-    return enabledGenerationNumbers().flatMap((generation) => STARTER_SPECIES_BY_GENERATION[generation] || []);
-  }
-
-  function activeSpeciesTarget() {
-    return enabledSpeciesTotal || enabledSpeciesIds.length || 0;
-  }
-
-  function activeSpeciesSet() {
-    return new Set(enabledSpeciesIds.length ? enabledSpeciesIds : []);
-  }
-
-  function countActiveSpecies(values) {
-    const set = activeSpeciesSet();
-    const ids = uniqueNumberList(values);
-    if (!set.size) return ids.filter(speciesInEnabledGenerations).length;
-    return ids.filter((speciesId) => set.has(speciesId)).length;
-  }
-
-  function formatMoney(amount) {
-    return `₽${Math.max(0, Math.floor(Number(amount || 0))).toLocaleString()}`;
-  }
-
-  function achievementReward(id, category, target) {
-    const oneOffRewards = {
-      registered: 50,
-      "first-egg-hatched": 100,
-      "first-catch": 150,
-      "first-release": 75,
-      "first-partner": 125,
-      "first-favourite": 100,
-      "showcase-six": 750,
-      "backup-safe": 75,
-      "early-clutch": 900,
-      "hatch-each-generation": Math.max(600, target * 450),
-      "pokedex-quarter": Math.max(8000, target * 150),
-      "pokedex-half": Math.max(25000, target * 260),
-      "pokedex-three-quarter": Math.max(75000, target * 420),
-      "pokedex-complete-active": Math.max(150000, target * 850),
-      "catch-each-generation": Math.max(1000, target * 650),
-      "caught-species-25": 5000,
-      "caught-species-100": 28000,
-      "caught-quarter": Math.max(12000, target * 220),
-      "caught-half": Math.max(50000, target * 360),
-      "caught-all-active": Math.max(250000, target * 1250),
-      "starter-hatch-one": 300,
-      "starter-catch-one": 450,
-      "starter-hatch-active": Math.max(15000, target * 3500),
-      "starter-catch-active": Math.max(30000, target * 5200),
-      "shiny-seen-one": 25000,
-      "shiny-caught-one": 50000,
-      "shiny-seen-three": 90000,
-      "shiny-caught-five": 200000,
-      "shiny-pc-six": 225000,
-      "shiny-species-ten": 350000,
-      "ball-poke": 100,
-      "ball-premier": 350,
-      "ball-great": 500,
-      "ball-ultra": 900,
-      "ball-master": 50000,
-      "buy-pokeballs-10": 300,
-      "buy-pokeballs-50": 1800,
-      "premier-owned": 250,
-      "master-found": 75000,
-      "incubator-two": 5000,
-      "incubator-three": 18000,
-      "incubator-five": 125000,
-      "magmarizer-owned": 20000,
-      "shiny-charm-owned": 18000,
-      "shiny-charm-used": 5000,
-      "plate-one": 2500,
-      "plate-five": 18000,
-      "plate-all": 175000,
-      "pc-six": 600,
-      "pc-thirty": 4500,
-      "pc-hundred": 25000,
-      "favorites-ten": 2500,
-      "level-fifty": 12000,
-      "level-hundred": 70000,
-      "contest-one": 1000,
-      "contest-five": 6000,
-      "contest-ten": 18000,
-      "contest-twenty-five": 70000,
-      "contest-all-stats": 35000,
-      "streak-three": 600,
-      "streak-seven": 2500,
-      "streak-ten": 6000,
-      "streak-thirty": 60000
-    };
-    if (Object.prototype.hasOwnProperty.call(oneOffRewards, id)) return Math.floor(oneOffRewards[id]);
-    if (id.startsWith("hatch-")) {
-      const rewards = { 5: 250, 10: 700, 25: 2000, 50: 5000, 100: 14000, 250: 50000, 500: 140000 };
-      return rewards[target] || Math.max(150, target * 80);
-    }
-    if (id.startsWith("catch-")) {
-      const rewards = { 5: 350, 10: 900, 25: 3500, 50: 8500, 100: 24000, 250: 85000, 500: 240000 };
-      return rewards[target] || Math.max(250, target * 120);
-    }
-    const categoryBase = {
-      "First steps": 100,
-      Hatching: 500,
-      Pokédex: 1500,
-      Catching: 800,
-      Starters: 1000,
-      "Shiny surprises": 25000,
-      "Poké Balls": 250,
-      "Shop and bag": 1000,
-      "PC room": 750,
-      Competitions: 1000,
-      "Daily rhythm": 600
-    };
-    return categoryBase[category] || 100;
-  }
-
-  function claimedAchievementSet() {
-    state.claimedAchievementIds = uniqueStringList(state.claimedAchievementIds || []);
-    return new Set(state.claimedAchievementIds);
-  }
-
-  function achievementProgress(current, target) {
-    const safeTarget = Math.max(1, Math.floor(Number(target || 1)));
-    const safeCurrent = Math.max(0, Math.floor(Number(current || 0)));
-    return { current: Math.min(safeCurrent, safeTarget), target: safeTarget, unlocked: safeCurrent >= safeTarget };
-  }
-
-  function achievement(id, category, title, description, current, target = 1) {
-    const progress = achievementProgress(current, target);
-    const claimed = claimedAchievementSet().has(id);
-    const reward = achievementReward(id, category, progress.target);
-    return { id, category, title, description, reward, claimed, claimable: progress.unlocked && !claimed, ...progress };
-  }
-
-  function achievementsForThresholds(prefix, category, noun, descriptionPrefix, current, thresholds) {
-    return thresholds.map((target) => achievement(`${prefix}-${target}`, category, `${noun} ${target.toLocaleString()}`, `${descriptionPrefix} ${target.toLocaleString()}.`, current, target));
-  }
-
-  function allAchievements() {
-    const enabledGenerations = enabledGenerationNumbers();
-    const activeTotal = activeSpeciesTarget();
-    const pokedexSpeciesIds = Object.values(state.pokedex || {}).map((entry) => Number(entry.speciesId || 0));
-    const activePokedexCount = countActiveSpecies(pokedexSpeciesIds);
-    const caughtSpeciesIds = uniqueNumberList([...(state.caughtSpeciesIds || []), ...(state.pc || []).map((pokemon) => pokemon?.speciesId)]);
-    const activeCaughtCount = countActiveSpecies(caughtSpeciesIds);
-    const starterIds = enabledStarterSpeciesIds();
-    const starterSet = new Set(starterIds);
-    const hatchedStarterCount = uniqueNumberList(pokedexSpeciesIds).filter((speciesId) => starterSet.has(speciesId)).length;
-    const caughtStarterCount = caughtSpeciesIds.filter((speciesId) => starterSet.has(speciesId)).length;
-    const hatchedGenerationCount = new Set(uniqueNumberList(pokedexSpeciesIds).map(speciesGeneration).filter((generation) => enabledGenerations.includes(generation))).size;
-    const caughtGenerationCount = new Set(caughtSpeciesIds.map(speciesGeneration).filter((generation) => enabledGenerations.includes(generation))).size;
-    const shinySeen = Object.values(state.pokedex || {}).reduce((total, entry) => total + Number(entry.shinySeen || 0), 0);
-    const shinySpeciesSeen = Object.values(state.pokedex || {}).filter((entry) => Number(entry.shinySeen || 0) > 0).length;
-    const shinyCaughtSpecies = uniqueNumberList([...(state.caughtShinySpeciesIds || []), ...(state.pc || []).filter((pokemon) => pokemon?.shiny).map((pokemon) => pokemon.speciesId)]).length;
-    const shinyPcCount = (state.pc || []).filter((pokemon) => pokemon.shiny).length;
-    const caughtBallIds = new Set(uniqueStringList([...(state.caughtBallIds || []), ...(state.pc || []).map((pokemon) => pokemon?.caughtWith)]));
-    const registry = shopItemRegistry();
-    const plateDefinitions = registry && typeof registry.plates === "function" ? registry.plates() : [];
-    const ownedPlateCount = plateDefinitions.filter((item) => itemCount(item.id) > 0).length;
-    const plateTarget = plateDefinitions.length || 17;
-    const winsByStat = state.statistics?.competitionWinsByStat || {};
-    const wonStatCount = CONTEST_STATS.filter((stat) => Number(winsByStat[stat] || 0) > 0).length;
-    const pcCount = (state.pc || []).length;
-    const favouriteCount = (state.pc || []).filter((pokemon) => pokemon.favorite).length;
-    const highestLevel = (state.pc || []).reduce((level, pokemon) => Math.max(level, Number(pokemon.level || 0)), state.encounter?.level || 0);
-    const pendingActiveTarget = 999999;
-    const activeQuarter = activeTotal ? Math.max(1, Math.ceil(activeTotal * 0.25)) : pendingActiveTarget;
-    const activeHalf = activeTotal ? Math.max(1, Math.ceil(activeTotal * 0.5)) : pendingActiveTarget;
-    const activeThreeQuarter = activeTotal ? Math.max(1, Math.ceil(activeTotal * 0.75)) : pendingActiveTarget;
-    const activeAll = activeTotal || pendingActiveTarget;
-    return [
-      achievement("registered", "First steps", "Registration card", "Open a hatchery save.", state.player ? 1 : 0),
-      achievement("first-egg-hatched", "First steps", "Shell hello", "Hatch your first egg.", state.statistics.eggsHatched, 1),
-      achievement("first-catch", "First steps", "First settled friend", "Catch your first Pokémon.", state.statistics.pokemonCaught, 1),
-      achievement("first-release", "First steps", "Gentle goodbye", "Release a visiting hatchling safely.", state.statistics.pokemonReleased, 1),
-      achievement("first-partner", "First steps", "Watchful partner", "Set a Pokémon as your partner.", state.partnerUid ? 1 : 0),
-      achievement("first-favourite", "First steps", "Little gold star", "Mark any PC Pokémon as a favourite.", favouriteCount, 1),
-      achievement("showcase-six", "First steps", "Six ready", "Choose a full six-Pokémon showcase team.", state.team.length, 6),
-      achievement("backup-safe", "First steps", "Backup-minded", "Have a save that can use export and import tools.", state.player ? 1 : 0),
-      ...achievementsForThresholds("hatch", "Hatching", "Hatch", "Hatch eggs until the counter reaches", state.statistics.eggsHatched, [5, 10, 25, 50, 100, 250, 500]),
-      achievement("early-clutch", "Hatching", "First clutch complete", "Hatch through the accelerated first clutch.", state.statistics.eggsHatched, 10),
-      achievement("hatch-each-generation", "Hatching", "Every invited region says hello", "Hatch at least one Pokémon from each generation chosen for this save.", hatchedGenerationCount, enabledGenerations.length),
-      achievement("pokedex-quarter", "Pokédex", "Quarter journal", "Meet 25% of the Pokémon available in this save's chosen generations.", activePokedexCount, activeQuarter),
-      achievement("pokedex-half", "Pokédex", "Half-filled journal", "Meet 50% of the Pokémon available in this save's chosen generations.", activePokedexCount, activeHalf),
-      achievement("pokedex-three-quarter", "Pokédex", "Thick field journal", "Meet 75% of the Pokémon available in this save's chosen generations.", activePokedexCount, activeThreeQuarter),
-      achievement("pokedex-complete-active", "Pokédex", "Regional journal complete", "Meet every Pokémon available in this save's chosen generations. Disabled generations do not count.", activePokedexCount, activeAll),
-      ...achievementsForThresholds("catch", "Catching", "Catch", "Catch Pokémon until the counter reaches", state.statistics.pokemonCaught, [5, 10, 25, 50, 100, 250, 500]),
-      achievement("catch-each-generation", "Catching", "Every invited region joins", "Catch at least one Pokémon from each generation chosen for this save.", caughtGenerationCount, enabledGenerations.length),
-      achievement("caught-species-25", "Catching", "Twenty-five settled species", "Catch 25 different species available in this save.", activeCaughtCount, Math.min(25, activeAll)),
-      achievement("caught-species-100", "Catching", "Hundred-species PC", "Catch 100 different species available in this save.", activeCaughtCount, Math.min(100, activeAll)),
-      achievement("caught-quarter", "Catching", "Quarter caught", "Catch 25% of the Pokémon available in this save's chosen generations.", activeCaughtCount, activeQuarter),
-      achievement("caught-half", "Catching", "Half caught", "Catch 50% of the Pokémon available in this save's chosen generations.", activeCaughtCount, activeHalf),
-      achievement("caught-all-active", "Catching", "Catch them all — your way", "Catch every Pokémon available in this save's chosen generations. Disabled generations do not count.", activeCaughtCount, activeAll),
-      achievement("starter-hatch-one", "Starters", "Starter spark", "Hatch any starter Pokémon.", hatchedStarterCount, 1),
-      achievement("starter-catch-one", "Starters", "Starter settled", "Catch any starter Pokémon.", caughtStarterCount, 1),
-      achievement("starter-hatch-active", "Starters", "Starter clutch complete", "Hatch every starter from the generations chosen for this save.", hatchedStarterCount, starterIds.length),
-      achievement("starter-catch-active", "Starters", "Starter shelf complete", "Catch every starter from the generations chosen for this save.", caughtStarterCount, starterIds.length),
-      achievement("shiny-seen-one", "Shiny surprises", "First sparkle", "Meet a shiny Pokémon.", shinySeen, 1),
-      achievement("shiny-caught-one", "Shiny surprises", "Sparkle settled", "Catch a shiny Pokémon.", shinyCaughtSpecies, 1),
-      achievement("shiny-seen-three", "Shiny surprises", "Three glimmers", "Meet three shiny Pokémon.", shinySeen, 3),
-      achievement("shiny-caught-five", "Shiny surprises", "Five bright friends", "Catch five different shiny species.", shinyCaughtSpecies, 5),
-      achievement("shiny-pc-six", "Shiny surprises", "Glittering six", "Keep six shiny Pokémon in the PC.", shinyPcCount, 6),
-      achievement("shiny-species-ten", "Shiny surprises", "Shiny field notes", "Record ten shiny species in the Pokédex.", shinySpeciesSeen, 10),
-      achievement("ball-poke", "Poké Balls", "Classic click", "Catch something with a Poké Ball.", caughtBallIds.has("poke-ball") ? 1 : 0),
-      achievement("ball-premier", "Poké Balls", "Premier click", "Catch something with a Premier Ball.", caughtBallIds.has("premier-ball") ? 1 : 0),
-      achievement("ball-great", "Poké Balls", "Great click", "Catch something with a Great Ball.", caughtBallIds.has("great-ball") ? 1 : 0),
-      achievement("ball-ultra", "Poké Balls", "Ultra click", "Catch something with an Ultra Ball.", caughtBallIds.has("ultra-ball") ? 1 : 0),
-      achievement("ball-master", "Poké Balls", "Perfect purple click", "Catch something with a Master Ball.", caughtBallIds.has("master-ball") ? 1 : 0),
-      achievement("buy-pokeballs-10", "Poké Balls", "Ten-ball habit", "Buy ten ordinary Poké Balls.", state.statistics.pokeBallsBought, 10),
-      achievement("buy-pokeballs-50", "Poké Balls", "Stocked shelf", "Buy fifty ordinary Poké Balls.", state.statistics.pokeBallsBought, 50),
-      achievement("premier-owned", "Poké Balls", "White surprise", "Own a Premier Ball.", state.inventory["premier-ball"] || caughtBallIds.has("premier-ball") ? 1 : 0),
-      achievement("master-found", "Poké Balls", "Parcel miracle", "Find a Master Ball in a daily parcel.", state.statistics.masterBallsFound, 1),
-      achievement("incubator-two", "Shop and bag", "Second cushion", "Unlock two incubators.", incubatorCapacity(), 2),
-      achievement("incubator-three", "Shop and bag", "Busy nursery", "Unlock three incubators.", incubatorCapacity(), 3),
-      achievement("incubator-five", "Shop and bag", "Five warm lights", "Unlock the maximum five incubators.", incubatorCapacity(), 5),
-      achievement("magmarizer-owned", "Shop and bag", "Warm machine", "Own the Magmarizer.", hasItem("magmarizer") ? 1 : 0),
-      achievement("shiny-charm-owned", "Shop and bag", "Bright trinket", "Own a Shiny Charm.", hasItem("shiny-charm") || activeShinyCharmCharges() > 0 ? 1 : 0),
-      achievement("shiny-charm-used", "Shop and bag", "Charm bell", "Use a Shiny Charm.", state.statistics.shinyCharmUses || 0, 1),
-      achievement("plate-one", "Shop and bag", "First plate", "Own any Arceus plate.", ownedPlateCount, 1),
-      achievement("plate-five", "Shop and bag", "Plate drawer", "Own five Arceus plates.", ownedPlateCount, 5),
-      achievement("plate-all", "Shop and bag", "Plate cabinet complete", "Own every Arceus plate.", ownedPlateCount, plateTarget),
-      achievement("pc-six", "PC room", "A full little room", "Keep six Pokémon in the PC.", pcCount, 6),
-      achievement("pc-thirty", "PC room", "Thirty friends", "Keep thirty Pokémon in the PC.", pcCount, 30),
-      achievement("pc-hundred", "PC room", "Hundred-card PC", "Keep one hundred Pokémon in the PC.", pcCount, 100),
-      achievement("favorites-ten", "PC room", "Favourite shelf", "Mark ten Pokémon as favourites.", favouriteCount, 10),
-      achievement("level-fifty", "PC room", "Strong friend", "Raise any Pokémon to level 50.", highestLevel, 50),
-      achievement("level-hundred", "PC room", "Level 100 legend", "Raise any Pokémon to level 100.", highestLevel, 100),
-      achievement("contest-one", "Competitions", "First ribbon day", "Win one showcase.", state.statistics.competitionsWon, 1),
-      achievement("contest-five", "Competitions", "Showcase regular", "Win five showcases.", state.statistics.competitionsWon, 5),
-      achievement("contest-ten", "Competitions", "Judge favourite", "Win ten showcases.", state.statistics.competitionsWon, 10),
-      achievement("contest-twenty-five", "Competitions", "Showcase champion", "Win twenty-five showcases.", state.statistics.competitionsWon, 25),
-      achievement("contest-all-stats", "Competitions", "All-round team", "Win at least one showcase in every stat category.", wonStatCount, CONTEST_STATS.length),
-      achievement("streak-three", "Daily rhythm", "Three-day nest", "Reach a three-day login streak.", state.streak, 3),
-      achievement("streak-seven", "Daily rhythm", "One-week keeper", "Reach a seven-day login streak.", state.streak, 7),
-      achievement("streak-ten", "Daily rhythm", "Parcel watcher", "Reach a ten-day login streak.", state.streak, 10),
-      achievement("streak-thirty", "Daily rhythm", "Month-long keeper", "Reach a thirty-day login streak.", state.streak, 30)
-    ];
-  }
-
-  function renderAchievementCard(entry) {
-    const percent = Math.min(100, (entry.current / Math.max(1, entry.target)) * 100);
-    const cardClasses = [
-      "achievement-card",
-      "paper-panel",
-      entry.unlocked ? "is-unlocked" : "is-locked",
-      entry.claimable ? "is-claimable" : "",
-      entry.claimed ? "is-claimed" : ""
-    ].filter(Boolean).join(" ");
-    const mark = entry.claimed ? "✓" : entry.claimable ? "₽" : entry.unlocked ? "!" : "◇";
-    const rewardAction = entry.claimable
-      ? `<button class="button achievement-claim-button" type="button" data-action="claim-achievement" data-achievement-id="${escapeHtml(entry.id)}">Claim ${formatMoney(entry.reward)}</button>`
-      : `<span class="achievement-reward-state ${entry.claimed ? "is-claimed" : ""}">${entry.claimed ? "Reward claimed" : entry.unlocked ? "Ready" : "Locked"}</span>`;
-    return `<article class="${cardClasses}"><span class="achievement-mark">${mark}</span><div><p class="eyebrow">${escapeHtml(entry.category)}</p><h2>${escapeHtml(entry.title)}</h2><p>${escapeHtml(entry.description)}</p><div class="achievement-progress"><span style="width:${percent.toFixed(2)}%"></span></div><small>${entry.current.toLocaleString()} / ${entry.target.toLocaleString()}</small><div class="achievement-reward-row"><span class="achievement-reward">Reward ${formatMoney(entry.reward)}</span>${rewardAction}</div></div></article>`;
-  }
-
-  function claimAchievementReward(achievementId) {
-    const entry = allAchievements().find((achievementEntry) => achievementEntry.id === achievementId);
-    if (!entry) {
-      toast("That achievement is not on this wall.");
-      return;
-    }
-    if (!entry.unlocked) {
-      toast("That reward is still locked.");
-      return;
-    }
-    if (entry.claimed) {
-      toast("That achievement reward has already been claimed.");
-      return;
-    }
-    state.claimedAchievementIds = uniqueStringList([...(state.claimedAchievementIds || []), entry.id]);
-    state.money += entry.reward;
-    state.statistics.achievementRewardsClaimed = (state.statistics.achievementRewardsClaimed || 0) + entry.reward;
-    saveState();
-    if (activeTab === "achievements") renderAchievements();
-    toast(`${entry.title} reward claimed: +${formatMoney(entry.reward)}.`);
-  }
-
-  function claimAllAchievementRewards() {
-    const entries = allAchievements().filter((entry) => entry.claimable);
-    if (!entries.length) {
-      toast("No achievement rewards are waiting right now.");
-      return;
-    }
-    const total = entries.reduce((sum, entry) => sum + entry.reward, 0);
-    state.claimedAchievementIds = uniqueStringList([...(state.claimedAchievementIds || []), ...entries.map((entry) => entry.id)]);
-    state.money += total;
-    state.statistics.achievementRewardsClaimed = (state.statistics.achievementRewardsClaimed || 0) + total;
-    saveState();
-    if (activeTab === "achievements") renderAchievements();
-    toast(`${entries.length} achievement reward${entries.length === 1 ? "" : "s"} claimed: +${formatMoney(total)}.`);
-  }
-
-  function renderAchievements() {
-    const activeTotalKnown = activeSpeciesTarget() > 0;
-    const entries = allAchievements();
-    const unlocked = entries.filter((entry) => entry.unlocked).length;
-    const claimed = entries.filter((entry) => entry.claimed).length;
-    const claimable = entries.filter((entry) => entry.claimable);
-    const pendingReward = claimable.reduce((sum, entry) => sum + entry.reward, 0);
-    const grouped = entries.reduce((groups, entry) => {
-      if (!groups[entry.category]) groups[entry.category] = [];
-      groups[entry.category].push(entry);
-      return groups;
-    }, {});
-    const rewardPanel = `<article class="paper-panel achievement-reward-panel"><div><p class="eyebrow">Reward chest</p><h2>${formatMoney(pendingReward)} waiting</h2><p>${claimable.length ? `${claimable.length} unlocked achievement reward${claimable.length === 1 ? "" : "s"} can be claimed.` : "No achievement rewards are waiting right now."}</p></div><button class="button button-primary" type="button" data-action="claim-all-achievements" ${claimable.length ? "" : "disabled"}>Claim all rewards</button></article>`;
-    const groupsHtml = Object.entries(grouped).map(([category, categoryEntries]) => `<section class="achievement-group"><h2>${escapeHtml(category)}</h2><div class="achievement-grid">${categoryEntries.map(renderAchievementCard).join("")}</div></section>`).join("");
-    view.innerHTML = `<section class="archive-page achievement-page">${pageHeader("Long-term records", "Achievements", "A wall of milestones for hatching, catching, collecting, contests, daily visits, and shop progress. Each one pays a Pokédollar reward once claimed, and completion goals use only the generations chosen for this save.", `<div class="summary-stamps"><span><b>${unlocked}</b> unlocked</span><span><b>${claimed}</b> claimed</span><span><b>${activeTotalKnown ? activeSpeciesTarget().toLocaleString() : "…"}</b> active species</span></div>`)}${rewardPanel}${!activeTotalKnown ? `<article class="paper-panel achievement-note"><p class="eyebrow">Counting chosen regions</p><p>The achievement wall is checking the species list for your enabled generations. Region-wide goals will settle in shortly.</p></article>` : ""}${groupsHtml}</section>`;
-    if (!activeTotalKnown) {
-      getEnabledSpeciesReferences().then(() => {
-        if (activeTab === "achievements") renderAchievements();
-      }).catch(() => {});
-    }
-  }
-
   function renderSettings() {
-    const themes = THEME_TEMPLATES.map(([value, label, description]) => `<label class="theme-card" data-theme-preview="${value}"><input type="radio" name="theme" value="${value}" ${state.settings.theme === value ? "checked" : ""} /><span class="theme-swatch"></span><span class="theme-card-copy"><b>${label}</b><small>${description}</small><em>easy to read</em></span></label>`).join("");
+    const themes = THEME_TEMPLATES.map(([value, label, description]) => `<label class="theme-card ${state.settings.theme === value ? "is-selected" : ""}" data-theme-preview="${value}"><input type="radio" name="theme" value="${value}" ${state.settings.theme === value ? "checked" : ""} /><span class="theme-swatch"></span><span class="theme-card-copy"><b>${label}</b><small>${description}</small><em>easy to read</em></span></label>`).join("");
+    const selectedPerformance = normaliseInterfacePerformance(state.settings.interfacePerformance);
+    const automaticResult = AUTOMATIC_LOW_POWER_INTERFACE ? "currently chooses low power" : "currently chooses standard";
+    const performanceOptions = INTERFACE_PERFORMANCE_OPTIONS.map((option) => {
+      const selected = selectedPerformance === option.value;
+      const detail = option.value === "automatic" ? `${option.description} This browser ${automaticResult}.` : option.description;
+      return `<label class="check-card performance-option ${selected ? "is-selected" : ""}"><input type="radio" name="interface_performance" value="${option.value}" ${selected ? "checked" : ""} /><span><b>${option.label}</b><small>${detail}</small></span></label>`;
+    }).join("");
     const devToolsPanel = renderDevSettingsPanel();
     view.innerHTML = `
       <section class="archive-page settings-page">
@@ -3133,6 +2787,9 @@ ${renderFieldNoteAside({
           </article>
           <article class="paper-panel settings-section settings-wide">
             <p class="eyebrow">Hatchery look</p><h2>Theme</h2><p class="settings-copy">Choose a colour template. Each one is kept readable across the hatchery before it reaches this list.</p><div class="theme-grid">${themes}</div>
+          </article>
+          <article class="paper-panel settings-section settings-wide">
+            <p class="eyebrow">Browser workload</p><h2>Interface performance</h2><p class="settings-copy">Choose how much visual and background work this browser should do. The preference is stored in this save.</p><div class="check-grid performance-grid">${performanceOptions}</div>
           </article>
           ${devToolsPanel}
           <div class="settings-actions"><p id="settings-error" class="form-error"></p><button class="button button-primary" type="submit">Save settings</button></div>
@@ -3151,8 +2808,7 @@ ${renderFieldNoteAside({
   }
 
   function render() {
-    if (syncMysteriousItemUnlocks(true)) saveState();
-    document.querySelectorAll("[data-tab]").forEach((button) => {
+    navButtons.forEach((button) => {
       button.classList.toggle("is-active", button.dataset.tab === activeTab);
     });
     if (activeTab === "home") renderHome();
@@ -3160,20 +2816,22 @@ ${renderFieldNoteAside({
     else if (activeTab === "pc") renderPc();
     else if (activeTab === "bag") renderBag();
     else if (activeTab === "competitions") renderCompetitions();
-    else if (activeTab === "achievements") renderAchievements();
     else if (activeTab === "mart") renderMart();
     else if (activeTab === "settings") renderSettings();
     else renderPlaceholder(activeTab);
     updateHeader();
-    flushMysteriousUnlockToasts();
     animateRenderedView();
     syncIdleCryTimer();
-    view.focus({ preventScroll: true });
+    if (focusViewAfterRender) {
+      view.focus({ preventScroll: true });
+      focusViewAfterRender = false;
+    }
   }
 
   function switchTab(tab) {
     closeModal();
     activeTab = tab;
+    focusViewAfterRender = true;
     mobileNav.hidden = true;
     menuButton.setAttribute("aria-expanded", "false");
     render();
@@ -3185,33 +2843,41 @@ ${renderFieldNoteAside({
     return tomorrow - new Date();
   }
 
-  function startClock() {
-    window.clearInterval(clockTimer);
-    clockTimer = window.setInterval(() => {
-      if (state.player && state.lastLoginDate !== localDateKey()) applyDailyReward();
+  function runClockTick(forceMaintenance = false) {
+    if (document.hidden && !forceMaintenance) return;
+    const now = Date.now();
+    if (state.player && state.lastLoginDate !== localDateKey()) applyDailyReward();
+    if (forceMaintenance || now - lastMaintenanceAt >= MAINTENANCE_INTERVAL) {
+      lastMaintenanceAt = now;
       ensureAllIncubators();
       settleReturnedExpeditions(true);
-      incubatorSlots().forEach((slot, index) => {
-        if (eggNeedsPreparedEncounterForSlot(slot)) prepareEggForSlot(slot, index);
-        else if (triggerSnakeEggEventForSlot(index)) return;
-        if (slot.egg && !eggNeedsPreparedEncounterForSlot(slot) && Date.now() >= slot.egg.hatchAt) hatchEggForSlot(index);
-      });
-      const activeChanged = accrueEncounterExperience();
-      if (activeChanged && activeTab === "home") {
-        render();
-        return;
-      }
-      if (activeTab !== "home") return;
-      const hatchCountdown = document.getElementById("hatch-countdown");
-      const giftCountdown = document.getElementById("gift-countdown");
-      const eggProgress = document.getElementById("egg-progress");
-      if (hatchCountdown) hatchCountdown.textContent = state.egg ? (eggNeedsPreparedEncounter() ? "syncing" : "incubating") : "empty";
-      if (giftCountdown) giftCountdown.textContent = formatDuration(millisecondsUntilTomorrow());
-      if (eggProgress && state.egg) {
-        const hatchDuration = Math.max(1, state.egg.hatchDuration || state.egg.hatchAt - state.egg.laidAt);
-        eggProgress.style.width = eggNeedsPreparedEncounter() ? "0%" : `${Math.min(100, ((Date.now() - state.egg.laidAt) / hatchDuration) * 100)}%`;
-      }
-    }, 1000);
+    }
+    incubatorSlots().forEach((slot, index) => {
+      if (eggNeedsPreparedEncounterForSlot(slot)) prepareEggForSlot(slot, index);
+      if (slot.egg && !eggNeedsPreparedEncounterForSlot(slot) && now >= slot.egg.hatchAt) hatchEggForSlot(index);
+    });
+    const activeChanged = accrueEncounterExperience();
+    if (activeChanged && activeTab === "home") {
+      render();
+      return;
+    }
+    if (activeTab === "competitions") { updateCompetitionCooldownDisplay(); return; }
+    if (activeTab !== "home") return;
+    const hatchCountdown = document.getElementById("hatch-countdown");
+    const giftCountdown = document.getElementById("gift-countdown");
+    const eggProgress = document.getElementById("egg-progress");
+    if (hatchCountdown && state.egg) hatchCountdown.textContent = "incubating";
+    if (giftCountdown) giftCountdown.textContent = formatDuration(millisecondsUntilTomorrow());
+    if (eggProgress && state.egg) {
+      const hatchDuration = Math.max(1, state.egg.hatchDuration || state.egg.hatchAt - state.egg.laidAt);
+      eggProgress.style.width = eggNeedsPreparedEncounter() ? "0%" : `${Math.min(100, ((now - state.egg.laidAt) / hatchDuration) * 100)}%`;
+    }
+  }
+
+  function startClock() {
+    window.clearInterval(clockTimer);
+    runClockTick(true);
+    clockTimer = window.setInterval(runClockTick, 1000);
   }
 
   function showOnboarding() {
@@ -3228,7 +2894,7 @@ ${renderFieldNoteAside({
             <fieldset class="field option-field"><legend>Player gender</legend><div class="check-grid gender-grid"><label class="check-card"><input type="radio" name="gender" value="boy" required /><span><b>Boy</b><small>he/him field card</small></span></label><label class="check-card"><input type="radio" name="gender" value="girl" required /><span><b>Girl</b><small>she/her field card</small></span></label><label class="check-card"><input type="radio" name="gender" value="other" required /><span><b>Other</b><small>they/them field card</small></span></label></div></fieldset>
             <fieldset class="field option-field"><legend>Egg regions</legend><p class="settings-copy">Choose which generations can send eggs to your hatchery. This becomes part of the save.</p><div class="check-grid">${generationSignupCards()}</div></fieldset>
             <p id="onboarding-error" class="form-error" role="alert"></p>
-            <div class="button-row"><button class="button button-primary" type="submit">Receive your first egg</button></div>
+            <div class="button-row"><button class="button button-primary" type="submit">Receive your free first egg</button></div>
           </form>
         </section>
       </div>`;
@@ -3262,16 +2928,18 @@ ${renderFieldNoteAside({
     state.player = { name, dob, gender, createdAt: new Date().toISOString() };
     state.settings.generations = generations;
     ensureAllIncubators();
+    grantOpeningEggIfNeeded();
     applyDailyReward();
     saveState();
     modalRoot.innerHTML = "";
     render();
-    toast(`Welcome, ${name}. Your first egg is warm and waiting.`);
+    toast(`Welcome, ${name}. Your first egg is free, warm, and waiting.`);
   }
 
   function closeModal() {
     clearCatchChallengeTimer();
     catchChallenge = null;
+    pendingImportSave = null;
     modalRoot.innerHTML = "";
   }
 
@@ -3285,7 +2953,7 @@ ${renderFieldNoteAside({
     const availableBalls = ballOrder.filter((name) => Number(state.inventory[name] || 0) > 0);
     const balls = availableBalls.length ? availableBalls.map((name) => {
       const count = state.inventory[name] || 0;
-      return `<button class="ball-choice" type="button" data-action="throw-ball" data-ball="${name}">${ballMark(name)}<span><strong>${displayBallName(name)}</strong><small>${count} in bag</small></span></button>`;
+      return `<button class="ball-choice" type="button" data-action="throw-ball" data-ball="${escapeHtml(name)}">${ballMark(name)}<span><strong>${displayBallName(name)}</strong><small>${count} in bag</small></span></button>`;
     }).join("") : `<p class="no-results">No Poké Balls are tucked away right now.</p>`;
     modalRoot.innerHTML = `
       <div class="modal-backdrop">
@@ -3298,70 +2966,19 @@ ${renderFieldNoteAside({
       </div>`;
   }
 
-  function clamp(value, minimum, maximum) {
-    return Math.min(maximum, Math.max(minimum, value));
-  }
-
-  function catchDifficulty(pokemon) {
-    const captureRate = clamp(Number(pokemon?.captureRate || 45), 3, 255);
-    const baseStatTotal = clamp(Number(pokemon?.baseStatTotal || 350), 180, 720);
-    const rateDifficulty = 1 - ((captureRate - 3) / 252);
-    const statDifficulty = (baseStatTotal - 180) / 540;
-    return clamp((rateDifficulty * 0.72) + (statDifficulty * 0.28), 0, 1);
-  }
-
-  function rhythmProfile(ball) {
-    return BALL_CATCH_PROFILES[ball] || BALL_CATCH_PROFILES["poke-ball"];
-  }
-
-  function rhythmTargetCount(pokemon, ball) {
-    const profile = rhythmProfile(ball);
-    const difficulty = catchDifficulty(pokemon);
-    const baseCount = 2 + Math.ceil(difficulty * 3);
-    return clamp(Math.ceil(baseCount * profile.taps), 2, 5);
-  }
-
-  function rhythmDuration(pokemon, ball, index) {
-    const profile = rhythmProfile(ball);
-    const difficulty = catchDifficulty(pokemon);
-    const drift = 1 + (((index % 3) - 1) * 0.04);
-    return Math.round(clamp((1450 - (difficulty * 520)) * profile.speed * drift, 650, 2600));
-  }
-
-  function rhythmWindow(pokemon, ball) {
-    const profile = rhythmProfile(ball);
-    const difficulty = catchDifficulty(pokemon);
-    return clamp((0.19 - (difficulty * 0.055)) * profile.window, 0.12, 0.38);
-  }
-
-  function rhythmSuccessBounds(windowSize) {
-    const outer = clamp(CATCH_RING_SUCCESS_OUTER_SCALE + (windowSize * 0.16), 1.1, 1.22);
-    const inner = clamp(CATCH_RING_SUCCESS_INNER_SCALE - (windowSize * 0.06), 0.68, 0.74);
-    return { inner, outer };
-  }
-
-  function rhythmQuality(elapsed, duration, windowSize) {
-    const progress = clamp(elapsed / duration, 0, 1);
-    const scale = CATCH_RING_START_SCALE + ((CATCH_RING_END_SCALE - CATCH_RING_START_SCALE) * progress);
-    const bounds = rhythmSuccessBounds(windowSize);
-    if (scale <= bounds.outer && scale >= bounds.inner) {
-      const middle = (bounds.outer + bounds.inner) / 2;
-      const halfRange = (bounds.outer - bounds.inner) / 2;
-      const distance = Math.abs(scale - middle);
-      return { hit: true, label: distance <= halfRange * 0.32 ? "perfect" : "good" };
-    }
-    return { hit: false, label: scale > bounds.outer ? "early" : "late" };
+  function prefersReducedMotion() {
+    return window.matchMedia?.("(prefers-reduced-motion: reduce)").matches === true;
   }
 
   function buildCatchChallenge(pokemon, ball) {
-    const targetCount = rhythmTargetCount(pokemon, ball);
-    const windowSize = rhythmWindow(pokemon, ball);
+    const targetCount = catchEngine.targetCount(pokemon, ball);
+    const windowSize = catchEngine.windowSize(pokemon, ball);
     const targets = Array.from({ length: targetCount }, (_, index) => ({
       id: makeId(),
       index,
       x: 22 + randomInt(0, 57),
       y: 24 + randomInt(0, 51),
-      duration: rhythmDuration(pokemon, ball, index),
+      duration: catchEngine.duration(pokemon, ball, index),
       window: windowSize,
       state: "waiting",
       quality: "",
@@ -3374,7 +2991,9 @@ ${renderFieldNoteAside({
       activeIndex: 0,
       hits: 0,
       misses: 0,
-      finished: false
+      finished: false,
+      reducedMotion: prefersReducedMotion() || LOW_POWER_INTERFACE,
+      responseWindow: catchEngine.responseWindow(pokemon, ball)
     };
   }
 
@@ -3390,9 +3009,9 @@ ${renderFieldNoteAside({
     const activeTarget = catchChallenge.targets[catchChallenge.activeIndex];
     const targetMarkup = activeTarget ? (() => {
       const isActive = activeTarget.state === "active";
-      const className = ["rhythm-target", `is-${activeTarget.state}`, activeTarget.quality ? `quality-${activeTarget.quality}` : ""].filter(Boolean).join(" ");
+      const className = ["rhythm-target", `is-${activeTarget.state}`, catchChallenge.reducedMotion ? "is-reduced-motion" : "", activeTarget.quality ? `quality-${activeTarget.quality}` : ""].filter(Boolean).join(" ");
       const statusLabel = activeTarget.state === "hit" ? "hit" : activeTarget.state === "miss" ? "missed" : isActive ? "tap now" : "waiting";
-      const bounds = rhythmSuccessBounds(activeTarget.window);
+      const bounds = catchEngine.successBounds(activeTarget.window);
       const style = [
         `--target-x:${activeTarget.x}%`,
         `--target-y:${activeTarget.y}%`,
@@ -3400,19 +3019,19 @@ ${renderFieldNoteAside({
         `--success-outer-scale:${bounds.outer}`,
         `--success-inner-scale:${bounds.inner}`
       ].join(";");
-      return `<button class="${className}" type="button" data-action="catch-target" data-target-id="${activeTarget.id}" style="${style}" ${isActive ? "" : "disabled"} aria-label="Catch rhythm target ${activeTarget.index + 1}, ${statusLabel}">
+      return `<button class="${className}" type="button" data-action="catch-target" data-target-id="${escapeHtml(activeTarget.id)}" style="${style}" ${isActive ? "" : "disabled"} aria-label="Catch rhythm target ${activeTarget.index + 1}, ${statusLabel}">
         <span class="rhythm-success-zone" aria-hidden="true"></span>
         <span class="rhythm-inner-limit" aria-hidden="true"></span>
         <span class="rhythm-ring" aria-hidden="true"></span>
         <span class="rhythm-dot" aria-hidden="true"></span>
-        <span class="rhythm-status" aria-hidden="true">${activeTarget.state === "hit" ? "✓" : activeTarget.state === "miss" ? "×" : activeTarget.index + 1}</span>
+        <span class="rhythm-status" aria-hidden="true">${activeTarget.state === "hit" ? "✓" : activeTarget.state === "miss" ? "×" : catchChallenge.reducedMotion && isActive ? "tap now" : activeTarget.index + 1}</span>
       </button>`;
     })() : "";
     modalRoot.innerHTML = `
       <div class="modal-backdrop rhythm-backdrop">
         <section class="modal paper-panel rhythm-modal" role="dialog" aria-modal="true" aria-labelledby="rhythm-title">
           <p class="eyebrow">${escapeHtml(ballName)} throw</p><h2 id="rhythm-title">Match the rings</h2>
-          <p class="modal-intro">One dot appears at a time. Tap while the moving ring is inside the marked safe zone. Miss even one wobble and the ball pops open.</p>
+          <p class="modal-intro">${catchChallenge.reducedMotion ? "One target appears at a time. Wait for the clear ‘tap now’ prompt, then press the target before it closes." : "One dot appears at a time. Tap while the moving ring is inside the marked safe zone. One imperfect wobble is allowed."}</p>
           <div class="rhythm-stage" aria-live="polite">${targetMarkup}</div>
           <div class="rhythm-progress" aria-label="Catch rhythm progress">
             ${catchChallenge.targets.map((target, index) => `<span class="${target.state === "hit" ? "is-hit" : target.state === "miss" ? "is-miss" : index === catchChallenge.activeIndex ? "is-active" : ""}"></span>`).join("")}
@@ -3420,6 +3039,13 @@ ${renderFieldNoteAside({
           <p class="passive-note">${activeTarget ? `Target ${activeTarget.index + 1} of ${catchChallenge.targets.length}` : "One last shake…"}</p>
         </section>
       </div>`;
+  }
+
+  function focusActiveCatchTarget() {
+    window.requestAnimationFrame(() => {
+      const targetButton = modalRoot.querySelector('[data-action="catch-target"]:not([disabled])');
+      if (targetButton instanceof HTMLElement) targetButton.focus({ preventScroll: true });
+    });
   }
 
   function activateCatchTarget() {
@@ -3430,9 +3056,26 @@ ${renderFieldNoteAside({
       resolveCatchChallenge();
       return;
     }
+    if (catchChallenge.reducedMotion) {
+      target.state = "waiting";
+      renderCatchChallenge();
+      const targetId = target.id;
+      catchChallengeTimer = window.setTimeout(() => {
+        if (!catchChallenge || catchChallenge.finished) return;
+        const current = catchChallenge.targets[catchChallenge.activeIndex];
+        if (!current || current.id !== targetId) return;
+        current.state = "active";
+        current.startedAt = performance.now();
+        renderCatchChallenge();
+        focusActiveCatchTarget();
+        catchChallengeTimer = window.setTimeout(() => missCatchTarget(targetId), catchChallenge.responseWindow);
+      }, randomInt(650, 1250));
+      return;
+    }
     target.state = "active";
     target.startedAt = performance.now();
     renderCatchChallenge();
+    focusActiveCatchTarget();
     catchChallengeTimer = window.setTimeout(() => missCatchTarget(target.id), target.duration + 60);
   }
 
@@ -3443,7 +3086,7 @@ ${renderFieldNoteAside({
       resolveCatchChallenge();
       return;
     }
-    window.setTimeout(activateCatchTarget, 260);
+    window.setTimeout(activateCatchTarget, catchChallenge.reducedMotion ? 480 : 260);
   }
 
   function missCatchTarget(targetId) {
@@ -3462,7 +3105,9 @@ ${renderFieldNoteAside({
     const target = catchChallenge.targets[catchChallenge.activeIndex];
     if (!target || target.id !== targetId || target.state !== "active") return;
     clearCatchChallengeTimer();
-    const quality = rhythmQuality(performance.now() - target.startedAt, target.duration, target.window);
+    const quality = catchChallenge.reducedMotion
+      ? { hit: true, label: "perfect" }
+      : catchEngine.quality(performance.now() - target.startedAt, target.duration, target.window);
     target.state = quality.hit ? "hit" : "miss";
     target.quality = quality.label;
     if (quality.hit) catchChallenge.hits += 1;
@@ -3476,17 +3121,15 @@ ${renderFieldNoteAside({
     pokemon.ot = state.player.name;
     pokemon.caughtWith = ball;
     state.pc.push(pokemon);
-    recordCaughtPokemon(pokemon, ball);
-    state.encounter = null;
+    const autoPlacedEggs = clearActiveEncounter();
     state.statistics.pokemonCaught += 1;
     shopItems = null;
-    ensureEgg();
     saveState();
     modalRoot.innerHTML = `
       <div class="modal-backdrop"><section class="modal paper-panel catch-result" role="dialog" aria-modal="true" aria-labelledby="catch-title">
         <p class="eyebrow">${escapeHtml(eyebrow)}</p><h2 id="catch-title">${escapeHtml(heading)}</h2>
         <img class="result-sprite" src="${escapeHtml(pokemon.sprite)}" alt="${escapeHtml(pokemon.displayName)}" />
-        <p class="modal-intro">${escapeHtml(pokemon.displayName)} is safe in the PC room. The incubator cushion is ready for the next egg.</p>
+        <p class="modal-intro">${escapeHtml(pokemon.displayName)} is safe in the PC room. ${autoPlacedEggs > 0 ? "A prepaid egg moved straight into the incubator and is already incubating." : "The incubator cushion is ready whenever you want to buy the next egg."}</p>
         <button class="button button-primary" type="button" data-close-modal data-tab="pc">Open PC card</button>
       </section></div>`;
     render();
@@ -3501,10 +3144,11 @@ ${renderFieldNoteAside({
       catchChallenge = null;
       return;
     }
-    const caught = catchChallenge.hits === catchChallenge.targets.length && catchChallenge.misses === 0;
     const ball = catchChallenge.ball;
     const hits = catchChallenge.hits;
     const total = catchChallenge.targets.length;
+    const requiredHits = catchEngine.requiredHits(pokemon, ball);
+    const caught = hits >= requiredHits;
     catchChallenge = null;
     if (caught) {
       finishCaughtPokemon(pokemon, ball, "Caught!", "Perfect toss!");
@@ -3515,7 +3159,7 @@ ${renderFieldNoteAside({
       <div class="modal-backdrop"><section class="modal paper-panel catch-result" role="dialog" aria-modal="true" aria-labelledby="escape-title">
         <p class="eyebrow">Catch attempt ${pokemon.catchAttempts}</p><h2 id="escape-title">It wriggled loose</h2>
         <div class="shake-record" aria-label="${hits} matched rings out of ${total}">${catchChallengeResultMarks(hits, total)}</div>
-        <p class="modal-intro">The ball danced for a moment, then popped open. Every ring needs a clean tap, and ${escapeHtml(pokemon.displayName)} is still watching your hand.</p>
+        <p class="modal-intro">The ball danced for a moment, then popped open. Match at least ${requiredHits} of ${total} rings, and ${escapeHtml(pokemon.displayName)} may stay.</p>
         <div class="button-row"><button class="button button-primary" type="button" data-action="choose-ball">Try another ball</button><button class="button" type="button" data-close-modal>Keep watching</button></div>
       </section></div>`;
     render();
@@ -3527,7 +3171,7 @@ ${renderFieldNoteAside({
 
   function catchEncounter(ball) {
     const pokemon = state.encounter;
-    if (!pokemon || !BALL_BONUSES[ball] || (state.inventory[ball] || 0) <= 0) return;
+    if (!pokemon || !CATCH_BALL_IDS.has(ball) || (state.inventory[ball] || 0) <= 0) return;
     state.inventory[ball] -= 1;
     pokemon.catchAttempts += 1;
     if (ball === "master-ball" || isDevToolEnabled("guaranteedCatch")) {
@@ -3556,12 +3200,11 @@ ${renderFieldNoteAside({
     const reward = randomInt(5, 16);
     state.money += reward;
     state.statistics.pokemonReleased += 1;
-    state.encounter = null;
-    ensureEgg();
+    const autoPlacedEggs = clearActiveEncounter();
     saveState();
     modalRoot.innerHTML = "";
     render();
-    toast(`${name} wandered off safely. Thank-you gift: +₽${reward}.`);
+    toast(`${name} wandered off safely. Thank-you gift: +₽${reward}.${autoPlacedEggs > 0 ? " A prepaid egg was loaded automatically." : ""}`);
   }
 
   function showPokedexEntry(speciesId) {
@@ -3586,20 +3229,21 @@ ${renderFieldNoteAside({
     modalRoot.innerHTML = `
       <div class="modal-backdrop"><section class="modal paper-panel summary-modal pc-summary" role="dialog" aria-modal="true" aria-labelledby="pc-summary-title">
         <div class="summary-hero"><img src="${escapeHtml(pokemon.sprite)}" alt="${escapeHtml(pokemon.displayName)}" /><div><p class="eyebrow">${pokemon.shiny ? "✦ Shiny friend" : `National No. ${String(pokemon.speciesId).padStart(3, "0")}`}</p><h2 id="pc-summary-title">${escapeHtml(pokemon.nickname || pokemon.displayName)}</h2><p>${pokemon.nickname ? escapeHtml(pokemon.displayName) + " · " : ""}Level ${pokemon.level}</p></div></div>
-        <form id="nickname-form" class="nickname-form" data-uid="${pokemon.uid}"><div class="field"><label for="nickname">Nickname</label><input id="nickname" name="nickname" maxlength="16" value="${escapeHtml(pokemon.nickname || "")}" placeholder="Use their species name" /></div><button class="button" type="submit">Save nickname</button></form>
-        <dl class="summary-list two-column"><dt>Ability</dt><dd>${titleCase(pokemon.ability)}${pokemon.hiddenAbility ? " · hidden" : ""}</dd><dt>Types</dt><dd>${pokemon.types.map(titleCase).join(" / ")}</dd><dt>Growth</dt><dd>${pokemon.experience.toLocaleString()} XP</dd><dt>Training</dt><dd>${trainingCopy}</dd><dt>Caught with</dt><dd>${displayBallName(pokemon.caughtWith)}</dd><dt>Favourite</dt><dd>${pokemon.favorite ? "yes" : "not yet"}</dd><dt>Partner</dt><dd>${state.partnerUid === pokemon.uid ? "keeping watch" : "not currently"}</dd><dt>First friend</dt><dd>${escapeHtml(pokemon.ot)}</dd><dt>Hatched on</dt><dd>${new Date(pokemon.encounteredAt).toLocaleString()}</dd><dt>Joined PC</dt><dd>${new Date(pokemon.caughtAt).toLocaleString()}</dd></dl>
+        <form id="nickname-form" class="nickname-form" data-uid="${escapeHtml(pokemon.uid)}"><div class="field"><label for="nickname">Nickname</label><input id="nickname" name="nickname" maxlength="16" value="${escapeHtml(pokemon.nickname || "")}" placeholder="Use their species name" /></div><button class="button" type="submit">Save nickname</button></form>
+        <dl class="summary-list two-column"><dt>Ability</dt><dd>${escapeHtml(titleCase(pokemon.ability))}${pokemon.hiddenAbility ? " · hidden" : ""}</dd><dt>Types</dt><dd>${pokemon.types.map((type) => escapeHtml(titleCase(type))).join(" / ")}</dd><dt>Growth</dt><dd>${pokemon.experience.toLocaleString()} XP</dd><dt>Training</dt><dd>${trainingCopy}</dd><dt>Caught with</dt><dd>${displayBallName(pokemon.caughtWith)}</dd><dt>Favourite</dt><dd>${pokemon.favorite ? "yes" : "not yet"}</dd><dt>Partner</dt><dd>${state.partnerUid === pokemon.uid ? "keeping watch" : "not currently"}</dd><dt>First friend</dt><dd>${escapeHtml(pokemon.ot)}</dd><dt>Hatched on</dt><dd>${new Date(pokemon.encounteredAt).toLocaleString()}</dd><dt>Joined PC</dt><dd>${new Date(pokemon.caughtAt).toLocaleString()}</dd></dl>
         <table class="stat-table"><thead><tr><th>Stat</th><th>Current</th><th>Berry points</th></tr></thead><tbody>${stats}</tbody></table>
         ${evolutionNotes ? `<div class="evolution-notes"><p class="eyebrow">Evolution memories</p><ul>${evolutionNotes}</ul></div>` : ""}
         <div class="button-row">
-          <button class="button" type="button" data-action="toggle-favorite" data-uid="${pokemon.uid}">${pokemon.favorite ? "Remove favourite" : "Mark favourite"}</button>
-          <button class="button" type="button" data-action="toggle-partner" data-uid="${pokemon.uid}">${state.partnerUid === pokemon.uid ? "Rest partner" : "Set as partner"}</button>
-          <button class="button" type="button" data-action="open-expedition" data-uid="${pokemon.uid}">Send exploring</button>
+          <button class="button" type="button" data-action="toggle-favorite" data-uid="${escapeHtml(pokemon.uid)}">${pokemon.favorite ? "Remove favourite" : "Mark favourite"}</button>
+          <button class="button" type="button" data-action="toggle-partner" data-uid="${escapeHtml(pokemon.uid)}">${state.partnerUid === pokemon.uid ? "Rest partner" : "Set as partner"}</button>
+          <button class="button" type="button" data-action="open-expedition" data-uid="${escapeHtml(pokemon.uid)}">Send exploring</button>
           <button class="button button-primary" type="button" data-close-modal>Close card</button>
         </div>
       </section></div>`;
   }
 
   function toggleTeam(uid) {
+    if (competitionProgress().activeMatch) { toast("Finish the active showcase before changing its registered six."); return; }
     if (state.team.includes(uid)) state.team = state.team.filter((id) => id !== uid);
     else if (state.team.length < 6) state.team.push(uid);
     else {
@@ -3630,7 +3274,6 @@ ${renderFieldNoteAside({
     if (activeTab === "pc" || activeTab === "home") render();
     toast(wasPartner ? `${pokemon.nickname || pokemon.displayName} is resting in the PC room.` : `${pokemon.nickname || pokemon.displayName} is keeping watch by the incubator.`);
   }
-
 
 
   function showBerryTargetChooser(itemId) {
@@ -3677,50 +3320,10 @@ ${renderFieldNoteAside({
     setItemCount(itemId, itemCount(itemId) - 1);
     state.statistics.berriesUsed = (state.statistics.berriesUsed || 0) + 1;
     saveState();
-    modalRoot.innerHTML = "";
+    closeModal();
     if (activeTab === "bag") renderBag();
     if (activeTab === "pc") renderPc();
     toast(`${pokemon.nickname || pokemon.displayName} enjoyed ${item.displayName}: ${applied.join(", ")}.`);
-  }
-
-  function showRareCandyTargetChooser(itemId) {
-    const item = shopItemDefinition(itemId);
-    if (!item || item.id !== "rare-candy" || itemCount(itemId) <= 0) return;
-    const pokemonCards = state.pc.length ? state.pc.map((pokemon) => {
-      const canUse = Number(pokemon.level || 1) < 100;
-      return `
-        <button class="berry-target-card" type="button" data-action="apply-rare-candy" data-item-id="${escapeHtml(item.id)}" data-uid="${escapeHtml(pokemon.uid)}" ${canUse ? "" : "disabled"}>
-          <img src="${escapeHtml(pokemon.sprite)}" alt="" />
-          <span><strong>${escapeHtml(pokemon.nickname || pokemon.displayName)}</strong><small>Lv. ${pokemon.level}${canUse ? "" : " · level cap"}</small></span>
-        </button>`;
-    }).join("") : `<p class="no-results">There are no PC Pokémon ready for candy right now.</p>`;
-    modalRoot.innerHTML = `
-      <div class="modal-backdrop"><section class="modal paper-panel summary-modal" role="dialog" aria-modal="true" aria-labelledby="rare-candy-title">
-        <p class="eyebrow">Rare Candy</p><h2 id="rare-candy-title">Choose a Pokémon</h2>
-        <p class="modal-intro">Rare Candy raises one PC Pokémon by one level and cannot push anyone past level 100.</p>
-        <div class="berry-target-grid">${pokemonCards}</div>
-        <div class="button-row"><button class="button" type="button" data-close-modal>Keep candy</button></div>
-      </section></div>`;
-  }
-
-  async function applyRareCandyToPokemon(itemId, uid) {
-    const item = shopItemDefinition(itemId);
-    const pokemon = state.pc.find((entry) => entry.uid === uid);
-    if (!item || item.id !== "rare-candy" || !pokemon || itemCount(itemId) <= 0) return;
-    if (Number(pokemon.level || 1) >= 100) {
-      toast(`${pokemon.nickname || pokemon.displayName} is already at level 100.`);
-      showRareCandyTargetChooser(itemId);
-      return;
-    }
-    const oldLevel = pokemon.level;
-    setItemCount(itemId, itemCount(itemId) - 1);
-    const evolutions = await setPokemonLevel(pokemon, Math.min(100, oldLevel + 1));
-    saveState();
-    modalRoot.innerHTML = "";
-    if (activeTab === "bag") renderBag();
-    if (activeTab === "pc") renderPc();
-    const evolutionText = evolutions.length ? ` ${evolutions.join(" ")}.` : "";
-    toast(`${pokemon.nickname || pokemon.displayName} grew from level ${oldLevel} to level ${pokemon.level}.${evolutionText}`);
   }
 
   function sellSouvenir(itemId, sellAll = false) {
@@ -3735,35 +3338,16 @@ ${renderFieldNoteAside({
     state.money += payout;
     saveState();
     renderBag();
-    updateHeader();
     toast(`Sold ${amount} ${item.displayName}${amount === 1 ? "" : "s"} for ₽${payout.toLocaleString()}.`);
   }
 
-
-
-  function summonMysteriousEgg(itemId) {
-    const item = shopItemDefinition(itemId);
-    if (!item || item.category !== "mysterious" || itemCount(item.id) <= 0) return;
-    normaliseIncubatorsIfNeeded();
-    const slotIndex = activeIncubatorIndex();
-    const slot = incubatorSlots()[slotIndex];
-    if (!slot || slot.egg || slot.encounter) {
-      toast("The active incubator needs an empty cushion before that relic can call an egg.");
+  function showExpeditionChooser(uid) {
+    if (competitionProgress().activeMatch) {
+      toast("Finish the active showcase before sending one of its registered Pokémon away.");
       return;
     }
-    slot.egg = createEgg(Date.now(), false, Number(item.summonSpeciesId || 0));
-    slot.egg.mysteriousItemId = item.id;
-    slot.egg.mysteriousSummon = true;
-    syncLegacyFromActiveIncubator();
-    state.statistics.mysteriousSummons = (state.statistics.mysteriousSummons || 0) + 1;
-    saveState();
-    if (activeTab === "bag" || activeTab === "home") render();
-    toast(`${item.displayName} hummed. An egg for ${item.summonSpeciesName || "a rare Pokémon"} settled into incubator ${slotIndex + 1}.`);
-  }
-
-  function showExpeditionChooser(uid) {
     const pokemon = state.pc.find((entry) => entry.uid === uid);
-    if (!pokemon) return;
+    if (!pokemon || activeExpeditionForPokemon(uid)) return;
     const locations = enabledExpeditionLocations();
     const locationCards = locations.length ? locations.map((location) => `
       <button class="location-card" type="button" data-action="confirm-expedition" data-uid="${escapeHtml(uid)}" data-location-id="${escapeHtml(location.id)}">
@@ -3774,30 +3358,28 @@ ${renderFieldNoteAside({
     modalRoot.innerHTML = `
       <div class="modal-backdrop"><section class="modal paper-panel summary-modal" role="dialog" aria-modal="true" aria-labelledby="expedition-title">
         <p class="eyebrow">PC expedition</p><h2 id="expedition-title">Send ${escapeHtml(pokemon.nickname || pokemon.displayName)} exploring?</h2>
-        <p class="modal-intro">They will leave the PC, then return with XP, berries, Poké Balls, money, and harmless keepsakes.</p>
+        <p class="modal-intro">They will leave the PC for 2.5–12 hours, then return with XP, berries, Poké Balls, money, and harmless keepsakes. The exact return time stays hidden.</p>
         <div class="location-grid">${locationCards}</div>
         <div class="button-row"><button class="button" type="button" data-close-modal>Keep them home</button></div>
       </section></div>`;
   }
 
   function startExpedition(uid, locationId) {
+    if (competitionProgress().activeMatch) {
+      toast("Finish the active showcase before changing the registered team.");
+      return;
+    }
     const index = state.pc.findIndex((entry) => entry.uid === uid);
     const location = expeditionLocation(locationId);
-    if (index < 0 || !location) return;
+    if (index < 0 || !location || !enabledGenerationNumbers().includes(location.generation)) return;
     const [pokemon] = state.pc.splice(index, 1);
     const durationMs = expeditionDuration();
     state.team = state.team.filter((id) => id !== uid);
     if (state.partnerUid === uid) state.partnerUid = "";
     state.expeditions.push({
-      id: makeId(),
-      pokemon,
-      locationId: location.id,
-      locationName: location.displayName,
-      region: location.region,
-      generation: location.generation,
-      startedAt: Date.now(),
-      returnAt: Date.now() + durationMs,
-      durationMs
+      id: makeId(), pokemon, locationId: location.id, locationName: location.displayName,
+      region: location.region, generation: location.generation, startedAt: Date.now(),
+      returnAt: Date.now() + durationMs, durationMs
     });
     state.statistics.expeditionsStarted = (state.statistics.expeditionsStarted || 0) + 1;
     saveState();
@@ -3818,47 +3400,100 @@ ${renderFieldNoteAside({
     }).catch(() => toast("That expedition return could not be recorded yet."));
   }
 
-  function buyShopItem(itemId) {
+  function isBulkPurchaseItem(item) {
+    return item?.consumable === true && item?.stackable === true && item?.unique !== true;
+  }
+
+  function affordableShopQuantity(item) {
+    if (!item) return 0;
+    if (isDevToolEnabled("freeShop")) return MAX_BULK_PURCHASE;
+    if (item.cost <= 0) return MAX_BULK_PURCHASE;
+    return Math.min(MAX_BULK_PURCHASE, Math.max(0, Math.floor(state.money / item.cost)));
+  }
+
+  function showShopQuantityDialog(itemId) {
+    const item = shopItems?.find((entry) => entry.id === itemId) || shopItemDefinition(itemId);
+    if (!item || !isBulkPurchaseItem(item)) {
+      buyShopItem(itemId, 1);
+      return;
+    }
+    const maximum = affordableShopQuantity(item);
+    if (maximum < 1) {
+      toast("You are a few Pokédollars short for that.");
+      return;
+    }
+    const freePurchase = isDevToolEnabled("freeShop");
+    const unitPrice = freePurchase ? "FREE" : `₽${item.cost.toLocaleString()}`;
+    modalRoot.innerHTML = `
+      <div class="modal-backdrop"><section class="modal paper-panel purchase-modal" role="dialog" aria-modal="true" aria-labelledby="purchase-title">
+        <p class="eyebrow">Pokémart order</p><h2 id="purchase-title">How many ${escapeHtml(item.displayName)}?</h2>
+        <p class="modal-intro">Choose a quantity from 1 to ${maximum.toLocaleString()}. Each one costs ${unitPrice}.</p>
+        <form id="shop-purchase-form" data-item-id="${escapeHtml(item.id)}" class="form-grid">
+          <div class="field"><label for="purchase-quantity">Quantity</label><input id="purchase-quantity" name="quantity" type="number" min="1" max="${maximum}" step="1" value="1" inputmode="numeric" required /></div>
+          <dl class="summary-list"><dt>In bag</dt><dd>${(item.category === "ball" ? Number(state.inventory[item.id] || 0) : itemCount(item.id)).toLocaleString()}</dd><dt>Unit price</dt><dd>${unitPrice}</dd><dt>Total</dt><dd id="purchase-total">${freePurchase ? "FREE" : `₽${item.cost.toLocaleString()}`}</dd><dt>Wallet</dt><dd>₽${state.money.toLocaleString()}</dd></dl>
+          <div class="button-row"><button class="button button-primary" type="submit">Buy selected quantity</button><button class="button" type="button" data-close-modal>Cancel</button></div>
+        </form>
+      </section></div>`;
+  }
+
+  function buyShopItem(itemId, requestedQuantity = 1) {
     const item = shopItems?.find((entry) => entry.id === itemId) || shopItemDefinition(itemId);
     const freePurchase = isDevToolEnabled("freeShop");
     if (!item || (item.unique && (item.category === "ball" ? state.inventory[item.id] > 0 : itemCount(item.id) > 0))) {
       toast("That one is already tucked safely away.");
       return;
     }
-    if (!freePurchase && state.money < item.cost) {
+    const quantity = isBulkPurchaseItem(item)
+      ? Math.min(MAX_BULK_PURCHASE, Math.max(1, Math.floor(Number(requestedQuantity) || 1)))
+      : 1;
+    const totalCost = item.cost * quantity;
+    if (!freePurchase && state.money < totalCost) {
       toast("You are a few Pokédollars short for that.");
       return;
     }
-    if (!freePurchase) state.money -= item.cost;
+    if (!freePurchase) state.money -= totalCost;
     let bonusMessage = "";
+    let autoPlacedEggs = 0;
     if (item.id === "incubator-upgrade") {
       if (!upgradeIncubatorCapacity()) {
+        if (!freePurchase) state.money += totalCost;
         toast("Every incubator cushion is already humming.");
         return;
       }
       ensureAllIncubators();
       saveState();
       shopItems = null;
-      renderMart();
+      modalRoot.innerHTML = "";
+      render();
       toast(`A new incubator cushion is humming. You now have ${incubatorCapacity()} egg slots.`);
       return;
     }
     if (item.category === "ball") {
-      state.inventory[item.id] = (state.inventory[item.id] || 0) + 1;
+      state.inventory[item.id] = (state.inventory[item.id] || 0) + quantity;
       if (item.id === "poke-ball") {
-        state.statistics.pokeBallsBought = (state.statistics.pokeBallsBought || 0) + 1;
-        if (state.statistics.pokeBallsBought % 10 === 0) {
-          state.inventory["premier-ball"] = (state.inventory["premier-ball"] || 0) + 1;
-          bonusMessage = " There was a surprise Premier Ball tucked in too.";
+        const previousTotal = Number(state.statistics.pokeBallsBought || 0);
+        const nextTotal = previousTotal + quantity;
+        const premierBonus = Math.floor(nextTotal / 10) - Math.floor(previousTotal / 10);
+        state.statistics.pokeBallsBought = nextTotal;
+        if (premierBonus > 0) {
+          state.inventory["premier-ball"] = (state.inventory["premier-ball"] || 0) + premierBonus;
+          bonusMessage = ` ${premierBonus.toLocaleString()} surprise Premier Ball${premierBonus === 1 ? " was" : "s were"} tucked in too.`;
         }
       }
     } else {
-      addItemToBag(item.id, 1);
+      addItemToBag(item.id, quantity);
+      if (item.id === PREPAID_EGG_ITEM_ID) autoPlacedEggs = autoPlacePrepaidEggs();
     }
     saveState();
     shopItems = null;
-    renderMart();
-    toast(`${item.displayName} tucked into the field bag.${bonusMessage}`);
+    modalRoot.innerHTML = "";
+    render();
+    if (item.id === PREPAID_EGG_ITEM_ID && autoPlacedEggs > 0) {
+      const remaining = itemCount(PREPAID_EGG_ITEM_ID);
+      toast(`${quantity.toLocaleString()} ${item.displayName}${quantity === 1 ? "" : "s"} purchased. ${autoPlacedEggs.toLocaleString()} loaded automatically; ${remaining.toLocaleString()} remain in the field bag.`);
+    } else {
+      toast(`${quantity.toLocaleString()} ${item.displayName}${quantity === 1 ? "" : "s"} tucked into the field bag.${bonusMessage}`);
+    }
   }
 
   function useBagItem(itemId) {
@@ -3868,14 +3503,9 @@ ${renderFieldNoteAside({
       showBerryTargetChooser(itemId);
       return;
     }
-    if (itemId === "rare-candy") {
-      showRareCandyTargetChooser(itemId);
-      return;
-    }
     if (itemId === "shiny-charm") {
       setItemCount(itemId, itemCount(itemId) - 1);
       state.activeItemEffects.shinyCharmEggsRemaining = activeShinyCharmCharges() + 10;
-      state.statistics.shinyCharmUses = (state.statistics.shinyCharmUses || 0) + 1;
       saveState();
       renderBag();
       toast("The Shiny Charm gives a bright little jingle.");
@@ -3891,97 +3521,314 @@ ${renderFieldNoteAside({
     toast(state.equippedPlate === itemId ? `${item.displayName} set beside the incubator.` : `${item.displayName} tucked back into the plate pocket.`);
   }
 
-  async function createNpcPokemon(reference, level) {
+  async function createCompetitionCandidate(reference) {
     const id = resourceId(reference.url);
+    if (!id) throw new Error("The rival selected an unknown species.");
     const [pokemon, species] = await Promise.all([apiFetch(`pokemon/${id}`), apiFetch(reference.url)]);
-    const sprites = getGenerationFiveSprites(pokemon);
+    const sprites = getPokemonSprites(pokemon);
     return {
+      uid: `rival-preview-${id}-${makeId()}`,
       speciesId: species.id,
       displayName: englishName(species, species.name),
       sprite: sprites.normal,
+      shiny: false,
+      types: pokemon.types.map((entry) => entry.type.name),
       baseStats: mapBaseStats(pokemon),
-      ivs: rollIvs(false),
-      level
+      ivs: Object.fromEntries(CONTEST_STATS.map((stat) => [stat, 0])),
+      level: 1
     };
   }
 
-  async function createNpcTeam(level) {
-    const references = await getEnabledSpeciesReferences();
-    const chosen = [];
-    const used = new Set();
-    while (chosen.length < 6) {
-      const reference = randomChoice(references);
-      const id = resourceId(reference.url);
-      if (!used.has(id)) {
-        used.add(id);
-        chosen.push(reference);
-      }
-    }
-    const team = (await Promise.all(chosen.map((reference) => createNpcPokemon(reference, level)))).filter(Boolean);
-    if (team.length !== 6) return createNpcTeam(level);
-    return team;
-  }
-
-  function showCompetitionLoading(stat) {
+  function showCompetitionLoading(title, copy) {
     modalRoot.innerHTML = `
       <div class="modal-backdrop"><section class="modal paper-panel catch-result" role="dialog" aria-modal="true" aria-labelledby="judging-title">
-        <p class="eyebrow">${statLabel(stat)} competition</p><h2 id="judging-title">The judges are whispering…</h2><p class="modal-intro">A visiting six-Pokémon team is making its way to the stage.</p><span class="loading-line"></span>
+        <p class="eyebrow">Competition office</p><h2 id="judging-title">${escapeHtml(title)}</h2><p class="modal-intro">${escapeHtml(copy)}</p><span class="loading-line"></span>
       </section></div>`;
   }
 
-  async function runCompetition(stat) {
-    if (!CONTEST_STATS.includes(stat) || isCompetitionRunning) return;
-    const team = state.team.map((id) => state.pc.find((pokemon) => pokemon.uid === id)).filter(Boolean);
-    if (team.length !== 6) return;
-    isCompetitionRunning = true;
+  async function scoutCompetitionRival() {
+    const progress = competitionProgress();
+    const league = COMPETITION_ENGINE.leagueById(progress.selectedLeague);
+    if (progress.activeMatch || progress.challenges[league.id] || isCompetitionScouting) return;
+    isCompetitionScouting = true;
     renderCompetitions();
-    showCompetitionLoading(stat);
+    showCompetitionLoading("Scouting the visiting team…", "The field notes are checking a bounded set of candidates. This lineup will remain fixed once revealed.");
     try {
-      const averageLevel = Math.max(1, Math.round(team.reduce((total, pokemon) => total + pokemon.level, 0) / team.length));
-      const npcTeam = await createNpcTeam(averageLevel);
-      const playerValues = team.map((pokemon) => statValue(pokemon, stat));
-      const npcValues = npcTeam.map((pokemon) => statValue(pokemon, stat, averageLevel));
-      const playerTotal = playerValues.reduce((total, value) => total + value, 0);
-      const npcTotal = npcValues.reduce((total, value) => total + value, 0);
-      const playerWon = isDevToolEnabled("alwaysWinContests") ? true : playerTotal === npcTotal ? randomInt(0, 2) === 0 : playerTotal > npcTotal;
-      const awards = [];
-      const evolutionMessages = [];
-      if (playerWon) {
-        const inverseWeights = playerValues.map((value) => 1 / Math.max(1, value));
-        const weightTotal = inverseWeights.reduce((total, value) => total + value, 0);
-        const amounts = inverseWeights.map((weight) => Math.max(1, Math.floor(600 * (weight / weightTotal))));
-        for (let index = 0; index < team.length; index += 1) {
-          const result = await addExperience(team[index], amounts[index]);
-          awards.push({ pokemon: team[index], amount: amounts[index], leveled: result.newLevel > result.oldLevel });
-          evolutionMessages.push(...result.evolutions);
+      const rival = getOrCreateCompetitionRival(league.id);
+      const references = await getEnabledSpeciesReferences();
+      if (references.length < 6) throw new Error("At least six enabled species are required for a rival team.");
+      const used = new Set();
+      const candidates = [];
+      const targetCandidates = Math.min(24, references.length);
+      for (let attempt = 0; attempt < 3 && candidates.length < Math.min(12, targetCandidates); attempt += 1) {
+        const batch = [];
+        while (batch.length < 8 && used.size < references.length && used.size < targetCandidates) {
+          const reference = randomChoice(references);
+          const id = resourceId(reference.url);
+          if (!id || used.has(id)) continue;
+          used.add(id);
+          batch.push(reference);
         }
-        state.statistics.competitionsWon += 1;
-        state.statistics.competitionWinsByStat = state.statistics.competitionWinsByStat || {};
-        state.statistics.competitionWinsByStat[stat] = (state.statistics.competitionWinsByStat[stat] || 0) + 1;
+        const results = await Promise.allSettled(batch.map(createCompetitionCandidate));
+        for (const result of results) if (result.status === "fulfilled") candidates.push(result.value);
       }
-      const title = playerWon ? `${statLabel(stat)} showcase won` : `${statLabel(stat)} showcase lost`;
-      const summary = `Your team scored ${playerTotal}; the visitors scored ${npcTotal}.`;
-      state.competitionLog.unshift({ title, summary, stat, playerTotal, npcTotal, won: playerWon, at: new Date().toISOString() });
-      state.competitionLog = state.competitionLog.slice(0, 20);
+      if (candidates.length < 6) throw new Error("The rival could not assemble six available Pokémon after three scouting attempts.");
+      const members = candidates
+        .sort((left, right) => COMPETITION_ENGINE.candidateScore(right, rival.archetype) - COMPETITION_ENGINE.candidateScore(left, rival.archetype))
+        .slice(0, 6);
+      progress.challenges[league.id] = { id: `challenge-${league.id}-${makeId()}`, rivalId: rival.id, archetype: rival.archetype, generatedAt: new Date().toISOString(), members };
       saveState();
-      const teamVisuals = (members, values) => members.map((pokemon, index) => `<figure><img src="${escapeHtml(pokemon.sprite)}" alt="" /><figcaption>${escapeHtml(pokemon.nickname || pokemon.displayName)}<b>${values[index]}</b></figcaption></figure>`).join("");
-      modalRoot.innerHTML = `
-        <div class="modal-backdrop"><section class="modal paper-panel competition-result" role="dialog" aria-modal="true" aria-labelledby="result-title">
-          <p class="eyebrow">${statLabel(stat)} showcase · final notes</p><h2 id="result-title">${playerWon ? "Your team shines" : "The visitors take it"}</h2>
-          <div class="scoreboard"><div><span>Your team</span><strong>${playerTotal}</strong></div><b>${playerWon ? "WIN" : "LOSS"}</b><div><span>visitor team</span><strong>${npcTotal}</strong></div></div>
-          <div class="result-team"><section><h3>Your six</h3>${teamVisuals(team, playerValues)}</section><section><h3>Visitor six</h3>${teamVisuals(npcTeam, npcValues)}</section></div>
-          ${playerWon ? `<div class="xp-awards"><p class="eyebrow">Team treat bowl</p>${awards.map((award) => `<span><img src="${escapeHtml(award.pokemon.sprite)}" alt="" /><b>${escapeHtml(award.pokemon.nickname || award.pokemon.displayName)}</b> +${award.amount} XP${award.leveled ? ` · Lv. ${award.pokemon.level}` : ""}</span>`).join("")}${evolutionMessages.map((message) => `<strong class="evolution-callout">${escapeHtml(message)}!</strong>`).join("")}</div>` : '<p class="modal-intro">No treats this time. Swap your six around and try again.</p>'}
-          <button class="button button-primary" type="button" data-close-modal>Close showcase</button>
-        </section></div>`;
-    } catch {
-      modalRoot.innerHTML = `
-        <div class="modal-backdrop"><section class="modal paper-panel" role="dialog" aria-modal="true" aria-labelledby="contest-error"><p class="eyebrow">Signal flutter</p><h2 id="contest-error">The showcase was postponed</h2><p class="modal-intro">The visiting team got lost on the way, so nothing was recorded.</p><button class="button button-primary" type="button" data-close-modal>Back</button></section></div>`;
+      closeModal();
+      toast(`${rival.name}’s six are now fixed for this showcase.`);
+    } catch (error) {
+      modalRoot.innerHTML = `<div class="modal-backdrop"><section class="modal paper-panel" role="dialog" aria-modal="true" aria-labelledby="scout-error"><p class="eyebrow">Scouting failed</p><h2 id="scout-error">The rival team could not be recorded</h2><p class="modal-intro">${escapeHtml(error?.message || "The visiting records were unavailable.")}</p><button class="button button-primary" type="button" data-close-modal>Back</button></section></div>`;
     } finally {
-      isCompetitionRunning = false;
+      isCompetitionScouting = false;
       if (activeTab === "competitions") renderCompetitions();
     }
   }
 
+  function selectCompetitionLeague(leagueId) {
+    const progress = competitionProgress();
+    if (progress.activeMatch) return;
+    const unlocked = COMPETITION_ENGINE.unlockedLeagues(progress.peakRating);
+    if (!unlocked.some((league) => league.id === leagueId)) return;
+    progress.selectedLeague = leagueId;
+    getOrCreateCompetitionRival(leagueId);
+    saveState();
+    renderCompetitions();
+  }
+
+  function selectCompetitionDifficulty(difficultyId) {
+    const progress = competitionProgress();
+    if (progress.activeMatch || !COMPETITION_ENGINE.DIFFICULTIES.some((difficulty) => difficulty.id === difficultyId)) return;
+    progress.selectedDifficulty = difficultyId;
+    saveState();
+    renderCompetitions();
+  }
+
+  function moveCompetitionTeam(indexValue, directionValue) {
+    const progress = competitionProgress();
+    if (progress.activeMatch) return;
+    const index = Number(indexValue);
+    const direction = Number(directionValue);
+    const target = index + direction;
+    if (!Number.isInteger(index) || ![-1, 1].includes(direction) || target < 0 || target >= state.team.length) return;
+    [state.team[index], state.team[target]] = [state.team[target], state.team[index]];
+    saveState();
+    renderCompetitions();
+  }
+
+  function showCompetitionEntryConfirmation(stat) {
+    if (!CONTEST_STATS.includes(stat) || isCompetitionRunning) return;
+    const progress = competitionProgress();
+    const team = competitionTeam();
+    const league = COMPETITION_ENGINE.leagueById(progress.selectedLeague);
+    const difficulty = COMPETITION_ENGINE.difficultyById(progress.selectedDifficulty);
+    const rival = getOrCreateCompetitionRival(league.id);
+    const challenge = progress.challenges[league.id];
+    const fee = COMPETITION_ENGINE.entryFee(league.id, difficulty.id);
+    const prize = COMPETITION_ENGINE.prizeRange(league.id, difficulty.id, progress.winStreak);
+    const cooldown = competitionCooldownRemaining(league.id);
+    if (team.length !== 6) return toast("Choose six Pokémon before entering a showcase.");
+    if (!challenge) return toast("Scout the rival team before entering.");
+    if (progress.activeMatch) return showCompetitionHalftime();
+    if (cooldown > 0) return toast(`${league.name} reopens in ${formatShortDuration(cooldown)}.`);
+    if (state.money < fee) return toast(`You need ₽${fee.toLocaleString()} for this entry.`);
+    modalRoot.innerHTML = `
+      <div class="modal-backdrop"><section class="modal paper-panel" role="dialog" aria-modal="true" aria-labelledby="entry-title">
+        <p class="eyebrow">${escapeHtml(league.name)} · ${escapeHtml(difficulty.name)}</p><h2 id="entry-title">Enter the ${escapeHtml(statLabel(stat))} showcase?</h2>
+        <p class="modal-intro">Your ordered six will face ${escapeHtml(rival.name)} in six head-to-head rounds. After round three, you will choose the team’s finishing tactic.</p>
+        <dl class="summary-list two-column"><dt>Entry fee</dt><dd>₽${fee.toLocaleString()}</dd><dt>Prize range</dt><dd>₽${prize.minimum.toLocaleString()}–₽${prize.maximum.toLocaleString()}</dd><dt>Cooldown</dt><dd>${formatShortDuration(COMPETITION_ENGINE.cooldownDuration(league.id))}</dd><dt>Current rating</dt><dd>${progress.rating}</dd></dl>
+        <div class="button-row"><button class="button button-primary" type="button" data-action="confirm-enter-contest" data-stat="${stat}">Pay and begin</button><button class="button" type="button" data-close-modal>Review lineup</button></div>
+      </section></div>`;
+  }
+
+  function competitionSnapshot(pokemon) {
+    return {
+      uid: pokemon.uid || makeId(),
+      speciesId: pokemon.speciesId,
+      displayName: pokemon.displayName,
+      nickname: pokemon.nickname || "",
+      sprite: pokemon.sprite,
+      shiny: pokemon.shiny === true,
+      types: [...(pokemon.types || [])],
+      baseStats: { ...(pokemon.baseStats || {}) },
+      ivs: { ...(pokemon.ivs || {}) },
+      level: pokemon.level
+    };
+  }
+
+  function npcCompetitionSnapshot(member, level, difficulty) {
+    return {
+      ...competitionSnapshot(member),
+      uid: `rival-${member.speciesId}-${makeId()}`,
+      ivs: Object.fromEntries(CONTEST_STATS.map((stat) => [stat, randomInt(difficulty.ivMin, difficulty.ivMax)])),
+      level
+    };
+  }
+
+  function buildCompetitionRound(match, index, tacticMultiplier = 1) {
+    const archetype = COMPETITION_ENGINE.archetypeById(match.archetype);
+    const variance = match.roundVariances[index];
+    const result = COMPETITION_ENGINE.scoreRound({
+      playerValue: statValue(match.playerTeam[index], match.stat),
+      rivalValue: statValue(match.rivalTeam[index], match.stat),
+      playerBalance: match.playerBalance,
+      rivalBalance: match.rivalBalance,
+      playerTacticMultiplier: tacticMultiplier,
+      playerVariance: variance.player,
+      rivalVariance: variance.rival,
+      rivalStrength: COMPETITION_ENGINE.rivalStrength(match.leagueId, match.difficultyId),
+      rivalSpecialtyMultiplier: archetype.specialty === match.stat ? 1.04 : 1
+    });
+    return { index, ...result, playerVariance: variance.player, rivalVariance: variance.rival };
+  }
+
+  function competitionRoundMarkup(match, rounds) {
+    return rounds.map((round) => {
+      const player = match.playerTeam[round.index];
+      const rival = match.rivalTeam[round.index];
+      return `<article class="competition-round ${round.winner === "player" ? "is-player-win" : round.winner === "rival" ? "is-rival-win" : "is-tie"}"><span>Round ${round.index + 1}</span><div><img src="${escapeHtml(player.sprite)}" alt="" /><strong>${escapeHtml(player.nickname || player.displayName)}</strong><b>${round.playerScore}</b></div><em>${round.winner === "tie" ? "TIE" : round.winner === "player" ? "WIN" : "LOSS"}</em><div><img src="${escapeHtml(rival.sprite)}" alt="" /><strong>${escapeHtml(rival.displayName)}</strong><b>${round.rivalScore}</b></div></article>`;
+    }).join("");
+  }
+
+  function showCompetitionHalftime() {
+    const match = competitionProgress().activeMatch;
+    if (!match) return;
+    const summary = COMPETITION_ENGINE.summariseRounds(match.firstHalf);
+    const status = summary.playerWins === summary.rivalWins ? "The showcase is level" : summary.playerWins > summary.rivalWins ? "Your team leads" : `${match.rivalName} leads`;
+    modalRoot.innerHTML = `
+      <div class="modal-backdrop"><section class="modal paper-panel competition-result" role="dialog" aria-modal="true" aria-labelledby="halftime-title">
+        <p class="eyebrow">${escapeHtml(statLabel(match.stat))} showcase · halftime</p><h2 id="halftime-title">${escapeHtml(status)}</h2>
+        <div class="scoreboard"><div><span>Your rounds</span><strong>${summary.playerWins}</strong></div><b>HALF</b><div><span>Rival rounds</span><strong>${summary.rivalWins}</strong></div></div>
+        <div class="competition-rounds">${competitionRoundMarkup(match, match.firstHalf)}</div>
+        <section class="tactic-picker"><p class="eyebrow">Captain’s decision</p><h3>How should the final three perform?</h3><div>${COMPETITION_ENGINE.TACTICS.map((tactic) => `<button class="tactic-button" type="button" data-action="competition-tactic" data-tactic-id="${tactic.id}"><strong>${escapeHtml(tactic.name)}</strong><small>${escapeHtml(tactic.description)}</small></button>`).join("")}</div></section>
+      </section></div>`;
+  }
+
+  function startCompetition(stat) {
+    if (!CONTEST_STATS.includes(stat) || isCompetitionRunning) return;
+    const progress = competitionProgress();
+    const team = competitionTeam();
+    const league = COMPETITION_ENGINE.leagueById(progress.selectedLeague);
+    const difficulty = COMPETITION_ENGINE.difficultyById(progress.selectedDifficulty);
+    const rival = getOrCreateCompetitionRival(league.id);
+    const challenge = progress.challenges[league.id];
+    const fee = COMPETITION_ENGINE.entryFee(league.id, difficulty.id);
+    if (progress.activeMatch) return showCompetitionHalftime();
+    if (team.length !== 6 || !challenge || competitionCooldownRemaining(league.id) > 0 || state.money < fee) {
+      closeModal();
+      renderCompetitions();
+      return;
+    }
+    const averageLevel = Math.max(1, Math.round(team.reduce((total, pokemon) => total + pokemon.level, 0) / team.length));
+    const rivalLevel = COMPETITION_ENGINE.opponentLevel(averageLevel, league.id, difficulty.id, rival.meetings);
+    const playerTeam = team.map(competitionSnapshot);
+    const rivalTeam = challenge.members.map((member) => npcCompetitionSnapshot(member, rivalLevel, difficulty));
+    const playerBalance = COMPETITION_ENGINE.teamBalance(playerTeam).bonus;
+    const rivalBalance = COMPETITION_ENGINE.teamBalance(rivalTeam).bonus;
+    const roundVariances = Array.from({ length: 6 }, () => ({ player: 0.97 + randomInt(0, 61) / 1000, rival: 0.97 + randomInt(0, 61) / 1000 }));
+    const match = {
+      id: `match-${makeId()}`,
+      stat,
+      leagueId: league.id,
+      difficultyId: difficulty.id,
+      rivalId: rival.id,
+      rivalName: rival.name,
+      archetype: rival.archetype,
+      startedAt: new Date().toISOString(),
+      entryFee: fee,
+      playerBalance,
+      rivalBalance,
+      playerTeam,
+      rivalTeam,
+      firstHalf: [],
+      roundVariances
+    };
+    match.firstHalf = [0, 1, 2].map((index) => buildCompetitionRound(match, index, 1));
+    state.money -= fee;
+    progress.cooldowns[league.id] = Date.now() + COMPETITION_ENGINE.cooldownDuration(league.id);
+    progress.totalEntries += 1;
+    progress.activeMatch = match;
+    saveState();
+    renderStatus();
+    showCompetitionHalftime();
+  }
+
+  async function finishCompetition(tacticId) {
+    const progress = competitionProgress();
+    const match = progress.activeMatch;
+    if (!match || isCompetitionRunning || !COMPETITION_ENGINE.TACTICS.some((tactic) => tactic.id === tacticId)) return;
+    isCompetitionRunning = true;
+    const halftime = COMPETITION_ENGINE.summariseRounds(match.firstHalf);
+    const tacticMultipliers = COMPETITION_ENGINE.tacticMultipliers(tacticId, halftime.playerWins < halftime.rivalWins);
+    const finalRounds = [3, 4, 5].map((index, tacticIndex) => buildCompetitionRound(match, index, tacticMultipliers[tacticIndex]));
+    const rounds = [...match.firstHalf, ...finalRounds];
+    const result = COMPETITION_ENGINE.decideWinner(rounds, isDevToolEnabled("alwaysWinContests"));
+    const league = COMPETITION_ENGINE.leagueById(match.leagueId);
+    const difficulty = COMPETITION_ENGINE.difficultyById(match.difficultyId);
+    const tactic = COMPETITION_ENGINE.tacticById(tacticId);
+    const rival = progress.rivals[match.leagueId] || getOrCreateCompetitionRival(match.leagueId);
+    const previousHighestLeague = COMPETITION_ENGINE.highestUnlockedLeague(progress.peakRating).id;
+    const prizeRange = COMPETITION_ENGINE.prizeRange(match.leagueId, match.difficultyId, progress.winStreak);
+    const moneyAward = result.playerWon ? randomInt(prizeRange.minimum, prizeRange.maximum + 1) : 0;
+    const ratingDelta = COMPETITION_ENGINE.ratingChange({ playerRating: progress.rating, leagueId: match.leagueId, difficultyId: match.difficultyId, playerWon: result.playerWon });
+    progress.rating = Math.max(100, Math.min(5000, progress.rating + ratingDelta));
+    progress.peakRating = Math.max(progress.peakRating, progress.rating);
+    progress.winStreak = result.playerWon ? progress.winStreak + 1 : 0;
+    state.money += moneyAward;
+    rival.meetings += 1;
+    rival.lastResult = result.playerWon ? "player" : "rival";
+    if (result.playerWon) {
+      rival.playerWins += 1;
+      state.statistics.competitionsWon += 1;
+    } else rival.rivalWins += 1;
+    delete progress.challenges[match.leagueId];
+    progress.activeMatch = null;
+    const title = result.playerWon ? `${statLabel(match.stat)} showcase won` : `${statLabel(match.stat)} showcase lost`;
+    const summaryText = `Rounds ${result.playerWins}–${result.rivalWins}; judging totals ${result.playerTotal}–${result.rivalTotal} against ${match.rivalName}.`;
+    state.competitionLog.unshift({ title, summary: summaryText, stat: match.stat, leagueId: match.leagueId, difficultyId: match.difficultyId, rivalName: match.rivalName, playerTotal: result.playerTotal, npcTotal: result.rivalTotal, playerRoundWins: result.playerWins, npcRoundWins: result.rivalWins, moneyAward, ratingDelta, won: result.playerWon, at: new Date().toISOString() });
+    state.competitionLog = state.competitionLog.slice(0, 30);
+    saveState();
+
+    showCompetitionLoading("The judges are filing the final notes…", "Experience, prize money, rivalry records, and rating changes are being written safely into the save.");
+    const awards = [];
+    const evolutionMessages = [];
+    const xpPool = Math.max(60, Math.round(league.xpPool * difficulty.prizeMultiplier * (result.playerWon ? 1 : 0.25)));
+    const playerValues = match.playerTeam.map((pokemon) => statValue(pokemon, match.stat));
+    const inverseWeights = playerValues.map((value) => 1 / Math.max(1, value));
+    const weightTotal = inverseWeights.reduce((total, value) => total + value, 0);
+    const amounts = inverseWeights.map((weight) => Math.max(1, Math.floor(xpPool * (weight / weightTotal))));
+    for (let index = 0; index < match.playerTeam.length; index += 1) {
+      const currentPokemon = state.pc.find((pokemon) => pokemon.uid === match.playerTeam[index].uid);
+      if (!currentPokemon) continue;
+      const oldLevel = currentPokemon.level;
+      try {
+        const experienceResult = await addExperience(currentPokemon, amounts[index]);
+        awards.push({ pokemon: currentPokemon, amount: amounts[index], leveled: experienceResult.newLevel > experienceResult.oldLevel });
+        evolutionMessages.push(...experienceResult.evolutions);
+      } catch {
+        awards.push({ pokemon: currentPokemon, amount: amounts[index], leveled: currentPokemon.level > oldLevel });
+      }
+    }
+    saveState();
+    renderStatus();
+    const newlyUnlockedLeague = COMPETITION_ENGINE.highestUnlockedLeague(progress.peakRating);
+    const unlockedCallout = newlyUnlockedLeague.id !== previousHighestLeague ? `<strong class="evolution-callout">${escapeHtml(newlyUnlockedLeague.name)} unlocked!</strong>` : "";
+    modalRoot.innerHTML = `
+      <div class="modal-backdrop"><section class="modal paper-panel competition-result" role="dialog" aria-modal="true" aria-labelledby="result-title">
+        <p class="eyebrow">${escapeHtml(league.name)} · ${escapeHtml(difficulty.name)} · ${escapeHtml(tactic.name)}</p><h2 id="result-title">${result.playerWon ? "Your team takes the showcase" : `${escapeHtml(match.rivalName)} takes the showcase`}</h2>
+        <div class="scoreboard"><div><span>Your rounds</span><strong>${result.playerWins}</strong></div><b>${result.playerWon ? "WIN" : "LOSS"}</b><div><span>Rival rounds</span><strong>${result.rivalWins}</strong></div></div>
+        <div class="competition-rounds">${competitionRoundMarkup(match, rounds)}</div>
+        <dl class="summary-list two-column"><dt>Judge totals</dt><dd>${result.playerTotal}–${result.rivalTotal}</dd><dt>Rating</dt><dd>${progress.rating} (${ratingDelta >= 0 ? "+" : ""}${ratingDelta})</dd><dt>Prize</dt><dd>${moneyAward ? `₽${moneyAward.toLocaleString()}` : "No Pokédollars"}</dd><dt>Win streak</dt><dd>${progress.winStreak}</dd></dl>
+        <div class="xp-awards"><p class="eyebrow">Team experience</p>${awards.map((award) => `<span><img src="${escapeHtml(award.pokemon.sprite)}" alt="" /><b>${escapeHtml(award.pokemon.nickname || award.pokemon.displayName)}</b> +${award.amount} XP${award.leveled ? ` · Lv. ${award.pokemon.level}` : ""}</span>`).join("")}${evolutionMessages.map((message) => `<strong class="evolution-callout">${escapeHtml(message)}!</strong>`).join("")}${unlockedCallout}</div>
+        <p class="modal-intro">${escapeHtml(match.rivalName)} remains your ${escapeHtml(league.name)} rival, but their next lineup must be scouted again.</p>
+        <button class="button button-primary" type="button" data-close-modal>Close showcase</button>
+      </section></div>`;
+    isCompetitionRunning = false;
+    if (activeTab === "competitions") renderCompetitions();
+  }
   async function addDevPokemonToPc(count) {
     for (let index = 0; index < count; index += 1) {
       const pokemon = await chooseWeightedEncounter();
@@ -3989,7 +3836,6 @@ ${renderFieldNoteAside({
       pokemon.ot = state.player.name;
       pokemon.caughtWith = "master-ball";
       state.pc.push(pokemon);
-      recordCaughtPokemon(pokemon, pokemon.caughtWith);
       recordPokedexEncounter(pokemon);
       shopItems = null;
     }
@@ -4012,7 +3858,6 @@ ${renderFieldNoteAside({
       if (options.shiny) makePokemonShiny(pokemon);
       if (options.favorite) pokemon.favorite = true;
       state.pc.push(pokemon);
-      recordCaughtPokemon(pokemon, pokemon.caughtWith);
       recordPokedexEncounter(pokemon);
       added.push(pokemon);
     }
@@ -4040,7 +3885,7 @@ ${renderFieldNoteAside({
     const registry = shopItemRegistry();
     const items = registry && typeof registry.allItems === "function" ? registry.allItems() : [];
     for (const item of items) {
-      if (item.id === "master-ball") continue;
+      if (item.id === "master-ball" || item.category === "mystery") continue;
       if (item.category === "ball") {
         state.inventory[item.id] = Math.max(state.inventory[item.id] || 0, 99);
       } else if (item.unique) {
@@ -4072,7 +3917,10 @@ ${renderFieldNoteAside({
       toast(`The next egg has been marked for ${label}.`);
       return;
     }
-    state.egg = createEgg(Date.now(), false, id);
+    const slot = activeIncubatorSlot();
+    slot.egg = createEgg(Date.now(), false, id);
+    slot.encounter = null;
+    syncLegacyFromActiveIncubator();
     saveState();
     await prepareNormalEgg();
     render();
@@ -4124,8 +3972,10 @@ ${renderFieldNoteAside({
   async function spawnDevEncounter() {
     renderHatchingHome();
     const encounter = await chooseWeightedEncounter();
-    state.encounter = encounter;
-    state.egg = null;
+    const slot = activeIncubatorSlot();
+    slot.encounter = encounter;
+    slot.egg = null;
+    syncLegacyFromActiveIncubator();
     state.statistics.eggsHatched += 1;
     recordPokedexEncounter(encounter);
     saveState();
@@ -4145,8 +3995,8 @@ ${renderFieldNoteAside({
           speciesId,
           name: reference.name,
           displayName: titleCase(reference.name),
-          sprite: `${GEN_FIVE_SPRITE_ROOT}/${speciesId}.png`,
-          shinySprite: `${GEN_FIVE_SPRITE_ROOT}/shiny/${speciesId}.png`,
+          sprite: `${DEFAULT_SPRITE_ROOT}/${speciesId}.png`,
+          shinySprite: `${DEFAULT_SPRITE_ROOT}/shiny/${speciesId}.png`,
           cryUrl: cryUrlFromSpeciesId(speciesId),
           baseStatTotal: 0,
           hatchDuration: 0,
@@ -4187,8 +4037,10 @@ ${renderFieldNoteAside({
         toast("The egg should be ready very soon.");
       } else if (action === "dev-new-egg") {
         const laidAt = Date.now();
-        state.encounter = null;
-        state.egg = createEgg(laidAt, false);
+        const slot = activeIncubatorSlot();
+        slot.encounter = null;
+        slot.egg = createEgg(laidAt, false);
+        syncLegacyFromActiveIncubator();
         saveState();
         await prepareNormalEgg();
         render();
@@ -4230,8 +4082,7 @@ ${renderFieldNoteAside({
         pokemon.ot = state.player.name;
         pokemon.caughtWith = "master-ball";
         state.pc.push(pokemon);
-        recordCaughtPokemon(pokemon, pokemon.caughtWith);
-        state.encounter = null;
+        clearActiveEncounter();
         state.statistics.pokemonCaught += 1;
         shopItems = null;
         ensureEgg();
@@ -4402,9 +4253,10 @@ ${renderFieldNoteAside({
       } else if (action === "dev-clear-contests") {
         state.competitionLog = [];
         state.statistics.competitionsWon = 0;
+        state.competition = JSON.parse(JSON.stringify(DEFAULT_STATE.competition));
         saveState();
         render();
-        toast("Showcase notes cleared.");
+        toast("Competition ladder, rivals, cooldowns, and showcase notes reset.");
       } else if (action === "dev-next-field-note") {
         rollNewDevFieldNote();
         render();
@@ -4435,6 +4287,8 @@ ${renderFieldNoteAside({
     event.preventDefault();
     const form = new FormData(event.target);
     state.settings.theme = normaliseTheme(String(form.get("theme") || "field"));
+    state.settings.interfacePerformance = normaliseInterfacePerformance(String(form.get("interface_performance") || "automatic"));
+    applyInterfacePerformance(true);
     if (devToolsAllowed()) {
       const selectedDevTools = new Set(form.getAll("dev_tool"));
       state.settings.devTools = Object.fromEntries(Object.keys(DEV_TOOL_DEFAULTS).map((key) => [key, selectedDevTools.has(key)]));
@@ -4456,19 +4310,32 @@ ${renderFieldNoteAside({
       <div class="modal-backdrop"><section class="modal paper-panel" role="dialog" aria-modal="true" aria-labelledby="reset-title"><p class="eyebrow">Last chance</p><h2 id="reset-title">Reset the whole hatchery?</h2><p class="modal-intro">This clears every local egg, Pokémon, coin, streak, and journal page on this device. It cannot be undone.</p><div class="button-row"><button class="button button-accent" type="button" data-action="confirm-reset">Reset everything</button><button class="button" type="button" data-close-modal>Keep hatchery</button></div></section></div>`;
   }
 
-  function resetProgress() {
-    localStorage.removeItem(STORAGE_KEY);
+  async function resetProgress() {
+    if (resetInProgress) return;
+    resetInProgress = true;
+    clearCatchChallengeTimer();
+    clearIdleCryTimer();
+    window.clearInterval(clockTimer);
+    closeModal();
+    try {
+      const storage = storageLayer();
+      if (typeof storage.clearAll === "function") await storage.clearAll();
+      else await storage.remove(STORAGE_KEY);
+    } catch (error) {
+      console.error("The hatchery could not be completely reset.", error);
+      try { localStorage.removeItem(STORAGE_KEY); } catch (storageError) { console.error("The local save could not be removed during reset recovery.", storageError); }
+    }
     window.location.reload();
   }
 
   function showHelp() {
     modalRoot.innerHTML = `
-      <div class="modal-backdrop" data-close-modal>
+      <div class="modal-backdrop">
         <section class="modal paper-panel" role="dialog" aria-modal="true" aria-labelledby="help-title">
           <p class="eyebrow">Hatchery guide</p>
           <h2 id="help-title">How the hatchery works</h2>
-          <p class="modal-intro">Your first clutch is eager to meet you. The early eggs warm more quickly, then the nest settles into its usual rhythm; the Pokédex remembers a species’ usual hatch time once you have met it. Some Pokémon are much rarer than others, shinies are a special surprise, and caught Pokémon settle into the PC room. Hatchlings chirp when they arrive and may call out now and then while they wait with you.</p>
-          <dl class="summary-list"><dt>Daily treats</dt><dd>A small Pokédollar gift that grows with your streak</dd><dt>Quiet training</dt><dd>Hatchlings grow little by little while they wait</dd><dt>Bag</dt><dd>Poké Balls, charms, and plates live in their own pockets</dd><dt>Showcases</dt><dd>Choose six Pokémon and meet visiting teams</dd><dt>Achievements</dt><dd>Track long-term milestones from your enabled generations</dd><dt>Save backups</dt><dd>Export and import your local hatchery from Settings</dd></dl>
+          <p class="modal-intro">Your first egg is free and eager to meet you. After that, each new egg costs ₽${EGG_PRICE}. You can pay at an empty incubator or prepurchase several eggs from the Pokémart. Prepaid eggs load automatically as soon as an incubator becomes available. The early eggs warm more quickly, then the nest settles into its usual rhythm; the Pokédex remembers a species’ usual hatch time once you have met it.</p>
+          <dl class="summary-list"><dt>New eggs</dt><dd>Pay ₽${EGG_PRICE} at an empty incubator; prepaid eggs load automatically</dd><dt>Early clutch</dt><dd>The first 50 eggs ramp smoothly from 30 seconds to each species’ normal hatch rate</dd><dt>Catching</dt><dd>Catch rings are slower and wider, and one missed wobble is allowed</dd><dt>Daily treats</dt><dd>A small Pokédollar gift that grows with your streak</dd><dt>Quiet training</dt><dd>Hatchlings grow little by little while they wait</dd><dt>Bag</dt><dd>Poké Balls, prepaid eggs, charms, plates, and earned Legendary relics live in their own pockets</dd><dt>Mystery research</dt><dd>Legendary relic goals are listed in the Bag and unlock automatically when completed</dd><dt>Expeditions</dt><dd>Send PC Pokémon to enabled-generation locations for 2.5–12 hours to earn XP and field rewards</dd><dt>Showcases</dt><dd>Scout persistent rivals, arrange six ordered rounds, climb league classes, and choose a halftime tactic</dd><dt>Save backups</dt><dd>Export and import your local hatchery from Settings</dd></dl>
           <div class="button-row"><button class="button button-primary" type="button" data-close-modal>Back to the hatchery</button></div>
         </section>
       </div>`;
@@ -4481,6 +4348,28 @@ ${renderFieldNoteAside({
     toastRoot.appendChild(element);
     window.setTimeout(() => element.classList.add("is-leaving"), 4400);
     window.setTimeout(() => element.remove(), 4700);
+  }
+
+
+  function scheduleArchiveRender(kind, value) {
+    window.clearTimeout(searchRenderTimer);
+    if (kind === "pokedex") {
+      pokedexFilter = value;
+      pokedexVisibleLimit = ARCHIVE_PAGE_SIZE;
+    } else {
+      pcSearch = value;
+      pcVisibleLimit = ARCHIVE_PAGE_SIZE;
+    }
+    searchRenderTimer = window.setTimeout(() => {
+      if (kind === "pokedex" && activeTab === "pokedex") renderPokedex();
+      if (kind === "pc" && activeTab === "pc") renderPc();
+      const search = document.getElementById(kind === "pokedex" ? "pokedex-search" : "pc-search");
+      const text = kind === "pokedex" ? pokedexFilter : pcSearch;
+      if (search) {
+        search.focus({ preventScroll: true });
+        search.setSelectionRange(text.length, text.length);
+      }
+    }, LOW_POWER_INTERFACE ? 180 : 90);
   }
 
   document.addEventListener("click", (event) => {
@@ -4500,29 +4389,39 @@ ${renderFieldNoteAside({
       else if (action === "toggle-favorite") toggleFavorite(actionButton.dataset.uid);
       else if (action === "toggle-partner") togglePartner(actionButton.dataset.uid);
       else if (action === "toggle-team") toggleTeam(actionButton.dataset.uid);
-      else if (action === "claim-daily-quest") claimDailyQuest(actionButton.dataset.questId);
       else if (action === "apply-berry") applyBerryToPokemon(actionButton.dataset.itemId, actionButton.dataset.uid);
-      else if (action === "apply-rare-candy") applyRareCandyToPokemon(actionButton.dataset.itemId, actionButton.dataset.uid);
       else if (action === "sell-souvenir") sellSouvenir(actionButton.dataset.itemId, false);
       else if (action === "sell-all-souvenir") sellSouvenir(actionButton.dataset.itemId, true);
-      else if (action === "summon-mysterious") summonMysteriousEgg(actionButton.dataset.itemId);
       else if (action === "open-expedition") showExpeditionChooser(actionButton.dataset.uid);
       else if (action === "confirm-expedition") startExpedition(actionButton.dataset.uid, actionButton.dataset.locationId);
       else if (action === "welcome-expedition") welcomeExpedition(actionButton.dataset.expeditionId);
-      else if (action === "buy-egg") startEggForSlot(actionButton.dataset.slotIndex);
-      else if (action === "buy-shop-item") buyShopItem(actionButton.dataset.itemId);
+      else if (action === "buy-shop-item") {
+        const item = shopItems?.find((entry) => entry.id === actionButton.dataset.itemId) || shopItemDefinition(actionButton.dataset.itemId);
+        if (isBulkPurchaseItem(item)) showShopQuantityDialog(actionButton.dataset.itemId);
+        else buyShopItem(actionButton.dataset.itemId, 1);
+      }
+      else if (action === "buy-new-egg") buyEggForActiveIncubator();
       else if (action === "use-item") useBagItem(actionButton.dataset.itemId);
       else if (action === "toggle-plate") togglePlate(actionButton.dataset.itemId);
       else if (action === "select-incubator-slot") { selectIncubatorSlot(actionButton.dataset.slotIndex); saveState(); render(); }
-      else if (action === "retry-mart") { shopItems = null; renderMart(); }
-      else if (action === "enter-contest") runCompetition(actionButton.dataset.stat);
+      else if (action === "show-more-pokedex") { pokedexVisibleLimit += ARCHIVE_PAGE_SIZE; renderPokedex(); }
+      else if (action === "show-more-pc") { pcVisibleLimit += ARCHIVE_PAGE_SIZE; renderPc(); }
+      else if (action === "show-more-shop") { shopVisibleLimit += ARCHIVE_PAGE_SIZE; renderMart(); }
+      else if (action === "show-more-mystery-goals") { mysteryGoalVisibleLimit += ARCHIVE_PAGE_SIZE; renderBag(); }
+      else if (action === "retry-mart") { shopItems = null; shopVisibleLimit = ARCHIVE_PAGE_SIZE; renderMart(); }
+      else if (action === "enter-contest") showCompetitionEntryConfirmation(actionButton.dataset.stat);
+      else if (action === "confirm-enter-contest") startCompetition(actionButton.dataset.stat);
+      else if (action === "competition-tactic") finishCompetition(actionButton.dataset.tacticId);
+      else if (action === "resume-competition") showCompetitionHalftime();
+      else if (action === "scout-competition-rival") scoutCompetitionRival();
+      else if (action === "select-competition-league") selectCompetitionLeague(actionButton.dataset.leagueId);
+      else if (action === "select-competition-difficulty") selectCompetitionDifficulty(actionButton.dataset.difficultyId);
+      else if (action === "move-competition-team") moveCompetitionTeam(actionButton.dataset.index, actionButton.dataset.direction);
       else if (action === "request-reset") showResetConfirmation();
       else if (action === "confirm-reset") resetProgress();
       else if (action === "export-save") exportSaveFile();
       else if (action === "request-import-save") requestSaveImport();
       else if (action === "confirm-import-save") importPendingSave();
-      else if (action === "claim-achievement") claimAchievementReward(actionButton.dataset.achievementId);
-      else if (action === "claim-all-achievements") claimAllAchievementRewards();
       else if (action.startsWith("dev-")) runDevAction(action);
     }
     if (event.target.closest("#menu-button")) {
@@ -4530,12 +4429,16 @@ ${renderFieldNoteAside({
       menuButton.setAttribute("aria-expanded", String(!mobileNav.hidden));
     }
     if (event.target.closest("#help-button")) showHelp();
-    if (event.target.closest("[data-close-modal]")) closeModal();
   });
 
   document.addEventListener("submit", (event) => {
     if (event.target.id === "onboarding-form") completeOnboarding(event);
     else if (event.target.id === "settings-form") saveSettings(event);
+    else if (event.target.id === "shop-purchase-form") {
+      event.preventDefault();
+      const form = new FormData(event.target);
+      buyShopItem(event.target.dataset.itemId, form.get("quantity"));
+    }
     else if (event.target.id === "nickname-form") {
       event.preventDefault();
       const pokemon = state.pc.find((entry) => entry.uid === event.target.dataset.uid);
@@ -4554,51 +4457,85 @@ ${renderFieldNoteAside({
   });
 
   document.addEventListener("input", (event) => {
-    if (event.target.id === "pokedex-search") {
-      pokedexFilter = event.target.value;
-      renderPokedex();
-      const search = document.getElementById("pokedex-search");
-      if (search) {
-        search.focus();
-        search.setSelectionRange(pokedexFilter.length, pokedexFilter.length);
+    if (event.target.id === "purchase-quantity") {
+      const form = event.target.closest("#shop-purchase-form");
+      const item = form ? shopItemDefinition(form.dataset.itemId) : null;
+      const total = document.getElementById("purchase-total");
+      if (item && total) {
+        const quantity = Math.min(MAX_BULK_PURCHASE, Math.max(1, Math.floor(Number(event.target.value) || 1)));
+        total.textContent = isDevToolEnabled("freeShop") ? "FREE" : `₽${(item.cost * quantity).toLocaleString()}`;
       }
+    } else if (event.target.id === "pokedex-search") {
+      scheduleArchiveRender("pokedex", event.target.value);
     } else if (event.target.id === "pc-search") {
-      pcSearch = event.target.value;
-      renderPc();
-      const search = document.getElementById("pc-search");
-      if (search) {
-        search.focus();
-        search.setSelectionRange(pcSearch.length, pcSearch.length);
-      }
+      scheduleArchiveRender("pc", event.target.value);
     }
   });
 
   document.addEventListener("change", (event) => {
-    if (event.target.name === "theme") document.getElementById("app").dataset.theme = normaliseTheme(event.target.value);
+    if (event.target.name === "theme") {
+      document.getElementById("app").dataset.theme = normaliseTheme(event.target.value);
+      document.querySelectorAll(".theme-card").forEach((card) => card.classList.toggle("is-selected", card.contains(event.target)));
+    } else if (event.target.name === "interface_performance") {
+      document.querySelectorAll(".performance-option").forEach((card) => card.classList.toggle("is-selected", card.contains(event.target)));
+    }
     else if (event.target.id === "pc-filter") {
       pcFilter = event.target.value;
+      pcVisibleLimit = ARCHIVE_PAGE_SIZE;
       renderPc();
     } else if (event.target.id === "pc-sort") {
       pcSort = event.target.value;
+      pcVisibleLimit = ARCHIVE_PAGE_SIZE;
       renderPc();
     }
   });
 
-  updateHeader();
-  if (state.player) {
-    applyDailyReward();
-    normaliseOpeningStarterEgg();
-    backfillPokedexHatchTimes();
-    ensureAllIncubators();
-    render();
-    settleReturnedExpeditions(true);
-    incubatorSlots().forEach((slot, index) => {
-      if (eggNeedsPreparedEncounterForSlot(slot)) prepareEggForSlot(slot, index);
-      if (slot.egg && !eggNeedsPreparedEncounterForSlot(slot) && Date.now() >= slot.egg.hatchAt) hatchEggForSlot(index);
-    });
-  } else {
-    renderHome();
-    showOnboarding();
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) runClockTick(true);
+  });
+
+  window.addEventListener("pagehide", () => {
+    if (!resetInProgress && state.player) saveState();
+  });
+
+  async function recoverBackupIfNeeded() {
+    if (!saveRecoveryNeeded || typeof storageLayer().readBackup !== "function") return false;
+    const backupText = await storageLayer().readBackup(STORAGE_KEY);
+    if (!backupText) return false;
+    try {
+      const recovered = normaliseSaveState(JSON.parse(backupText), { requirePlayer: true, preserveUnknown: true });
+      if (!storageLayer().write(STORAGE_KEY, JSON.stringify(recovered))) return false;
+      return true;
+    } catch (error) {
+      console.warn("The IndexedDB backup was present but could not be restored.", error);
+      return false;
+    }
   }
-  startClock();
+
+  function initialiseApplication() {
+    updateHeader();
+    if (state.player) {
+      saveState();
+      applyDailyReward();
+      grantOpeningEggIfNeeded();
+      normaliseOpeningStarterEgg();
+      backfillPokedexHatchTimes();
+      ensureAllIncubators();
+      render();
+      settleReturnedExpeditions(true);
+      incubatorSlots().forEach((slot, index) => {
+        if (eggNeedsPreparedEncounterForSlot(slot)) prepareEggForSlot(slot, index);
+        if (slot.egg && !eggNeedsPreparedEncounterForSlot(slot) && Date.now() >= slot.egg.hatchAt) hatchEggForSlot(index);
+      });
+    } else {
+      renderHome();
+      showOnboarding();
+    }
+    startClock();
+  }
+
+  recoverBackupIfNeeded().then((recovered) => {
+    if (recovered) window.location.reload();
+    else initialiseApplication();
+  });
 })();

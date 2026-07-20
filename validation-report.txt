@@ -1,0 +1,37 @@
+Pocket Hatchery — first 50 egg timing validation
+Date: 2026-07-20
+
+Result: PASS
+
+Implemented behavior
+- Egg 1 starts at 30 seconds before global item modifiers.
+- Eggs 1–50 linearly interpolate from 30 seconds to the species base hatch duration.
+- Egg 50 is exactly the full base duration.
+- Egg 51 and later use the full base duration.
+- The Magmarizer still halves the calculated result.
+- Instant-hatch developer mode still takes precedence.
+- Existing active eggs numbered 1–50 migrate once when base-stat data is available.
+- Public save version remains 13; additive schemaRevision is 17.
+- Existing profiles are preserved and receive a pre-v17 recovery backup before migration.
+
+Formula
+progress = (eggNumber - 1) / 49
+duration = 30 seconds + (base duration - 30 seconds) × progress
+
+Automated validation
+- JavaScript syntax: PASS
+- State schema tests: PASS
+- API client tests: PASS
+- Catch engine tests: PASS
+- Competition engine tests: PASS
+- Data registry tests: PASS
+- Storage/reset tests: PASS
+- Startup, migration, expedition and reset smoke tests: PASS
+- Egg economy and first-50 timing tests: PASS
+- Legendary gating tests: PASS
+- Legendary unlock tests: PASS
+- Performance tests: PASS
+- Compatibility tests: PASS
+- HTML local references: PASS
+- CSS parse: PASS
+- Clean ZIP extraction regression suite: PASS

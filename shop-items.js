@@ -3,7 +3,6 @@
 
   const INCUBATOR_UPGRADE_COSTS = [50000, 125000, 275000, 500000];
   const MAX_INCUBATOR_SLOTS = 5;
-  const CONTEST_STATS = ["hp", "attack", "defense", "special-attack", "special-defense", "speed"];
 
   const BALL_ITEMS = [
     {
@@ -13,6 +12,8 @@
       displayName: "Poké Ball",
       cost: 200,
       soldInShop: true,
+      consumable: true,
+      stackable: true,
       description: "The classic red-and-white companion for careful first throws."
     },
     {
@@ -22,6 +23,8 @@
       displayName: "Premier Ball",
       cost: 0,
       soldInShop: false,
+      consumable: true,
+      stackable: true,
       description: "A bright keepsake ball that turns up only when the shopkeeper is feeling generous."
     },
     {
@@ -31,6 +34,8 @@
       displayName: "Great Ball",
       cost: 600,
       soldInShop: true,
+      consumable: true,
+      stackable: true,
       description: "A sturdy blue favourite for Pokémon that need a little more convincing."
     },
     {
@@ -40,6 +45,8 @@
       displayName: "Ultra Ball",
       cost: 1200,
       soldInShop: true,
+      consumable: true,
+      stackable: true,
       description: "A black-and-gold premium ball for the ones that really do not want to stay put."
     },
     {
@@ -49,6 +56,8 @@
       displayName: "Master Ball",
       cost: 0,
       soldInShop: false,
+      consumable: true,
+      stackable: true,
       description: "A rare purple marvel kept well away from the shop counter."
     }
   ];
@@ -64,18 +73,19 @@
       availability: "first-shiny-caught",
       useAction: "activate-shiny-charm",
       usable: true,
+      consumable: true,
       stackable: true
     },
     {
-      id: "rare-candy",
+      id: "egg-voucher",
       category: "item",
       pocket: "items",
-      displayName: "Rare Candy",
-      cost: 4800,
-      description: "A sweet shortcut that raises one PC Pokémon by one level, up to level 100.",
-      usable: true,
+      displayName: "Prepaid Egg",
+      cost: 50,
+      description: "A paid hatchery claim slip. It moves from the bag into an empty incubator automatically as soon as one is available.",
+      consumable: true,
       stackable: true,
-      soldInShop: true
+      spriteId: "lucky-egg"
     },
     {
       id: "magmarizer",
@@ -133,6 +143,8 @@
     stackable: false
   }));
 
+
+
   function berry(id, displayName, cost, statEffects, description) {
     return {
       id,
@@ -143,6 +155,7 @@
       statEffects,
       soldInShop: true,
       usable: true,
+      consumable: true,
       stackable: true,
       description
     };
@@ -240,117 +253,9 @@
     description
   }));
 
-  const MYSTERIOUS_ITEMS = [
-    ["frozen-slate", "Frozen Slate", 144, "Articuno", "never-melt-ice"],
-    ["storm-slate", "Storm Slate", 145, "Zapdos", "magnet"],
-    ["ember-slate", "Ember Slate", 146, "Moltres", "charcoal"],
-    ["genetic-fragment", "Genetic Fragment", 150, "Mewtwo", "upgrade"],
-    ["old-sea-map", "Old Sea Map", 151, "Mew", "town-map"],
-    ["thunder-bell", "Thunder Bell", 243, "Raikou", "clear-bell"],
-    ["volcano-bell", "Volcano Bell", 244, "Entei", "clear-bell"],
-    ["clear-bell-suicune", "Clear Bell", 245, "Suicune", "clear-bell"],
-    ["silver-wing", "Silver Wing", 249, "Lugia", "silver-wing"],
-    ["rainbow-wing", "Rainbow Wing", 250, "Ho-Oh", "rainbow-wing"],
-    ["gs-ball", "GS Ball", 251, "Celebi", "gs-ball"],
-    ["stone-tablet", "Stone Tablet", 377, "Regirock", "stone-plate"],
-    ["ice-tablet", "Ice Tablet", 378, "Regice", "icicle-plate"],
-    ["iron-tablet", "Iron Tablet", 379, "Registeel", "iron-plate"],
-    ["eon-ticket-latias", "Eon Ticket", 380, "Latias", "eon-ticket"],
-    ["eon-ticket-latios", "Eon Ticket", 381, "Latios", "eon-ticket"],
-    ["blue-orb", "Blue Orb", 382, "Kyogre", "blue-orb"],
-    ["red-orb", "Red Orb", 383, "Groudon", "red-orb"],
-    ["jade-orb", "Jade Orb", 384, "Rayquaza", "green-orb"],
-    ["wish-tag", "Wish Tag", 385, "Jirachi", "wishing-piece"],
-    ["aurora-ticket", "Aurora Ticket", 386, "Deoxys", "aurora-ticket"],
-    ["knowledge-charm", "Knowledge Charm", 480, "Uxie", "mind-plate"],
-    ["emotion-charm", "Emotion Charm", 481, "Mesprit", "pixie-plate"],
-    ["willpower-charm", "Willpower Charm", 482, "Azelf", "fist-plate"],
-    ["adamant-orb", "Adamant Orb", 483, "Dialga", "adamant-orb"],
-    ["lustrous-orb", "Lustrous Orb", 484, "Palkia", "lustrous-orb"],
-    ["magma-stone", "Magma Stone", 485, "Heatran", "magma-stone"],
-    ["ancient-giant-key", "Ancient Giant Key", 486, "Regigigas", "key-stone"],
-    ["griseous-orb", "Griseous Orb", 487, "Giratina", "griseous-orb"],
-    ["lunar-wing", "Lunar Wing", 488, "Cresselia", "lunar-wing"],
-    ["sea-crown", "Sea Crown", 489, "Phione", "mystic-water"],
-    ["manaphy-egg-charm", "Manaphy Egg Charm", 490, "Manaphy", "mystic-water"],
-    ["member-card", "Member Card", 491, "Darkrai", "member-card"],
-    ["oaks-letter", "Oak’s Letter", 492, "Shaymin", "oaks-letter"],
-    ["azure-flute", "Azure Flute", 493, "Arceus", "azure-flute"],
-    ["liberty-pass", "Liberty Pass", 494, "Victini", "liberty-pass"],
-    ["sacred-blade-crest", "Sacred Blade Crest", 638, "Cobalion", "iron-plate"],
-    ["sacred-stone-crest", "Sacred Stone Crest", 639, "Terrakion", "stone-plate"],
-    ["sacred-leaf-crest", "Sacred Leaf Crest", 640, "Virizion", "meadow-plate"],
-    ["reveal-glass-tornadus", "Reveal Glass Fragment", 641, "Tornadus", "reveal-glass"],
-    ["reveal-glass-thundurus", "Reveal Glass Fragment", 642, "Thundurus", "reveal-glass"],
-    ["light-stone", "Light Stone", 643, "Reshiram", "light-stone"],
-    ["dark-stone", "Dark Stone", 644, "Zekrom", "dark-stone"],
-    ["reveal-glass", "Reveal Glass", 645, "Landorus", "reveal-glass"],
-    ["dna-splicers", "DNA Splicers", 646, "Kyurem", "dna-splicers"],
-    ["secret-sword-scroll", "Secret Sword Scroll", 647, "Keldeo", "scroll"],
-    ["relic-song-sheet", "Relic Song Sheet", 648, "Meloetta", "sheet-music"],
-    ["ancient-drive", "Ancient Drive", 649, "Genesect", "douse-drive"],
-    ["life-antler", "Life Antler", 716, "Xerneas", "big-root"],
-    ["ruin-feather", "Ruin Feather", 717, "Yveltal", "dark-gem"],
-    ["zygarde-cube", "Zygarde Cube", 718, "Zygarde", "zygarde-cube"],
-    ["diamond-shard", "Diamond Shard", 719, "Diancie", "diamond"],
-    ["prison-bottle", "Prison Bottle", 720, "Hoopa", "prison-bottle"],
-    ["steam-core", "Steam Core", 721, "Volcanion", "magma-stone"],
-    ["rks-memory-core", "RKS Memory Core", 772, "Type: Null", "memory"],
-    ["rks-memory-drive", "RKS Memory Drive", 773, "Silvally", "memory"],
-    ["guardian-spark", "Guardian Spark", 785, "Tapu Koko", "zap-plate"],
-    ["guardian-bloom", "Guardian Bloom", 786, "Tapu Lele", "mind-plate"],
-    ["guardian-horn", "Guardian Horn", 787, "Tapu Bulu", "meadow-plate"],
-    ["guardian-shell", "Guardian Shell", 788, "Tapu Fini", "splash-plate"],
-    ["cosmog-star", "Cosmog’s Star", 789, "Cosmog", "star-piece"],
-    ["cosmoem-shell", "Cosmoem Shell", 790, "Cosmoem", "star-piece"],
-    ["sun-flute", "Sun Flute", 791, "Solgaleo", "sun-stone"],
-    ["moon-flute", "Moon Flute", 792, "Lunala", "moon-stone"],
-    ["light-prism", "Light Prism", 800, "Necrozma", "light-clay"],
-    ["soul-heart-gear", "Soul-Heart Gear", 801, "Magearna", "metal-coat"],
-    ["shadow-charm", "Shadow Charm", 802, "Marshadow", "spell-tag"],
-    ["plasma-claw", "Plasma Claw", 807, "Zeraora", "quick-claw"],
-    ["mystery-box", "Mystery Box", 808, "Meltan", "mystery-box"],
-    ["rusted-sword", "Rusted Sword", 888, "Zacian", "rusted-sword"],
-    ["rusted-shield", "Rusted Shield", 889, "Zamazenta", "rusted-shield"],
-    ["wishing-star-core", "Wishing Star Core", 890, "Eternatus", "wishing-piece"],
-    ["armor-pass", "Armor Pass", 891, "Kubfu", "armor-pass"],
-    ["jungle-vine", "Jungle Vine", 893, "Zarude", "miracle-seed"],
-    ["electric-temple-key", "Electric Temple Key", 894, "Regieleki", "key-stone"],
-    ["dragon-temple-key", "Dragon Temple Key", 895, "Regidrago", "key-stone"],
-    ["iceroot-carrot", "Iceroot Carrot", 896, "Glastrier", "iceroot-carrot"],
-    ["shaderoot-carrot", "Shaderoot Carrot", 897, "Spectrier", "shaderoot-carrot"],
-    ["wooden-crown", "Wooden Crown", 898, "Calyrex", "wooden-crown"],
-    ["reveal-glass-enamorus", "Reveal Glass", 905, "Enamorus", "reveal-glass"],
-    ["ruinous-tablet", "Ruinous Tablet", 1001, "Wo-Chien", "dread-plate"],
-    ["ruinous-sword", "Ruinous Sword", 1002, "Chien-Pao", "dread-plate"],
-    ["ruinous-vessel", "Ruinous Vessel", 1003, "Ting-Lu", "dread-plate"],
-    ["ruinous-beads", "Ruinous Beads", 1004, "Chi-Yu", "dread-plate"],
-    ["scarlet-book", "Scarlet Book", 1007, "Koraidon", "red-book"],
-    ["violet-book", "Violet Book", 1008, "Miraidon", "blue-book"],
-    ["toxic-chain-okidogi", "Toxic Chain Link", 1014, "Okidogi", "poison-barb"],
-    ["toxic-chain-munkidori", "Toxic Chain Link", 1015, "Munkidori", "poison-barb"],
-    ["toxic-chain-fezandipiti", "Toxic Chain Link", 1016, "Fezandipiti", "poison-barb"],
-    ["teal-mask", "Teal Mask", 1017, "Ogerpon", "miracle-seed"],
-    ["indigo-disk", "Indigo Disk", 1024, "Terapagos", "blue-scarf"],
-    ["mythical-pecha-berry", "Mythical Pecha Berry", 1025, "Pecharunt", "pecha-berry"]
-  ].map(([id, displayName, summonSpeciesId, summonSpeciesName, spriteId]) => ({
-    id,
-    category: "mysterious",
-    pocket: "mysterious",
-    displayName,
-    cost: 0,
-    summonSpeciesId,
-    summonSpeciesName,
-    spriteId,
-    soldInShop: false,
-    unique: true,
-    usable: true,
-    stackable: false,
-    description: `A rare relic that can call ${summonSpeciesName} to the hatchery once its condition is met.`
-  }));
-
-
-  const ALL_ITEMS = [...BALL_ITEMS, ...UTILITY_ITEMS, ...PLATE_ITEMS, ...BERRY_ITEMS, ...SOUVENIR_ITEMS, ...MYSTERIOUS_ITEMS];
+  const LEGENDARY_REGISTRY = window.PocketHatcheryLegendaryItems || null;
+  const MYSTERY_ITEMS = LEGENDARY_REGISTRY && typeof LEGENDARY_REGISTRY.items === "function" ? LEGENDARY_REGISTRY.items() : [];
+  const ALL_ITEMS = [...BALL_ITEMS, ...UTILITY_ITEMS, ...PLATE_ITEMS, ...BERRY_ITEMS, ...SOUVENIR_ITEMS, ...MYSTERY_ITEMS];
   const ITEM_BY_ID = Object.fromEntries(ALL_ITEMS.map((item) => [item.id, item]));
 
   function normaliseItems(items) {
@@ -389,7 +294,7 @@
     if (item.availability === "five-fire-caught") return countCaughtType(state, "fire") >= 5;
     if (item.availability === "type-caught") return hasCaughtType(state, item.type);
     if (item.availability === "incubator-upgrade") return incubatorCapacity(state) < MAX_INCUBATOR_SLOTS;
-    return item.soldInShop !== false;
+    return true;
   }
 
   function isOwned(item, state) {
@@ -400,6 +305,7 @@
 
   function getShopStock(state) {
     return ALL_ITEMS
+      .filter((item) => item.category !== "mystery")
       .filter((item) => item.soldInShop === true || (item.soldInShop !== false && item.category !== "ball"))
       .filter((item) => isItemAvailable(item, state))
       .filter((item) => !(item.unique === true && isOwned(item, state)))
@@ -420,7 +326,6 @@
   function getBagPockets(state) {
     const inventory = state?.inventory || {};
     const items = normaliseItems(state?.items);
-    const souvenirs = normaliseItems(state?.souvenirs);
     const balls = BALL_ITEMS
       .map((item) => ({ ...item, count: Number(inventory[item.id] || 0) }))
       .filter((item) => item.count > 0);
@@ -433,13 +338,13 @@
     const plates = PLATE_ITEMS
       .map((item) => ({ ...item, count: Number(items[item.id] || 0), equipped: state?.equippedPlate === item.id }))
       .filter((item) => item.count > 0);
-    const keepsakes = SOUVENIR_ITEMS
-      .map((item) => ({ ...item, count: Number(souvenirs[item.id] || 0) }))
+    const souvenirs = SOUVENIR_ITEMS
+      .map((item) => ({ ...item, count: Number(state?.souvenirs?.[item.id] || 0) }))
       .filter((item) => item.count > 0);
-    const mysterious = MYSTERIOUS_ITEMS
+    const mysteryItems = MYSTERY_ITEMS
       .map((item) => ({ ...item, count: Number(items[item.id] || 0) }))
       .filter((item) => item.count > 0);
-    return { balls, items: utilityItems, berries, plates, souvenirs: keepsakes, mysterious };
+    return { balls, items: utilityItems, berries, plates, souvenirs, mysteryItems };
   }
 
   function getItem(id) {
@@ -466,9 +371,9 @@
     countCaughtType,
     hasCaughtShiny,
     allItems: () => ALL_ITEMS.map((item) => ({ ...item })),
-    berries: () => BERRY_ITEMS.map((item) => ({ ...item, statEffects: { ...item.statEffects } })),
     plates: () => PLATE_ITEMS.map((item) => ({ ...item })),
+    berries: () => BERRY_ITEMS.map((item) => ({ ...item })),
     souvenirs: () => SOUVENIR_ITEMS.map((item) => ({ ...item })),
-    mysteriousItems: () => MYSTERIOUS_ITEMS.map((item) => ({ ...item }))
+    mysteryItems: () => MYSTERY_ITEMS.map((item) => ({ ...item }))
   };
 }());

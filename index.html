@@ -6,6 +6,9 @@
     <meta name="theme-color" content="#17243b" />
     <meta name="description" content="Hatch eggs, meet Pokémon, and fill a cosy little Pokédex." />
     <title>Pocket Hatchery</title>
+    <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin />
+    <link rel="preconnect" href="https://pokeapi.co" crossorigin />
+    <link rel="dns-prefetch" href="//archives.bulbagarden.net" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -22,7 +25,6 @@
           <button class="nav-button" type="button" data-tab="pc">PC</button>
           <button class="nav-button" type="button" data-tab="bag">Bag</button>
           <button class="nav-button" type="button" data-tab="competitions">Competitions</button>
-          <button class="nav-button" type="button" data-tab="achievements">Achievements</button>
           <button class="nav-button" type="button" data-tab="mart">Pokémart</button>
           <button class="nav-button" type="button" data-tab="settings">Settings</button>
         </nav>
@@ -43,7 +45,6 @@
         <button type="button" data-tab="pc">PC</button>
         <button type="button" data-tab="bag">Bag</button>
         <button type="button" data-tab="competitions">Competitions</button>
-        <button type="button" data-tab="achievements">Achievements</button>
         <button type="button" data-tab="mart">Pokémart</button>
         <button type="button" data-tab="settings">Settings</button>
       </nav>
@@ -60,8 +61,16 @@
       <div id="toast-root" class="toast-root" aria-live="assertive"></div>
     </div>
     <noscript>This game needs JavaScript enabled to keep your local hatchery nest.</noscript>
+    <script src="compatibility.js" defer></script>
     <script src="profile-features.js" defer></script>
+    <script src="storage.js" defer></script>
+    <script src="api-client.js" defer></script>
+    <script src="modal-manager.js" defer></script>
+    <script src="competition-engine.js" defer></script>
+    <script src="state-schema.js" defer></script>
+    <script src="catch-engine.js" defer></script>
     <script src="field-notes.js" defer></script>
+    <script src="legendary-items.js" defer></script>
     <script src="shop-items.js" defer></script>
     <script src="app.js" defer></script>
   </body>
