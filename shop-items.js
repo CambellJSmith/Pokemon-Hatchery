@@ -88,6 +88,18 @@
       spriteId: "lucky-egg"
     },
     {
+      id: "repel",
+      category: "item",
+      pocket: "items",
+      displayName: "Repel",
+      cost: 350,
+      description: "An automatic five-egg safeguard. It protects the next five eggs that reach hatch time, spending one protection on every hatch whether a predator appears or not.",
+      soldInShop: true,
+      consumable: true,
+      stackable: true,
+      spriteId: "repel"
+    },
+    {
       id: "magmarizer",
       category: "item",
       pocket: "items",
@@ -331,7 +343,9 @@
       .filter((item) => item.count > 0);
     const utilityItems = UTILITY_ITEMS
       .map((item) => ({ ...item, count: Number(items[item.id] || 0) }))
-      .filter((item) => item.count > 0 || (item.id === "shiny-charm" && Number(state?.activeItemEffects?.shinyCharmEggsRemaining || 0) > 0));
+      .filter((item) => item.count > 0
+        || (item.id === "shiny-charm" && Number(state?.activeItemEffects?.shinyCharmEggsRemaining || 0) > 0)
+        || (item.id === "repel" && Number(state?.activeItemEffects?.repelEggsRemaining || 0) > 0));
     const berries = BERRY_ITEMS
       .map((item) => ({ ...item, count: Number(items[item.id] || 0) }))
       .filter((item) => item.count > 0);

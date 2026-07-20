@@ -6,7 +6,7 @@ Upload the contents of this folder to the existing `CambellJSmith/Pokemon-Hatche
 
 - Browser storage key remains `pocket_hatchery_save_v1`.
 - Public save `version` remains `13`, matching the repository build already used by players.
-- The new additive format is tracked by `schemaRevision: 17`.
+- The new additive format is tracked by `schemaRevision: 19`.
 - Existing version 1–13 saves are accepted.
 - A missing competition ladder is initialised without replacing the profile.
 - Existing achievements, quests, Pokédex data, PC Pokémon, EV training, expeditions, souvenirs, inventory, incubators, statistics, and unrecognised future JSON fields are retained.
@@ -16,13 +16,17 @@ Upload the contents of this folder to the existing `CambellJSmith/Pokemon-Hatche
 
 Existing `expeditions`, `expeditionLog`, `souvenirs`, berry inventory, Pokémon EV values, and expedition statistics remain in the same save object. Active routes continue from their migrated `returnAt` timestamp after deployment; ready routes settle on the next startup or clock tick. Active eggs numbered 1–50 are recalculated to the new early-game hatch curve when their stored species totals are available.
 
-The update adds 67 berry item definitions and nine keepsake definitions without renaming any repository item IDs.
+The update adds 67 berry item definitions, nine keepsake definitions, a stackable Repel item, and the egg-predator registry without renaming existing item IDs.
+
+## Egg safety data
+
+Existing saves receive empty `eggEventNotices`, zero active Repel charges, and the protection statistics without changing the player profile. Repels remain stored in the existing `items` map under the ID `repel`; active coverage is stored as `activeItemEffects.repelEggsRemaining`. Active eggs keep their current timing and receive their one-time predator check only when they become ready to hatch.
 
 ## Recovery copy
 
-Before the first schema-revision-17 write, the original serialized save is copied to:
+Before the first schema-revision-19 write, the original serialized save is copied to:
 
-`pocket_hatchery_save_v1_pre_v17_backup`
+`pocket_hatchery_save_v1_pre_v19_backup`
 
 The storage layer also attempts to write the same recovery copy into IndexedDB when IndexedDB is available.
 

@@ -197,6 +197,20 @@
       if (forcedSpeciesId) egg.forcedSpeciesId = forcedSpeciesId;
       if (baseStatTotal) egg.baseStatTotal = baseStatTotal;
       if (pendingEncounter) egg.pendingEncounter = pendingEncounter;
+      if (isPlainObject(value.predatorCheck) && value.predatorCheck.resolved === true) {
+        egg.predatorCheck = {
+          resolved: true,
+          attempted: value.predatorCheck.attempted === true,
+          outcome: ["none", "repel", "partner", "eaten"].includes(value.predatorCheck.outcome) ? value.predatorCheck.outcome : "none",
+          predatorSpeciesId: boundedNumber(value.predatorCheck.predatorSpeciesId, 0, 0, 20000),
+          predatorName: cleanText(value.predatorCheck.predatorName, "a hungry Pokémon", 80),
+          partnerUid: String(value.predatorCheck.partnerUid || "").replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 80),
+          partnerName: cleanText(value.predatorCheck.partnerName, "", 80),
+          repelActivated: value.predatorCheck.repelActivated === true,
+          repelEggsRemaining: boundedNumber(value.predatorCheck.repelEggsRemaining, 0, 0, 5),
+          resolvedAt: cleanDate(value.predatorCheck.resolvedAt, new Date().toISOString())
+        };
+      }
       return egg;
     }
 
@@ -377,6 +391,29 @@
       };
     }
 
+    function normaliseEggEventNotices(value) {
+      if (!Array.isArray(value)) return [];
+      return value.slice(-20).map((notice) => {
+        if (!isPlainObject(notice)) return null;
+        const attempted = notice.attempted === true || (notice.attempted == null && Number(notice.predatorSpeciesId || 0) > 0);
+        const predatorSpeciesId = attempted ? boundedNumber(notice.predatorSpeciesId, 23, 1, 20000) : 0;
+        return {
+          id: cleanUid(notice.id),
+          kind: notice.kind === "protected" ? "protected" : "eaten",
+          protection: ["repel", "partner", ""].includes(notice.protection) ? notice.protection : "",
+          attempted,
+          predatorSpeciesId,
+          predatorName: cleanText(notice.predatorName, notice.attempted === true ? "a hungry Pokémon" : "", 80),
+          predatorSprite: notice.attempted === true ? cleanSpriteUrl(notice.predatorSprite, predatorSpeciesId, false) : "",
+          partnerName: cleanText(notice.partnerName, "", 80),
+          pokemonName: cleanText(notice.pokemonName, "", 80),
+          incubatorNumber: boundedNumber(notice.incubatorNumber, 1, 1, 5),
+          repelEggsRemaining: boundedNumber(notice.repelEggsRemaining, 0, 0, 5),
+          createdAt: cleanDate(notice.createdAt, new Date().toISOString())
+        };
+      }).filter(Boolean);
+    }
+
     function normaliseSaveState(stored, options = {}) {
       if (!isPlainObject(stored)) return cloneDefault();
       if (options.requirePlayer && (!isPlainObject(stored.player) || typeof stored.player.name !== "string" || !stored.player.name.trim())) {
@@ -439,7 +476,7 @@
 
       const normalised = {
         version: DEFAULT_STATE.version,
-        schemaRevision: boundedNumber(DEFAULT_STATE.schemaRevision, 17, 1, 1000000),
+        schemaRevision: boundedNumber(DEFAULT_STATE.schemaRevision, 19, 1, 1000000),
         player,
         money: boundedNumber(stored.money, 0, 0, 1000000000000),
         streak: boundedNumber(stored.streak, 0, 0, 1000000),
@@ -466,6 +503,7 @@
           currentDate: cleanLocalDate(stored.dailyQuests.currentDate, ""),
           quests: Array.isArray(stored.dailyQuests.quests) ? safeClone(stored.dailyQuests.quests.slice(0, 100), []) : []
         } : safeClone(DEFAULT_STATE.dailyQuests, { currentDate: "", quests: [] }),
+        eggEventNotices: normaliseEggEventNotices(stored.eggEventNotices),
         pc,
         expeditions: Array.isArray(stored.expeditions) ? safeClone(stored.expeditions.slice(0, 1000), []) : [],
         expeditionLog: Array.isArray(stored.expeditionLog) ? safeClone(stored.expeditionLog.slice(0, 100), []) : [],
@@ -475,7 +513,10 @@
         inventory,
         items,
         equippedPlate: items[equippedPlate] > 0 ? equippedPlate : "",
-        activeItemEffects: { shinyCharmEggsRemaining: boundedNumber(stored.activeItemEffects?.shinyCharmEggsRemaining, 0, 0, 1000000) },
+        activeItemEffects: {
+          shinyCharmEggsRemaining: boundedNumber(stored.activeItemEffects?.shinyCharmEggsRemaining, 0, 0, 1000000),
+          repelEggsRemaining: boundedNumber(stored.activeItemEffects?.repelEggsRemaining, 0, 0, 5)
+        },
         settings: {
           generations: usedLegacyDefault || !storedGenerations.length ? [...DEFAULT_STATE.settings.generations] : storedGenerations,
           theme: normaliseTheme(stored.settings?.theme),

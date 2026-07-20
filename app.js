@@ -27,6 +27,9 @@
   const MAX_INCUBATOR_SLOTS = 5;
   const EGG_PRICE = 50;
   const PREPAID_EGG_ITEM_ID = "egg-voucher";
+  const REPEL_ITEM_ID = "repel";
+  const REPEL_EGG_COVERAGE = 5;
+  const EGG_PREDATOR_SCHEMA_REVISION = 19;
   const MAX_BULK_PURCHASE = 999;
   const CATCH_BALL_IDS = new Set(["poke-ball", "premier-ball", "great-ball", "ultra-ball", "master-ball"]);
 
@@ -118,6 +121,8 @@
   const CONTEST_STATS = ["hp", "attack", "defense", "special-attack", "special-defense", "speed"];
   const COMPETITION_ENGINE = window.PocketHatcheryCompetitionEngine;
   if (!COMPETITION_ENGINE) throw new Error("Competition engine failed to load.");
+  const EGG_PREDATOR_REGISTRY = window.PocketHatcheryEggPredators;
+  if (!EGG_PREDATOR_REGISTRY) throw new Error("Egg predator registry failed to load.");
   const DEV_TOOL_DEFAULTS = {
     instantHatch: false,
     boostedPassiveXp: false,
@@ -174,7 +179,7 @@
   const INTERFACE_PERFORMANCE_VALUES = new Set(INTERFACE_PERFORMANCE_OPTIONS.map((option) => option.value));
   const DEFAULT_STATE = {
     version: 13,
-    schemaRevision: 17,
+    schemaRevision: EGG_PREDATOR_SCHEMA_REVISION,
     player: null,
     money: 0,
     streak: 0,
@@ -184,6 +189,7 @@
     forcedNextEggSpeciesId: 0,
     fieldNotes: { currentDate: "", currentId: "", seen: false, usedIds: [] },
     dailyQuests: { currentDate: "", quests: [] },
+    eggEventNotices: [],
     incubators: { capacity: 1, activeIndex: 0, slots: [{ id: "incubator-1", egg: null, encounter: null }] },
     egg: null,
     encounter: null,
@@ -201,13 +207,17 @@
     inventory: { "poke-ball": 5, "premier-ball": 0, "great-ball": 0, "ultra-ball": 0, "master-ball": 0 },
     items: {},
     equippedPlate: "",
-    activeItemEffects: { shinyCharmEggsRemaining: 0 },
+    activeItemEffects: { shinyCharmEggsRemaining: 0, repelEggsRemaining: 0 },
     settings: { generations: [1, 2, 3, 4, 5, 6, 7, 8, 9], theme: "field", interfacePerformance: "automatic", devTools: { ...DEV_TOOL_DEFAULTS } },
     statistics: {
       eggsHatched: 0,
       eggsLaid: 0,
       eggsBought: 0,
       eggsLostToSnakes: 0,
+      eggConsumptionAttempts: 0,
+      eggsProtectedByRepel: 0,
+      eggsProtectedByPartner: 0,
+      repelsUsed: 0,
       pokemonCaught: 0,
       pokemonReleased: 0,
       competitionsWon: 0,
@@ -1229,6 +1239,136 @@
     return placeEggInSlot(incubatorSlots()[0], 0, true);
   }
 
+  function eggPredatorSpriteUrl(speciesId) {
+    const id = Math.max(1, Math.floor(Number(speciesId || 23)));
+    return `${DEFAULT_SPRITE_ROOT}/${id}.png`;
+  }
+
+  function activeRepelEggCharges() {
+    return Math.max(0, Math.min(REPEL_EGG_COVERAGE, Math.floor(Number(state.activeItemEffects?.repelEggsRemaining || 0))));
+  }
+
+  function beginRepelCoverageForEgg() {
+    if (!state.activeItemEffects || typeof state.activeItemEffects !== "object") state.activeItemEffects = {};
+    let remaining = activeRepelEggCharges();
+    let activated = false;
+    if (remaining <= 0 && itemCount(REPEL_ITEM_ID) > 0) {
+      setItemCount(REPEL_ITEM_ID, itemCount(REPEL_ITEM_ID) - 1);
+      remaining = REPEL_EGG_COVERAGE;
+      state.activeItemEffects.repelEggsRemaining = remaining;
+      state.statistics.repelsUsed = (state.statistics.repelsUsed || 0) + 1;
+      activated = true;
+    }
+    if (remaining <= 0) return { active: false, activated: false, remainingAfter: 0 };
+    const remainingAfter = remaining - 1;
+    state.activeItemEffects.repelEggsRemaining = remainingAfter;
+    return { active: true, activated, remainingAfter };
+  }
+
+  function eggPredatorCheck(egg) {
+    if (egg?.predatorCheck?.resolved === true) return egg.predatorCheck;
+    const partner = getPartnerPokemon();
+    const repelCoverage = beginRepelCoverageForEgg();
+    const result = EGG_PREDATOR_REGISTRY.resolveAttempt({
+      hasRepel: repelCoverage.active,
+      hasPartner: Boolean(partner) && !repelCoverage.active,
+      generations: enabledGenerationNumbers(),
+      random: Math.random
+    });
+    const check = {
+      resolved: true,
+      attempted: result.attempted === true,
+      outcome: repelCoverage.active ? "repel" : (result.outcome || "none"),
+      predatorSpeciesId: Number(result.predator?.speciesId || 0),
+      predatorName: String(result.predator?.displayName || ""),
+      partnerUid: partner?.uid || "",
+      partnerName: partner ? String(partner.nickname || partner.displayName) : "",
+      repelActivated: repelCoverage.activated,
+      repelEggsRemaining: repelCoverage.remainingAfter,
+      resolvedAt: new Date().toISOString()
+    };
+    egg.predatorCheck = check;
+    if (check.attempted) state.statistics.eggConsumptionAttempts = (state.statistics.eggConsumptionAttempts || 0) + 1;
+    if (check.outcome === "repel") {
+      state.statistics.eggsProtectedByRepel = (state.statistics.eggsProtectedByRepel || 0) + 1;
+    } else if (check.outcome === "partner") {
+      state.statistics.eggsProtectedByPartner = (state.statistics.eggsProtectedByPartner || 0) + 1;
+    } else if (check.outcome === "eaten") {
+      state.statistics.eggsLostToSnakes = (state.statistics.eggsLostToSnakes || 0) + 1;
+    }
+    return check;
+  }
+
+  function enqueueEggEventNotice(notice) {
+    if (!Array.isArray(state.eggEventNotices)) state.eggEventNotices = [];
+    state.eggEventNotices.push({
+      id: makeId(),
+      kind: notice.kind,
+      protection: notice.protection || "",
+      attempted: notice.attempted === true,
+      predatorSpeciesId: Math.max(0, Math.floor(Number(notice.predatorSpeciesId || 0))),
+      predatorName: String(notice.predatorName || ""),
+      predatorSprite: Number(notice.predatorSpeciesId || 0) > 0 ? eggPredatorSpriteUrl(notice.predatorSpeciesId) : "",
+      partnerName: String(notice.partnerName || ""),
+      pokemonName: String(notice.pokemonName || ""),
+      incubatorNumber: Math.max(1, Math.floor(Number(notice.incubatorNumber || 1))),
+      repelEggsRemaining: Math.max(0, Math.min(REPEL_EGG_COVERAGE, Math.floor(Number(notice.repelEggsRemaining || 0)))),
+      createdAt: new Date().toISOString()
+    });
+    state.eggEventNotices = state.eggEventNotices.slice(-20);
+  }
+
+  function showNextEggEventNotice() {
+    if (resetInProgress || !state.player || !Array.isArray(state.eggEventNotices) || !state.eggEventNotices.length) return;
+    if (String(modalRoot.innerHTML || "").trim()) return;
+    const notice = state.eggEventNotices[0];
+    const predatorName = escapeHtml(notice.predatorName || "A hungry Pokémon");
+    let visualName = predatorName;
+    let visualSprite = escapeHtml(notice.predatorSprite || eggPredatorSpriteUrl(notice.predatorSpeciesId));
+    let eyebrow = "Incubator incident";
+    let title = `${predatorName} ate the egg`;
+    let body = `A ${predatorName} slipped into incubator ${Number(notice.incubatorNumber || 1)} and ate the egg before it could hatch.`;
+    if (notice.kind === "protected" && notice.protection === "repel") {
+      const remaining = Math.max(0, Math.floor(Number(notice.repelEggsRemaining || 0)));
+      const remainingText = remaining > 0
+        ? `The active Repel will protect ${remaining} more egg${remaining === 1 ? "" : "s"}.`
+        : "The Repel has now worn off.";
+      eyebrow = "Automatic protection";
+      title = "A Repel protected the egg";
+      if (notice.attempted) {
+        body = `${predatorName} tried to reach the egg, but the active Repel drove it away. ${escapeHtml(notice.pokemonName || "The Pokémon")} hatched safely. ${remainingText}`;
+      } else {
+        visualName = "Repel";
+        visualSprite = escapeHtml(itemSpriteUrl(REPEL_ITEM_ID));
+        body = `An active Repel covered incubator ${Number(notice.incubatorNumber || 1)} while ${escapeHtml(notice.pokemonName || "the Pokémon")} hatched safely. This hatch used one of its five protections. ${remainingText}`;
+      }
+    } else if (notice.kind === "protected" && notice.protection === "partner") {
+      eyebrow = "Partner on watch";
+      title = `${escapeHtml(notice.partnerName || "Your partner")} protected the egg`;
+      body = `${predatorName} tried to reach the egg, but ${escapeHtml(notice.partnerName || "your partner")} chased it away. ${escapeHtml(notice.pokemonName || "The Pokémon")} hatched safely.`;
+    }
+    modalRoot.innerHTML = `
+      <div class="modal-backdrop">
+        <section class="modal paper-panel egg-event-modal" role="dialog" aria-modal="true" aria-labelledby="egg-event-title">
+          <p class="eyebrow">${eyebrow}</p>
+          <h2 id="egg-event-title">${title}</h2>
+          <img class="egg-event-predator" src="${visualSprite}" alt="${visualName}" />
+          <p class="modal-intro">${body}</p>
+          <div class="button-row"><button class="button button-primary" type="button" data-action="acknowledge-egg-event" data-notice-id="${escapeHtml(notice.id)}">Continue</button></div>
+        </section>
+      </div>`;
+  }
+
+  function acknowledgeEggEventNotice(noticeId) {
+    if (!Array.isArray(state.eggEventNotices)) state.eggEventNotices = [];
+    const index = state.eggEventNotices.findIndex((notice) => notice.id === noticeId);
+    if (index >= 0) state.eggEventNotices.splice(index, 1);
+    else state.eggEventNotices.shift();
+    modalRoot.innerHTML = "";
+    saveState();
+    showNextEggEventNotice();
+  }
+
   async function hatchEggForSlot(slotIndex = activeIncubatorIndex()) {
     normaliseIncubatorsIfNeeded();
     const slot = incubatorSlots()[slotIndex];
@@ -1249,6 +1389,23 @@
       }
       return;
     }
+    const predatorCheck = eggPredatorCheck(egg);
+    saveState();
+    if (predatorCheck.outcome === "eaten") {
+      slot.egg = null;
+      if (slotIndex === activeIncubatorIndex()) syncLegacyFromActiveIncubator();
+      enqueueEggEventNotice({
+        kind: "eaten",
+        attempted: true,
+        predatorSpeciesId: predatorCheck.predatorSpeciesId,
+        predatorName: predatorCheck.predatorName,
+        incubatorNumber: slotIndex + 1
+      });
+      saveState();
+      if (activeTab === "home") render();
+      else showNextEggEventNotice();
+      return;
+    }
     egg.hatching = true;
     const openingStarterEgg = Boolean(egg.openingStarterEgg);
     if (slotIndex === activeIncubatorIndex()) {
@@ -1265,6 +1422,19 @@
       if (slotIndex === activeIncubatorIndex()) syncLegacyFromActiveIncubator();
       state.statistics.eggsHatched += 1;
       recordPokedexEncounter(encounter);
+      if (predatorCheck.outcome === "repel" || predatorCheck.outcome === "partner") {
+        enqueueEggEventNotice({
+          kind: "protected",
+          protection: predatorCheck.outcome,
+          attempted: predatorCheck.attempted,
+          predatorSpeciesId: predatorCheck.predatorSpeciesId,
+          predatorName: predatorCheck.predatorName,
+          partnerName: predatorCheck.partnerName,
+          pokemonName: encounter.nickname || encounter.displayName,
+          incubatorNumber: slotIndex + 1,
+          repelEggsRemaining: predatorCheck.repelEggsRemaining
+        });
+      }
       saveState();
       toast(openingStarterEgg
         ? `${encounter.displayName} tumbled out of your first egg. The hatchery is officially awake.`
@@ -2263,7 +2433,7 @@ ${renderFieldNoteAside({
     const actionGroups = DEV_ACTION_GROUPS.map(([title, actions]) => `
       <div class="dev-action-group"><h3>${title}</h3><div>${actions.map(([action, label]) => `<button class="button" type="button" data-action="${action}">${label}</button>`).join("")}</div></div>`).join("");
     return `
-      <article class="paper-panel settings-section settings-wide dev-tools-section">
+      <article class="paper-panel settings-section settings-card-full dev-tools-section">
         <p class="eyebrow">Secret hatchery drawer</p>
         <h2>Cheats & dev tools</h2>
         <p class="settings-copy">These controls are tucked away for one special profile. Change the profile and the drawer shuts again.</p>
@@ -2494,6 +2664,7 @@ ${renderFieldNoteAside({
     const registry = shopItemRegistry();
     const pockets = registry && typeof registry.getBagPockets === "function" ? registry.getBagPockets(state) : { balls: [], items: [], berries: [], plates: [], souvenirs: [], mysteryItems: [] };
     const charmCharges = activeShinyCharmCharges();
+    const repelCharges = activeRepelEggCharges();
     const ballPocket = renderBagPocket("Poké Ball pocket", "The round things with a habit of rolling under furniture.", pockets.balls, "No Poké Balls are currently in the bag.", (item) => `
       <article class="bag-card">
         <img src="${escapeHtml(itemSpriteUrl(item.spriteId || item.id))}" alt="" />
@@ -2505,6 +2676,7 @@ ${renderFieldNoteAside({
       const isCharm = item.id === "shiny-charm";
       const isMagmarizer = item.id === "magmarizer";
       const isPrepaidEgg = item.id === PREPAID_EGG_ITEM_ID;
+      const isRepel = item.id === REPEL_ITEM_ID;
       const incubatorAvailable = !activeIncubatorSlot()?.egg && !activeIncubatorSlot()?.encounter;
       const detail = isCharm && charmCharges > 0
         ? `${charmCharges} egg${charmCharges === 1 ? "" : "s"} still sparkling`
@@ -2512,12 +2684,18 @@ ${renderFieldNoteAside({
           ? "warming new eggs"
           : isPrepaidEgg
             ? `${Number(item.count || 0).toLocaleString()} prepaid egg${Number(item.count || 0) === 1 ? "" : "s"} ready`
-            : `${Number(item.count || 0).toLocaleString()} in bag`;
+            : isRepel
+              ? repelCharges > 0
+                ? `${Number(item.count || 0).toLocaleString()} in bag · ${repelCharges} of 5 active egg protections remain`
+                : `${Number(item.count || 0).toLocaleString()} in bag · the next Repel activates automatically for five hatches`
+              : `${Number(item.count || 0).toLocaleString()} in bag`;
       const action = isCharm && owned
         ? `<button class="button button-primary" type="button" data-action="use-item" data-item-id="${item.id}">Use charm</button>`
         : isPrepaidEgg && owned
           ? `<p class="passive-note">${incubatorAvailable ? "An available incubator will load this automatically." : "It will load automatically when an incubator becomes available."}</p>`
-          : "";
+          : isRepel && (owned || repelCharges > 0)
+            ? `<p class="passive-note">No button is needed. A Repel activates automatically and covers five eggs that reach hatch time. Every hatch spends one protection, even when no predator appears.</p>`
+            : "";
       return `
         <article class="bag-card">
           <img src="${escapeHtml(itemSpriteUrl(item.spriteId || item.id))}" alt="" />
@@ -2776,25 +2954,25 @@ ${renderFieldNoteAside({
       <section class="archive-page settings-page">
         ${pageHeader("Hatchery preferences", "Settings", "Adjust the hatchery’s look and check the details written on your first registration card.")}
         <form id="settings-form" class="settings-form">
-          <article class="paper-panel settings-section">
+          <article class="paper-panel settings-section settings-card-compact">
             <p class="eyebrow">Registration card</p><h2>Identity</h2>
             <dl class="static-details"><dt>Name</dt><dd>${escapeHtml(state.player.name)}</dd><dt>Gender</dt><dd>${escapeHtml(genderLabel(state.player.gender))}</dd><dt>Date of birth</dt><dd>${new Date(`${state.player.dob}T12:00:00`).toLocaleDateString()}</dd><dt>Hatchery opened</dt><dd>${new Date(state.player.createdAt).toLocaleDateString()}</dd></dl>
             <p class="settings-copy">Your registration card is part of this save and stays as it was written when the hatchery opened.</p>
           </article>
-          <article class="paper-panel settings-section settings-wide">
+          <article class="paper-panel settings-section settings-card-compact">
             <p class="eyebrow">Invited regions</p><h2>Egg regions</h2><p class="settings-copy">These regions were chosen when the hatchery opened and are now part of this save.</p>
             <dl class="static-details"><dt>Regions</dt><dd>${escapeHtml(generationSummary())}</dd></dl>
           </article>
-          <article class="paper-panel settings-section settings-wide">
+          <article class="paper-panel settings-section settings-card-full">
             <p class="eyebrow">Hatchery look</p><h2>Theme</h2><p class="settings-copy">Choose a colour template. Each one is kept readable across the hatchery before it reaches this list.</p><div class="theme-grid">${themes}</div>
           </article>
-          <article class="paper-panel settings-section settings-wide">
+          <article class="paper-panel settings-section settings-card-medium">
             <p class="eyebrow">Browser workload</p><h2>Interface performance</h2><p class="settings-copy">Choose how much visual and background work this browser should do. The preference is stored in this save.</p><div class="check-grid performance-grid">${performanceOptions}</div>
           </article>
           ${devToolsPanel}
           <div class="settings-actions"><p id="settings-error" class="form-error"></p><button class="button button-primary" type="submit">Save settings</button></div>
         </form>
-        <article class="paper-panel settings-section settings-wide save-tools-panel">
+        <article class="paper-panel settings-section settings-card-medium save-tools-panel">
           <p class="eyebrow">Save backup</p><h2>Carry the nest elsewhere</h2><p class="settings-copy">Export a backup file before changing browsers, clearing storage, or moving to another device. Importing a backup replaces the current local hatchery on this browser.</p>
           <div class="button-row"><button class="button button-primary" type="button" data-action="export-save">Export save</button><button class="button" type="button" data-action="request-import-save">Import save</button></div>
           <input id="save-import-input" class="sr-only" type="file" accept="application/json,.json" />
@@ -2822,6 +3000,7 @@ ${renderFieldNoteAside({
     updateHeader();
     animateRenderedView();
     syncIdleCryTimer();
+    showNextEggEventNotice();
     if (focusViewAfterRender) {
       view.focus({ preventScroll: true });
       focusViewAfterRender = false;
@@ -2941,6 +3120,7 @@ ${renderFieldNoteAside({
     catchChallenge = null;
     pendingImportSave = null;
     modalRoot.innerHTML = "";
+    window.setTimeout(showNextEggEventNotice, 0);
   }
 
   function ballMark(name) {
@@ -4335,7 +4515,7 @@ ${renderFieldNoteAside({
           <p class="eyebrow">Hatchery guide</p>
           <h2 id="help-title">How the hatchery works</h2>
           <p class="modal-intro">Your first egg is free and eager to meet you. After that, each new egg costs ₽${EGG_PRICE}. You can pay at an empty incubator or prepurchase several eggs from the Pokémart. Prepaid eggs load automatically as soon as an incubator becomes available. The early eggs warm more quickly, then the nest settles into its usual rhythm; the Pokédex remembers a species’ usual hatch time once you have met it.</p>
-          <dl class="summary-list"><dt>New eggs</dt><dd>Pay ₽${EGG_PRICE} at an empty incubator; prepaid eggs load automatically</dd><dt>Early clutch</dt><dd>The first 50 eggs ramp smoothly from 30 seconds to each species’ normal hatch rate</dd><dt>Catching</dt><dd>Catch rings are slower and wider, and one missed wobble is allowed</dd><dt>Daily treats</dt><dd>A small Pokédollar gift that grows with your streak</dd><dt>Quiet training</dt><dd>Hatchlings grow little by little while they wait</dd><dt>Bag</dt><dd>Poké Balls, prepaid eggs, charms, plates, and earned Legendary relics live in their own pockets</dd><dt>Mystery research</dt><dd>Legendary relic goals are listed in the Bag and unlock automatically when completed</dd><dt>Expeditions</dt><dd>Send PC Pokémon to enabled-generation locations for 2.5–12 hours to earn XP and field rewards</dd><dt>Showcases</dt><dd>Scout persistent rivals, arrange six ordered rounds, climb league classes, and choose a halftime tactic</dd><dt>Save backups</dt><dd>Export and import your local hatchery from Settings</dd></dl>
+          <dl class="summary-list"><dt>New eggs</dt><dd>Pay ₽${EGG_PRICE} at an empty incubator; prepaid eggs load automatically</dd><dt>Early clutch</dt><dd>The first 50 eggs ramp smoothly from 30 seconds to each species’ normal hatch rate</dd><dt>Catching</dt><dd>Catch rings are slower and wider, and one missed wobble is allowed</dd><dt>Daily treats</dt><dd>A small Pokédollar gift that grows with your streak</dd><dt>Quiet training</dt><dd>Hatchlings grow little by little while they wait</dd><dt>Bag</dt><dd>Poké Balls, prepaid eggs, Repels, charms, plates, and earned Legendary relics live in their own pockets</dd><dt>Egg safety</dt><dd>Each egg faces a 1-in-25 predator attempt; a partner blocks half of attempts and each automatic Repel protects five eggs that reach hatch time</dd><dt>Mystery research</dt><dd>Legendary relic goals are listed in the Bag and unlock automatically when completed</dd><dt>Expeditions</dt><dd>Send PC Pokémon to enabled-generation locations for 2.5–12 hours to earn XP and field rewards</dd><dt>Showcases</dt><dd>Scout persistent rivals, arrange six ordered rounds, climb league classes, and choose a halftime tactic</dd><dt>Save backups</dt><dd>Export and import your local hatchery from Settings</dd></dl>
           <div class="button-row"><button class="button button-primary" type="button" data-close-modal>Back to the hatchery</button></div>
         </section>
       </div>`;
@@ -4418,6 +4598,7 @@ ${renderFieldNoteAside({
       else if (action === "select-competition-difficulty") selectCompetitionDifficulty(actionButton.dataset.difficultyId);
       else if (action === "move-competition-team") moveCompetitionTeam(actionButton.dataset.index, actionButton.dataset.direction);
       else if (action === "request-reset") showResetConfirmation();
+      else if (action === "acknowledge-egg-event") acknowledgeEggEventNotice(actionButton.dataset.noticeId);
       else if (action === "confirm-reset") resetProgress();
       else if (action === "export-save") exportSaveFile();
       else if (action === "request-import-save") requestSaveImport();

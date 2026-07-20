@@ -3568,3 +3568,304 @@ textarea {
 html[data-performance="low"] body {
   background: var(--paper);
 }
+
+/* Content-aware adaptive layout */
+.archive-page,
+.settings-form,
+.dex-grid,
+.pc-grid,
+.shop-grid,
+.bag-grid,
+.mystery-goal-grid,
+.contest-grid,
+.competition-control-grid,
+.expedition-panel,
+.expedition-grid,
+.incubator-slot-tray,
+.theme-grid,
+.check-grid,
+.berry-target-grid,
+.location-grid,
+.team-strip,
+.result-team,
+.result-team section,
+.xp-awards {
+  min-width: 0;
+}
+
+/* Do not stretch short cards to match taller neighbours. */
+.dex-grid,
+.pc-grid,
+.shop-grid,
+.bag-grid,
+.mystery-goal-grid,
+.contest-grid,
+.competition-control-grid,
+.expedition-panel,
+.expedition-grid,
+.incubator-slot-tray,
+.theme-grid,
+.check-grid,
+.berry-target-grid,
+.location-grid,
+.result-team,
+.result-team section,
+.xp-awards,
+.side-stack {
+  align-items: start;
+}
+
+.dex-grid > *,
+.pc-grid > *,
+.shop-grid > *,
+.bag-grid > *,
+.mystery-goal-grid > *,
+.contest-grid > *,
+.competition-control-grid > *,
+.expedition-grid > *,
+.incubator-slot-tray > *,
+.theme-grid > *,
+.check-grid > *,
+.berry-target-grid > *,
+.location-grid > *,
+.result-team > *,
+.xp-awards > * {
+  align-self: start;
+}
+
+/* Collection pages use intrinsic card widths instead of fixed column counts. */
+.dex-grid,
+.pc-grid {
+  grid-template-columns: repeat(auto-fit, minmax(160px, 220px));
+  grid-auto-flow: row dense;
+  justify-content: start;
+}
+
+.shop-grid {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 380px));
+  grid-auto-flow: row dense;
+  justify-content: start;
+}
+
+.bag-grid {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 220px));
+  grid-auto-flow: row dense;
+  justify-content: start;
+}
+
+.mystery-goal-grid {
+  grid-template-columns: repeat(auto-fit, minmax(230px, 360px));
+  grid-auto-flow: row dense;
+  justify-content: start;
+}
+
+.contest-grid {
+  grid-template-columns: repeat(auto-fit, minmax(210px, 320px));
+  justify-content: start;
+}
+
+.incubator-slot-tray {
+  grid-template-columns: repeat(auto-fit, minmax(170px, 240px));
+  justify-content: center;
+}
+
+.theme-grid {
+  grid-template-columns: repeat(auto-fit, minmax(230px, 340px));
+  justify-content: start;
+}
+
+.check-grid {
+  grid-template-columns: repeat(auto-fit, minmax(190px, 320px));
+  justify-content: start;
+}
+
+.performance-grid {
+  grid-template-columns: repeat(auto-fit, minmax(230px, 360px));
+}
+
+.expedition-grid {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 420px));
+  justify-content: start;
+}
+
+.berry-target-grid,
+.location-grid {
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+}
+
+/* Settings panels wrap by their own content needs instead of sharing row height. */
+.settings-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: clamp(16px, 2vw, 24px);
+}
+
+.settings-section {
+  min-width: 0;
+  flex: 1 1 340px;
+  align-self: flex-start;
+  height: auto;
+}
+
+.settings-card-compact {
+  flex: 1 1 300px;
+  max-width: 520px;
+}
+
+.settings-card-medium {
+  flex: 1 1 560px;
+}
+
+.settings-card-full,
+.settings-actions {
+  flex: 1 0 100%;
+  width: 100%;
+}
+
+.save-tools-panel {
+  width: min(760px, 100%);
+  margin-top: 24px;
+}
+
+/* Let content determine card height where a fixed height adds only empty space. */
+.shop-card,
+.bag-card,
+.contest-card,
+.theme-card,
+.performance-option,
+.mystery-goal-card,
+.competition-control-panel,
+.expedition-card,
+.location-card,
+.berry-target-card {
+  min-height: 0;
+  height: auto;
+}
+
+.shop-card > p:not(.eyebrow) {
+  min-height: 0;
+}
+
+.check-card {
+  min-height: 56px;
+  height: auto;
+}
+
+.page-heading {
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.page-heading > :last-child {
+  max-width: 100%;
+}
+
+.summary-stamps {
+  grid-template-columns: repeat(auto-fit, minmax(86px, 1fr));
+  width: min(100%, 420px);
+}
+
+.summary-stamps span {
+  min-width: 0;
+}
+
+.competition-control-grid {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.expedition-panel {
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 360px);
+}
+
+.result-team section {
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+}
+
+.xp-awards {
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+}
+
+.danger-zone,
+.competition-entry-summary,
+.active-showcase-callout,
+.rival-heading,
+.rival-unscouted {
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+/* Landscape phones and short windows need less ornamental vertical space. */
+@media (max-height: 720px) and (min-width: 700px) {
+  .view { padding-block: 20px; }
+  .page-heading { margin-bottom: 22px; padding-bottom: 16px; }
+  .incubator { min-height: 480px; }
+  .settings-section,
+  .shop-card,
+  .bag-pocket,
+  .rival-sheet { padding: 24px; }
+}
+
+@media (max-width: 980px) {
+  .expedition-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .expedition-log {
+    width: min(100%, 680px);
+  }
+
+  .settings-card-compact {
+    max-width: none;
+  }
+}
+
+@media (max-width: 620px) {
+  .dex-grid,
+  .pc-grid {
+    grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+  }
+
+  .shop-grid,
+  .bag-grid,
+  .mystery-goal-grid,
+  .contest-grid,
+  .theme-grid,
+  .check-grid,
+  .performance-grid,
+  .expedition-grid,
+  .berry-target-grid,
+  .location-grid,
+  .competition-control-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-section,
+  .save-tools-panel {
+    width: 100%;
+    max-width: none;
+    flex-basis: 100%;
+  }
+
+  .summary-stamps {
+    width: 100%;
+  }
+
+  .danger-zone > .button,
+  .competition-entry-summary > .button,
+  .active-showcase-callout > .button {
+    width: 100%;
+  }
+}
+
+
+/* Egg predator event */
+.egg-event-modal { width: min(620px, 100%); text-align: center; }
+.egg-event-predator {
+  width: clamp(120px, 24vw, 190px);
+  height: clamp(120px, 24vw, 190px);
+  margin: 8px auto 18px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+.app-shell[data-performance="low"] .egg-event-predator { filter: none; }

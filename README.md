@@ -17,9 +17,21 @@ Run the included checks with:
 ./tests/run-tests.sh
 ```
 
-The checks validate JavaScript syntax, current-version save migration, imported-state sanitisation, stuck-egg cleanup, later-generation sprite migration, API cache retry behaviour, catch timing calculations, reset persistence, the paid/prepaid egg economy, and complete expedition departure and return behavior.
+The checks validate JavaScript syntax, current-version save migration, imported-state sanitisation, stuck-egg cleanup, later-generation sprite migration, API cache retry behaviour, catch timing calculations, reset persistence, the paid/prepaid egg economy, deterministic egg-predator outcomes, and complete expedition departure and return behavior.
 
 The profile-based developer unlock and its associated personal-data handling were deliberately left unchanged.
+
+## Adaptive interface layout
+
+- Settings panels wrap independently according to their contents instead of stretching to the tallest panel in a grid row.
+- Identity and region panels stay compact; performance settings use a medium panel; theme and developer controls receive the full row when needed.
+- Pokédex, PC, Pokémart, Bag, Mystery research, competition, expedition, incubator and modal-choice grids choose their column count from available width.
+- Sparse pages keep sensible card widths and align cards to the start instead of expanding a few items across the entire screen.
+- Page headings, stamps, action areas and side-by-side summaries wrap cleanly on narrow or unusually shaped windows.
+- Short landscape screens reduce decorative padding.
+- The layout pass changes only markup classes and CSS; it does not alter or migrate save data.
+
+See `ADAPTIVE-LAYOUT.md` for the detailed layout rules.
 
 ## Egg economy
 
@@ -33,6 +45,21 @@ The profile-based developer unlock and its associated personal-data handling wer
 - Newly placed eggs display `incubating` immediately; the former `nesting` state has been removed.
 - Every stackable consumable in the Pokémart uses a quantity-order dialog.
 - Bulk Poké Ball purchases still award one Premier Ball for each ten Poké Balls purchased.
+
+## Egg predators and Repels
+
+- Every egg receives one independent predator check when it becomes ready to hatch.
+- The base attempt chance is exactly 1 in 25.
+- `egg-predators.js` stores the complete game registry of snake-like Pokémon and explicit egg thieves used by the event.
+- A partner watches every incubator and blocks half of actual attempts, reducing the unprotected loss chance to 1 in 50 while a partner is present.
+- Repels cost ₽350 and stack in the Bag. When no Repel is active, one activates automatically as an egg reaches hatch time.
+- One active Repel protects the next five eggs across all incubators. Every hatch spends one charge, even when no predator attempt occurs.
+- Repel coverage takes priority over partner protection and makes consumption impossible for all five covered eggs.
+- Every Repel-covered hatch and every successful partner defence is saved and displayed in a modal when the egg hatches.
+- An unprotected successful attack removes the egg, increments the existing egg-loss statistic, and displays an incident modal.
+- Persistent notice records ensure a protection message waits safely if another dialog is already open.
+
+See `EGG-SAFETY.md` for the predator registry and exact resolution order.
 
 ## Reset behaviour
 
@@ -101,7 +128,7 @@ Competition calculations are isolated in `competition-engine.js` and covered by 
 
 ## Save compatibility release
 
-This package uses the existing `pocket_hatchery_save_v1` browser key and public save version 13 with additive `schemaRevision: 17`. It accepts public save versions 1 through 13. When an older schema revision is loaded, the original serialized save is copied to `pocket_hatchery_save_v1_pre_v17_backup` before the first schema-revision-17 write.
+This package uses the existing `pocket_hatchery_save_v1` browser key and public save version 13 with additive `schemaRevision: 19`. It accepts public save versions 1 through 13. When an older schema revision is loaded, the original serialized save is copied to `pocket_hatchery_save_v1_pre_v19_backup` before the first schema-revision-19 write.
 
 The additive migration preserves fields introduced by the repository's version-13 build, including achievements, daily quests, caught-species records, training values, expeditions, expedition logs, souvenirs, expanded statistics, and any future unknown JSON fields. The competition ladder is added alongside those fields rather than replacing them.
 

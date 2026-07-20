@@ -1,37 +1,39 @@
-Pocket Hatchery — first 50 egg timing validation
+Pocket Hatchery five-egg Repel validation
 Date: 2026-07-20
 
-Result: PASS
+Build base
+- Based on the adaptive-layout, early-egg, performance-setting, easier-catching, half-duration-expedition, egg-predator build.
+- Browser storage key remains pocket_hatchery_save_v1.
+- Public save version remains 13.
+- Additive schema revision is 19.
 
-Implemented behavior
-- Egg 1 starts at 30 seconds before global item modifiers.
-- Eggs 1–50 linearly interpolate from 30 seconds to the species base hatch duration.
-- Egg 50 is exactly the full base duration.
-- Egg 51 and later use the full base duration.
-- The Magmarizer still halves the calculated result.
-- Instant-hatch developer mode still takes precedence.
-- Existing active eggs numbered 1–50 migrate once when base-stat data is available.
-- Public save version remains 13; additive schemaRevision is 17.
-- Existing profiles are preserved and receive a pre-v17 recovery backup before migration.
-
-Formula
-progress = (eggNumber - 1) / 49
-duration = 30 seconds + (base duration - 30 seconds) × progress
+Implemented mechanics
+- Repels remain stackable ₽350 Pokémart consumables stored under items.repel.
+- If no Repel is active, one activates automatically when an egg reaches hatch time.
+- An active Repel protects exactly five eggs globally across all incubators.
+- Every egg that reaches hatch time consumes one active protection, whether or not a predator attempt occurs.
+- Repel coverage takes priority over partner protection and prevents consumption with 100% certainty.
+- Every Repel-covered hatch creates a persistent popup and reports the remaining protection count.
+- The fifth covered hatch reports that the Repel has worn off.
+- Partner protection remains unchanged: without Repel coverage, a partner blocks 50% of actual attempts.
+- Existing saves receive activeItemEffects.repelEggsRemaining = 0 without profile reset.
+- Existing queued egg incident notices retain legacy predator information during migration.
 
 Automated validation
-- JavaScript syntax: PASS
-- State schema tests: PASS
-- API client tests: PASS
-- Catch engine tests: PASS
-- Competition engine tests: PASS
-- Data registry tests: PASS
-- Storage/reset tests: PASS
-- Startup, migration, expedition and reset smoke tests: PASS
-- Egg economy and first-50 timing tests: PASS
-- Legendary gating tests: PASS
-- Legendary unlock tests: PASS
-- Performance tests: PASS
-- Compatibility tests: PASS
-- HTML local references: PASS
-- CSS parse: PASS
-- Clean ZIP extraction regression suite: PASS
+- JavaScript syntax checks passed for every script.
+- State-schema migration, bounds, preservation, and sanitisation tests passed.
+- API client tests passed.
+- Catch engine tests passed.
+- Competition engine tests passed.
+- Item and data registry tests passed, including visibility of active Repel coverage in the Bag.
+- Egg-predator registry probability tests passed.
+- Egg-safety integration tests passed for no-attempt Repel coverage, attempted Repel coverage, partner protection, egg loss, final-charge expiry, and five simultaneous protected hatches.
+- Storage reset tests passed.
+- Startup, expedition, migration, and reset smoke tests passed.
+- Egg economy and first-50 timing tests passed.
+- Legendary lock and unlock tests passed.
+- Performance, compatibility, and adaptive-layout tests passed.
+- HTML parsing and local file-reference checks passed.
+- Static data-action coverage audit passed for 40 literal actions.
+- CSS parsed with zero errors across 620 top-level rules.
+- Clean package extraction and complete test rerun passed.
