@@ -84,27 +84,29 @@ See `EGG-SAFETY.md` for the predator registry and exact resolution order.
 - Earned Mystery Items are permanent and are not consumed by egg formation or hatching.
 - The complete goal table is in `legendary-unlock-goals.md`.
 
-
 ## Expeditions
 
-The repository expedition system is fully included rather than merely preserving its save fields.
+The expedition system has a dedicated top-level tab designed for sending groups without opening individual PC cards.
 
-- A PC Pokémon can be sent to one of 45 canon locations: five locations for each enabled generation.
-- Expeditions last a hidden random duration from 2.5 to 12 hours. The interface deliberately does not reveal the exact return time.
+- The **Expeditions** tab shows every available PC Pokémon in a searchable bulk-selection grid.
+- **Select shown** and individual selection controls make it practical to prepare large groups quickly.
+- A departure can contain any number of available Pokémon and uses one selected canon destination.
+- Every Pokémon in the departure receives the same `startedAt`, duration, and `returnAt`, so the complete group leaves and arrives together.
+- Each group member remains a normal independent expedition record. On return, every Pokémon receives its own full XP roll, Pokédollar reward, Poké Balls, berries, and keepsakes exactly as though it had travelled alone.
+- The active section groups synchronized records together and shows one shared return countdown.
+- Sending from the PC summary and the former PC expedition panel are removed from the interface.
 - A sent Pokémon is removed from the PC, showcase team, and partner position until it returns.
-- Active routes and recent return records are shown in the PC room.
-- Ready routes settle automatically during startup and the one-second game clock, or through the **Welcome back** control.
-- Returning Pokémon gain XP and can level or evolve through the existing growth system.
-- Returns award Pokédollars, Poké Balls, berries, and harmless expedition keepsakes.
+- Multiple departure groups can be active at once, with each group keeping its own synchronized return time.
+- Ready routes continue to settle through the existing startup and game-clock logic.
+- Returning Pokémon can level or evolve through the existing growth system.
 - The Pokémart includes all 67 repository berries. Every berry is a bulk-purchasable consumable.
 - Berries apply capped training values: at most 252 points per stat and 510 total per Pokémon.
 - Nine expedition keepsakes appear in their own Bag pocket and can be sold individually or all at once. They are never sold by the Pokémart and never substitute for unique items.
 - Expedition starts, completions, berry use, keepsakes found, and keepsakes sold are tracked in statistics.
 - An unfinished competition temporarily blocks expedition departure so a registered six-member lineup cannot lose a participant mid-match. Legendary Pokémon are otherwise permitted on expeditions.
-- If PokéAPI is unavailable when a route returns, the Pokémon still returns safely with its rewards and recorded XP.
+- If PokéAPI is unavailable when a route returns, every Pokémon still returns safely with its rewards and recorded XP.
 
-Existing version-13 expedition records, logs, souvenirs, berry inventory, and EV training values are retained. The expedition duration conversion remains part of the additive migration history.
-
+Existing version-13 expedition records remain valid. Older individual routes appear as single-member groups, while newly created bulk groups add only an optional `batchId` field that is safe for older loaders to ignore.
 
 ## Competition ladder
 
@@ -125,7 +127,6 @@ The former one-step stat-total showcase has been replaced with a complete ranked
 
 Competition calculations are isolated in `competition-engine.js` and covered by `tests/competition-engine.test.js`.
 
-
 ## Save compatibility release
 
 This package uses the existing `pocket_hatchery_save_v1` browser key and public save version 13 with additive `schemaRevision: 19`. It accepts public save versions 1 through 13. When an older schema revision is loaded, the original serialized save is copied to `pocket_hatchery_save_v1_pre_v19_backup` before the first schema-revision-19 write.
@@ -133,6 +134,5 @@ This package uses the existing `pocket_hatchery_save_v1` browser key and public 
 The additive migration preserves fields introduced by the repository's version-13 build, including achievements, daily quests, caught-species records, training values, expeditions, expedition logs, souvenirs, expanded statistics, and any future unknown JSON fields. The competition ladder is added alongside those fields rather than replacing them.
 
 Because the public `version` remains 13, the repository's previous version-13 loader can still open a save written by this package if a deployment is rolled back.
-
 
 Existing active expeditions created before the half-duration update are shortened once during migration. Existing active eggs numbered 1–50 are also recalculated onto the new proportional hatch curve when enough species data is already stored. Neither migration removes the Pokémon or egg. Expedition rewards retain the previous 5–24-hour value scale.
