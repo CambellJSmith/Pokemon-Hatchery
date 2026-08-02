@@ -1,27 +1,39 @@
-/* Restore native document scrolling on phones and tablets. */
+/* Keep phones and tablets on the browser's native document scroller. */
 
 @media (max-width: 1100px) {
-  html {
-    min-height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
-    overscroll-behavior: auto;
+  html:not(.modal-open),
+  body:not(.modal-open) {
+    width: auto !important;
+    height: auto !important;
+    min-height: 100% !important;
+    max-height: none !important;
+    overflow: visible !important;
+    overscroll-behavior: auto !important;
   }
 
-  body {
-    min-height: 100%;
-    overflow: visible;
+  body:not(.modal-open) {
+    position: static !important;
   }
 
   .app-shell {
-    display: block;
-    min-height: 100dvh;
+    position: static;
+    width: 100%;
     height: auto;
+    min-height: 100dvh;
+    max-height: none;
+    display: block;
+    overflow: visible;
+    contain: none;
   }
 
-  .view {
-    min-height: auto;
+  .view,
+  .archive-page,
+  .achievements-page,
+  .expeditions-page,
+  .placeholder-page {
     height: auto;
+    min-height: 0;
+    max-height: none;
     overflow: visible;
     overscroll-behavior: auto;
     -webkit-overflow-scrolling: auto;
@@ -29,6 +41,18 @@
 
   html.mobile-menu-open:not(.modal-open),
   body.mobile-menu-open:not(.modal-open) {
-    overflow-y: auto;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .account-metrics {
+    position: static;
+    inset: auto;
+  }
+}
+
+@media (max-width: 700px) {
+  .account-metrics {
+    grid-column: 1 / -1;
   }
 }
