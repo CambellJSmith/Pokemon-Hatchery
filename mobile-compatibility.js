@@ -17,15 +17,21 @@
   }
 
   function modalIsOpen() {
-    return Boolean(modalRoot.firstElementChild);
+    return Boolean(modalRoot.querySelector('.modal-backdrop [role="dialog"]'));
   }
 
   function setViewportVariables() {
-    const viewport = menuIsOpen() || modalIsOpen() ? window.visualViewport : null;
-    const height = Math.max(1, Math.round(viewport ? viewport.height : window.innerHeight));
+    const overlayOpen = menuIsOpen() || modalIsOpen();
+    const viewport = overlayOpen ? window.visualViewport : null;
     const headerHeight = Math.max(1, Math.round(topbar.getBoundingClientRect().height));
-    root.style.setProperty("--app-viewport-height", `${height}px`);
+
     root.style.setProperty("--mobile-header-height", `${headerHeight}px`);
+    if (overlayOpen) {
+      const height = Math.max(1, Math.round(viewport ? viewport.height : window.innerHeight));
+      root.style.setProperty("--app-viewport-height", `${height}px`);
+    } else {
+      root.style.removeProperty("--app-viewport-height");
+    }
   }
 
   function syncActiveMobileTab() {
@@ -64,7 +70,7 @@
   navObserver.observe(mobileNav, { attributes: true, attributeFilter: ["hidden"] });
 
   const modalObserver = new MutationObserver(syncUiState);
-  modalObserver.observe(modalRoot, { childList: true });
+  modalObserver.observe(modalRoot, { childList: true, subtree: true });
 
   document.addEventListener("click", (event) => {
     const clickedMenuButton = event.target.closest("#menu-button");
