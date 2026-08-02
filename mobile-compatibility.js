@@ -12,20 +12,20 @@
 
   if (!topbar || !menuButton || !mobileNav || !modalRoot) return;
 
-  function setViewportVariables() {
-    const viewport = window.visualViewport;
-    const height = Math.max(1, Math.round(viewport ? viewport.height : window.innerHeight));
-    const headerHeight = Math.max(1, Math.round(topbar.getBoundingClientRect().height));
-    root.style.setProperty("--app-viewport-height", `${height}px`);
-    root.style.setProperty("--mobile-header-height", `${headerHeight}px`);
-  }
-
   function menuIsOpen() {
     return mobileQuery.matches && !mobileNav.hidden;
   }
 
   function modalIsOpen() {
     return Boolean(modalRoot.firstElementChild);
+  }
+
+  function setViewportVariables() {
+    const viewport = menuIsOpen() || modalIsOpen() ? window.visualViewport : null;
+    const height = Math.max(1, Math.round(viewport ? viewport.height : window.innerHeight));
+    const headerHeight = Math.max(1, Math.round(topbar.getBoundingClientRect().height));
+    root.style.setProperty("--app-viewport-height", `${height}px`);
+    root.style.setProperty("--mobile-header-height", `${headerHeight}px`);
   }
 
   function syncActiveMobileTab() {
@@ -105,7 +105,6 @@
   window.addEventListener("resize", setViewportVariables, { passive: true });
   window.addEventListener("orientationchange", () => window.setTimeout(setViewportVariables, 50), { passive: true });
   window.visualViewport?.addEventListener("resize", setViewportVariables, { passive: true });
-  window.visualViewport?.addEventListener("scroll", setViewportVariables, { passive: true });
 
   syncUiState();
 })();
