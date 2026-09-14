@@ -1,0 +1,166 @@
+.events-page {
+  width: min(1120px, 100%);
+  margin: 0 auto;
+  display: grid;
+  gap: 22px;
+}
+
+.events-heading {
+  max-width: 760px;
+}
+
+.events-heading h1 {
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(2.4rem, 5vw, 4.6rem);
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+}
+
+.events-heading > p:last-child {
+  max-width: 62ch;
+  margin: 16px 0 0;
+  color: var(--ink-soft);
+  font-family: var(--display);
+  font-size: 1.05rem;
+  line-height: 1.65;
+}
+
+.events-summary {
+  min-height: 118px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 28px 30px;
+}
+
+.events-summary .eyebrow {
+  margin-bottom: 7px;
+}
+
+.events-summary strong {
+  display: block;
+  font-family: var(--display);
+  font-size: clamp(1.35rem, 2vw, 1.8rem);
+}
+
+.events-summary small {
+  display: block;
+  margin-top: 6px;
+  color: var(--ink-soft);
+  font-family: var(--mono);
+  font-size: var(--minimum-compact-text);
+}
+
+.event-list {
+  display: grid;
+  gap: 14px;
+}
+
+.event-card {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr);
+  align-items: center;
+  gap: 18px;
+  padding: 20px 24px;
+}
+
+.event-index {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  color: var(--paper-bright);
+  background: var(--ink);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.event-copy {
+  min-width: 0;
+}
+
+.event-copy p {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 1.05rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.event-copy time {
+  display: block;
+  margin-top: 7px;
+  color: var(--ink-soft);
+  font-family: var(--mono);
+  font-size: var(--minimum-compact-text);
+  letter-spacing: 0.04em;
+}
+
+.events-empty {
+  min-height: 190px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  padding: 32px;
+  text-align: left;
+}
+
+.events-empty-mark {
+  width: 58px;
+  height: 58px;
+  flex: 0 0 58px;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--leaf);
+  border-radius: 50%;
+  color: var(--leaf);
+  font-family: var(--mono);
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.events-empty h2 {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 1.65rem;
+}
+
+.events-empty p {
+  max-width: 50ch;
+  margin: 7px 0 0;
+  color: var(--ink-soft);
+  line-height: 1.55;
+}
+
+@media (max-width: 700px) {
+  .events-summary {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .events-summary .button {
+    width: 100%;
+  }
+
+  .event-card {
+    grid-template-columns: 42px minmax(0, 1fr);
+    gap: 13px;
+    padding: 18px;
+  }
+
+  .event-index {
+    width: 36px;
+    height: 36px;
+  }
+
+  .events-empty {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
