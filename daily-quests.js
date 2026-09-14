@@ -174,8 +174,8 @@
     const current = metricValue(save, definition.metric);
     const progress = Math.max(0, Math.min(definition.target, current - rawQuest.baseline));
     return {
-      ...rawQuest,
       ...definition,
+      ...rawQuest,
       progress,
       complete: progress >= definition.target,
       claimed: rawQuest.claimed === true
