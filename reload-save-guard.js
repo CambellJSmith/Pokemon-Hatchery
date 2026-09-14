@@ -4,7 +4,8 @@
   const STORAGE_KEY = "pocket_hatchery_save_v1";
   const REOPEN_SESSION_KEYS = [
     "pocket_hatchery_reopen_expeditions",
-    "pocket_hatchery_reopen_achievements"
+    "pocket_hatchery_reopen_achievements",
+    "pocket_hatchery_reopen_daily_quests"
   ];
 
   let pageIsHiding = false;
