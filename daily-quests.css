@@ -1,0 +1,229 @@
+.daily-quests-page {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  display: grid;
+  gap: 24px;
+}
+
+.daily-quests-heading {
+  align-items: end;
+}
+
+.daily-quests-heading > div:first-child {
+  max-width: 760px;
+}
+
+.daily-quests-heading h1 {
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(2.5rem, 5vw, 4.7rem);
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+}
+
+.daily-quests-heading > div:first-child > p:last-child {
+  max-width: 64ch;
+  margin: 16px 0 0;
+  color: var(--ink-soft);
+  font-family: var(--display);
+  font-size: 1.05rem;
+  line-height: 1.65;
+}
+
+.daily-quest-stamps {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.daily-quest-stamps span {
+  min-width: 106px;
+  padding: 11px 14px;
+  border: 1px solid var(--line);
+  background: var(--panel-wash);
+  font-family: var(--mono);
+  font-size: var(--minimum-compact-text);
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.daily-quest-stamps b {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--leaf);
+  font-size: 1.25rem;
+}
+
+.daily-quest-claim-notice {
+  padding: 16px 20px;
+  border-color: var(--leaf);
+  font-family: var(--mono);
+  font-size: 0.82rem;
+}
+
+.daily-quest-summary {
+  min-height: 126px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 26px;
+  padding: 28px 30px;
+}
+
+.daily-quest-summary .eyebrow {
+  margin-bottom: 8px;
+}
+
+.daily-quest-summary h2 {
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(1.45rem, 2.4vw, 2rem);
+}
+
+.daily-quest-summary p:last-child {
+  margin: 7px 0 0;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+
+.daily-quest-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.daily-quest-card {
+  min-height: 310px;
+  display: flex;
+  flex-direction: column;
+  padding: 26px;
+}
+
+.daily-quest-card.is-complete {
+  border-color: var(--leaf);
+}
+
+.daily-quest-card.is-claimed {
+  opacity: 0.72;
+}
+
+.daily-quest-card header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.daily-quest-card .eyebrow {
+  margin-bottom: 7px;
+}
+
+.daily-quest-card h2 {
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(1.35rem, 2vw, 1.8rem);
+  line-height: 1.08;
+}
+
+.daily-quest-card > p {
+  margin: 20px 0;
+  color: var(--ink-soft);
+  font-family: var(--display);
+  font-size: 1.02rem;
+  line-height: 1.55;
+}
+
+.daily-quest-reward {
+  flex: 0 0 auto;
+  padding: 6px 9px;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  font-family: var(--mono);
+  font-size: 0.8rem;
+}
+
+.daily-quest-progress-copy {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+  color: var(--ink-soft);
+  font-family: var(--mono);
+  font-size: var(--minimum-compact-text);
+}
+
+.daily-quest-progress-track {
+  height: 9px;
+  margin-top: 8px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--paper-deep);
+}
+
+.daily-quest-progress-track span {
+  display: block;
+  height: 100%;
+  background: var(--leaf);
+  transition: width 180ms ease;
+}
+
+.daily-quest-card footer {
+  min-height: 48px;
+  display: flex;
+  align-items: flex-end;
+  margin-top: 20px;
+}
+
+.daily-quest-card footer .button {
+  width: 100%;
+}
+
+.daily-quest-status,
+.daily-quest-claimed {
+  width: 100%;
+  padding-top: 10px;
+  border-top: 1px dotted var(--line);
+  color: var(--ink-soft);
+  font-family: var(--mono);
+  font-size: var(--minimum-compact-text);
+  text-transform: uppercase;
+}
+
+.daily-quest-claimed {
+  color: var(--leaf);
+  font-weight: 700;
+}
+
+@media (max-width: 980px) {
+  .daily-quest-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .daily-quest-card {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 700px) {
+  .daily-quests-heading {
+    align-items: stretch;
+  }
+
+  .daily-quest-stamps {
+    justify-content: flex-start;
+  }
+
+  .daily-quest-summary {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .daily-quest-summary .button {
+    width: 100%;
+  }
+
+  .daily-quest-card {
+    padding: 22px 19px;
+  }
+}
