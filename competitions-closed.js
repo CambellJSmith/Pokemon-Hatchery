@@ -4,6 +4,16 @@
   const STORAGE_KEY = "pocket_hatchery_save_v1";
   const CLOSED_TAB_ID = "competitions-closed";
   const COMPETITION_QUEST_ID = "win-competition-one";
+  const COMPETITION_TEAM_ACHIEVEMENTS = new Set([
+    "full_shiny_team",
+    "full_team",
+    "different_species_team",
+    "same_type_team",
+    "all_favourite_team",
+    "team_type_variety_12",
+    "team_many_generations",
+    "level_100_team"
+  ]);
   const QUEST_FALLBACKS = Object.freeze([
     Object.freeze({ id: "hatch-one", metric: "eggsHatched" }),
     Object.freeze({ id: "catch-one", metric: "pokemonCaught" }),
@@ -42,8 +52,13 @@
 
   function neutraliseLegacyCompetitionState() {
     const save = readSave();
-    if (!save || typeof save !== "object") return;
+    if (!save || typeof save !== "object") return false;
     let changed = false;
+
+    if (Array.isArray(save.team) && save.team.length) {
+      save.team = [];
+      changed = true;
+    }
 
     if (save.competition && typeof save.competition === "object") {
       if (save.competition.activeMatch) {
@@ -77,6 +92,7 @@
     }
 
     if (changed) writeSave(save);
+    return changed;
   }
 
   function removeCompetitionAchievements() {
@@ -85,7 +101,9 @@
     const categoryMeta = Object.freeze(Object.fromEntries(
       Object.entries(source.CATEGORY_META || {}).filter(([category]) => category !== "competitions")
     ));
-    const buildCatalogue = (state) => source.buildCatalogue(state).filter((entry) => entry.category !== "competitions");
+    const buildCatalogue = (state) => source.buildCatalogue(state).filter((entry) =>
+      entry.category !== "competitions" && !COMPETITION_TEAM_ACHIEVEMENTS.has(entry.id)
+    );
     const summary = (state) => {
       const catalogue = buildCatalogue(state);
       const unlocked = catalogue.filter((entry) => entry.unlocked);
@@ -121,15 +139,17 @@
   }
 
   function scrubVisibleCompetitionReferences(root = document) {
-    root.querySelectorAll('[data-action="dev-clear-contests"]').forEach((element) => element.remove());
+    root.querySelectorAll('[data-action="toggle-team"], [data-action="dev-clear-contests"], [data-action="dev-team-level-100"]').forEach((element) => element.remove());
     root.querySelectorAll('input[name="dev_tool"][value="alwaysWinContests"]').forEach((input) => input.closest("label")?.remove());
+    root.querySelectorAll('#pc-filter option[value="team"], #pc-filter option[value="not-team"]').forEach((option) => option.remove());
+    root.querySelectorAll(".pc-header-stamps .team-counter").forEach((counter) => {
+      if (counter.textContent.includes("on team")) counter.remove();
+    });
 
     const pcHeadingCopy = root.querySelector(".archive-page .page-heading > div > p:last-child");
     if (pcHeadingCopy?.textContent.includes("showcase team")) {
-      pcHeadingCopy.textContent = "Every Pokémon here has its own little story. Mark favourites, choose a partner, and keep your team tidy.";
+      pcHeadingCopy.textContent = "Every Pokémon here has its own little story. Mark favourites, choose a partner, and keep your collection tidy.";
     }
-
-    root.querySelectorAll('#pc-filter option[value="team"]').forEach((option) => { option.textContent = "Team"; });
   }
 
   function scrubHelpModal() {
